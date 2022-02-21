@@ -25,10 +25,17 @@ Contents <!-- omit in toc -->
 
 Why Hybrid?
 -----------
+Many businesses are now hosting applications in the public cloud. A cloud hosting strategy brings many benefits, including simpler maintenance and improved scalability.
 
+But running in the public cloud isn’t necessarily the best option for every business or workload. Yours might be one of the many organizations that continue to host services on local infrastructure. Maybe this helps you keep your operating expenses lower, or you’d like to stick with a hosting strategy that’s working just fine. Maybe you have applications that are particularly sensitive to latency, or data that needs to reside on your premises, under your complete control.
+
+![Hybrid Graphic](media/azure-hci-infographic-1-580x580.png)
+
+Whatever the reason, it doesn't have to be a public cloud ***or*** on-premises decision. With Dell Technologies and Microsoft, you can implement solutions that enable you to run your applications in the right place, at the right time, to achieve your business goals. These solutions have been designed with hybrid at the core, and can help you to transform and future-proof your infrastucture and modernize your applications.
 
 Why Dell Technologies & Microsoft?
 -----------
+So why choose Dell Technologies and Microsoft for your hybrid cloud?
 
 About the workshop
 -----------
