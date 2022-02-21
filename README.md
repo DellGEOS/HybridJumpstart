@@ -20,12 +20,8 @@ Contents <!-- omit in toc -->
 - [Why Hybrid?](#why-hybrid)
 - [Why Dell Technologies & Microsoft?](#why-dell-technologies--microsoft)
 - [About the workshop](#about-the-workshop)
-  - [Target audience](#target-audience)
-  - [Workshop Modules](#workshop-modules)
 - [Raising issues](#raising-issues)
 - [Contributions & Legal](#contributions--legal)
-  - [Contributing](#contributing)
-  - [Legal Notices](#legal-notices)
 
 Why Hybrid?
 -----------
@@ -40,7 +36,7 @@ This workshop takes a modular approach to education and experiences - it starts 
 
 You are free to choose the modules that are most appropriate for your learning - for instance, after completing the initial Azure Stack HCI module, you could focus on a deeper experience with Azure Stack HCI, or alternatively, you could switch focus to containerization and explore the Kubernetes-focused modules. There's no right or wrong path!
 
-### Target audience
+### Target audience <!-- omit in toc -->
 The goal of this workshop is to immerse you in the hybrid technologies from Dell Technolgies and Microsoft. As part of the workshop, you'll be exposed to a number of more technically complex features and functionality across a number of the solutions. This will involve hands-on time with both GUI and Console/PowerShell-based interfaces. With that in mind, this workshop is aimed at, but by no means limited to:
 
 - IT Professionals / Enthusiasts / Evangelists
@@ -50,7 +46,7 @@ The goal of this workshop is to immerse you in the hybrid technologies from Dell
 
 With that said, one goal of the workshop is to ensure that the more complex elements are simplified for broader audiences, so even if your role and experience doesn't fit with those previously mentioned, give the workshop a try, and provide us feedback on how we can make it better for you!
 
-### Workshop Modules
+### Workshop Modules <!-- omit in toc -->
 The workshop is broken down into the following list of modules. As previously mentioned, after the initial introductory module, the core focus will shift to Azure Stack HCI, including a number of hands-on exercises to help you experience the deployment and configuration of the solution.
 
 From there, you're free to focus on the modules that are most appropriate to your goals.
@@ -72,12 +68,12 @@ If you notice something is wrong with the workshop, such as a step isn't working
 Contributions & Legal
 -----------
 
-### Contributing ###
+### Contributing ### <!-- omit in toc -->
 This project welcomes contributions and suggestions - if you have edits, or wish to provide feedback, please feel free to do so - we'll incorporate any changes that can improve the overall experience for all users! Make sure you read the [contributing guidance](.github/CONTRIBUTING.md) before submitting!
 
-### Legal Notices ###
+### Legal Notices ### <!-- omit in toc -->
 
-Microsoft and any contributors grant you a license to the Microsoft documentation and other content in this repository under the [Creative Commons Attribution 4.0 International Public License](https://creativecommons.org/licenses/by/4.0/legalcode), see the [LICENSE](LICENSE) file, and grant you a license to any code in the repository under the [MIT License](https://opensource.org/licenses/MIT), see the [LICENSE-CODE](LICENSE-CODE) file.
+You are granted a license to the content in this repository under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0), see the [LICENSE](LICENSE) file.
 
 Dell Technologies, Dell, Dell EMC and other trademarks referenced in the workshop guidance are trademarks of Dell Inc. or its subsidiaries. Microsoft, Windows, Microsoft Azure and/or other Microsoft products and services referenced in the workshop guidance may be either trademarks or registered trademarks of Microsoft in the United States and/or other countries. The licenses for this project do not grant you rights to use any Microsoft or Dell Inc. names, logos, or trademarks. The respective trademark guidelines are available online for [Dell Inc.](https://www.dell.com/learn/us/en/uscorp1/terms-conditions/trademarks-us) and [Microsoft](http://go.microsoft.com/fwlink/?LinkID=254653).
 
