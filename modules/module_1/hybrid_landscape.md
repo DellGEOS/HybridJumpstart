@@ -38,8 +38,6 @@ With the flexible, production-ready, enterprise-grade AX nodes as the foundation
 
 Youb can read more about the unique proposition from Dell Technologies in the [Dell EMC Integrated System For Microsoft Azure Stack HCI TechBook](https://infohub.delltechnologies.com/l/techbook-dell-emc-integrated-system-for-microsoft-azure-stack-hci-2/what-makes-dell-emc-integrated-system-for-microsoft-azure-stack-hci-different-17).
 
-![Video: Dell EMC Integrated System for Microsoft Azure Stack HCI](/media/Dell_EMC_Integrated_System_for_Microsoft_Azure_Stack_HCI.mp4)
-
 Raising issues
 -----------
 If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!

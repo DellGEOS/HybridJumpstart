@@ -4,25 +4,44 @@ Dell Technologies & Microsoft | Hybrid Cloud Workshop
 ==============
 
 ## Welcome to the Hybrid Cloud Workshop
-The goal of this workshop is to help you grow your knowledge, skills and experience around a number of core hybrid cloud solutions from the Dell Technologies and Microsoft hybrid portfolio. This ever-growing portfolio is infused with deep joint-engineering work, resulting in a set of integrated technologies that truly can transform and future-proof your business. In this workshop, you'll learn about, and gain hands-on experience with:
-
-* Azure Stack HCI and the Dell EMC Integrated System for Microsoft Azure Stack HCI
-* Windows Admin Center & Dell EMC OpenManage Integration
-* Azure Virtual Desktop for Azure Stack HCI
-* Azure Kubernetes Service (AKS) on Azure Stack HCI
-* Azure Arc - Arc enabled Kubernetes, Data Services and App Service
-* and more...!
-
-This is just the start - we'll continue to grow this repository as more and more features and funcionality appear in the technologies, and as more compelling scenarios are designed and delivered.
+The goal of this workshop is to help you grow your knowledge, skills and experience around a number of core hybrid cloud solutions from the Dell Technologies and Microsoft hybrid portfolio. This ever-growing portfolio is infused with deep joint-engineering work, resulting in a set of integrated technologies that truly can transform and future-proof your business.
 
 About the workshop
 -----------
+In this workshop, you'll learn about, and gain hands-on experience with a number of hybrid technologies within the Dell Technologies and Microsoft hybrid cloud portfolios. The following graphic depicts the different building blocks that make up the hybrid solution, and which you'll explore throughout the modules in this workshop:
+
+![Hybrid Solution Architecture](media/HybridSolutionArchitecture.png)
+
+There's a lot to digest in this graphic, so let's break down the different layers.
+
+At the base, you have the foundation of this hybrid solution; **Azure Stack HCI**, the new purpose-built hyperconverged infrastructure operarting system from Microsoft, running on the enterprise-grade hardware platform from Dell Technologies, specifically, the **Dell EMC Integrated System for Microsoft Azure Stack HCI**. This is managed both from **Windows Admin Center**, which includes integration with **Dell EMC OpenManage**, but in addition, there's growing integration with **Azure Arc** that you'll explore in this workshop. This hyperconverged solution is ideal for running traditional virtualized workloads, but in addition, virtual desktops, through integration with **Azure Virtual Desktop**.
+
+In addition to traditional virtualized workloads, more and more organizations are exploring ways to modernize their applications - Kubernetes is an increasingly popular way to do this, yet Kubernetes is complex....unless you're using **Azure Kubernetes Service on Azure Stack HCI**. With AKS-HCI, you really do have the "easy button" to deploy and manage Kubernetes on your infrastructure, and in this workshop, you'll see that first hand.
+
+Finally, through the power of **Azure Arc**, you're able to bring a number of Azure services down from Azure, to run on your Kubernetes cluster - from **Cognitive Services** and **Data Services**, through to the ever-popular **Azure App Service**, these services can now be run inside your own environments, and in this workshop, you'll learn how. 
+
+This is just the start - we'll continue to grow this repository as more and more features and funcionality appear in the technologies, and as more compelling scenarios are designed and delivered.
+
 This workshop takes a modular approach to education and experiences - it starts with a focus on the foundation of the hybrid offering, specifically Azure Stack HCI, before moving up the stack to cover solutions that focus more on your applications and workloads, including Kubernetes, Data services and PaaS platforms.
 
 You are free to choose the modules that are most appropriate for your learning - for instance, after completing the initial Azure Stack HCI module, you could focus on a deeper experience with Azure Stack HCI, or alternatively, you could switch focus to containerization and explore the Kubernetes-focused modules. There's no right or wrong path!
 
-### Target audience
-The goal of this workshop is to immerse you in the hybrid technologies from Dell Technolgies and Microsoft. As part of the workshop, you'll be exposed to a number of more technically complex features and functionality across a number of the solutions. This will involve hands-on time with both GUI and Console/PowerShell-based interfaces. With that in mind, this workshop is aimed at, but by no means limited to:
+### Workshop Modules
+The workshop is broken down into the following list of modules. As previously mentioned, after the **prerequsities** and **initial introductory** modules, the core focus will shift to Azure Stack HCI, including a number of hands-on exercises to help you experience the deployment and configuration of the solution.
+
+From there, you're free to focus on the modules that are most appropriate to your goals.
+
+- **Module 1** - Introduction - The Hybrid Landscape
+- **Module 2** - Hybrid Infrastructure with Azure Stack HCI & Azure Arc
+  - Sub-Module 1
+  - Sub-Module 2
+  - Sub-Module 3
+- **Module 3** - Modernizing hybrid apps with Kubernetes & Azure Arc
+- **Module 4** - Modernizing hybrid apps with Azure Arc enabled App Services
+- **Module 5** - Enhancing the hybrid workplace with Azure Virtual Desktop for Azure Stack HCI
+
+### Is this workshop right for me?
+The goal of this workshop is to immerse you in the hybrid solutions from Dell Technolgies and Microsoft. As part of the workshop, you'll be exposed to a number of more technically complex features and functionality across a number of the solutions. This will involve hands-on time with both GUI and Console/PowerShell-based interfaces. With that in mind, this workshop is aimed at, but by no means limited to:
 
 - IT Professionals / Enthusiasts / Evangelists
 - Operations Teams
@@ -31,26 +50,11 @@ The goal of this workshop is to immerse you in the hybrid technologies from Dell
 
 With that said, one goal of the workshop is to ensure that the more complex elements are simplified for broader audiences, so even if your role and experience doesn't fit with those previously mentioned, give the workshop a try, and provide us feedback on how we can make it better for you!
 
-### Workshop Modules
-The workshop is broken down into the following list of modules. As previously mentioned, after the initial introductory module, the core focus will shift to Azure Stack HCI, including a number of hands-on exercises to help you experience the deployment and configuration of the solution.
-
-From there, you're free to focus on the modules that are most appropriate to your goals.
-
-- **Module 1** - Workshop Prerequisites & Introduction to MSLab
-- **Module 2** - Introduction - The Hybrid Landscape
-- **Module 3** - Hybrid Infrastructure with Azure Stack HCI & Azure Arc
-  - Sub-Module 1
-  - Sub-Module 2
-  - Sub-Module 3
-- **Module 4** - Modernizing hybrid apps with Kubernetes & Azure Arc
-- **Module 5** - Modernizing hybrid apps with Azure Arc enabled App Services
-- **Module 6** - Enhancing the hybrid workplace with Azure Virtual Desktop for Azure Stack HCI
-
 Getting Started
 -----------
 If you're ready to start your learning, head on over to the first module, to familiarize yourself with the hardware/software requirements for the workshop, and learn more about the tooling you'll use to deploy the solutions, most specifically, MSLab.
 
-Head over to [Module 1 - Workshop Prerequisites & Introduction to MSLab](modules/module_1/prerequisites.md)
+**Head over to [Workshop Prerequisites](modules/prerequisites.md)**
 
 Raising issues
 -----------
@@ -66,7 +70,11 @@ This project welcomes contributions and suggestions - if you have edits, or wish
 
 You are granted a license to the content in this repository under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0), see the [LICENSE](LICENSE) file.
 
-Dell Technologies, Dell, Dell EMC and other trademarks referenced in the workshop guidance are trademarks of Dell Inc. or its subsidiaries. Microsoft, Windows, Microsoft Azure and/or other Microsoft products and services referenced in the workshop guidance may be either trademarks or registered trademarks of Microsoft in the United States and/or other countries. The licenses for this project do not grant you rights to use any Microsoft or Dell Inc. names, logos, or trademarks. The respective trademark guidelines are available online for [Dell Inc.](https://www.dell.com/learn/us/en/uscorp1/terms-conditions/trademarks-us) and [Microsoft](http://go.microsoft.com/fwlink/?LinkID=254653).
+Dell Technologies, Dell, Dell EMC and other trademarks referenced in the workshop guidance are trademarks of Dell Inc. or its subsidiaries.
+
+Microsoft, Windows, Microsoft Azure and/or other Microsoft products and services referenced in the workshop guidance may be either trademarks or registered trademarks of Microsoft in the United States and/or other countries.
+
+The licenses for this project do not grant you rights to use any Microsoft or Dell Inc. names, logos, or trademarks. The respective trademark guidelines are available online for [Dell Inc.](https://www.dell.com/learn/us/en/uscorp1/terms-conditions/trademarks-us) and [Microsoft](http://go.microsoft.com/fwlink/?LinkID=254653).
 
 Dell Technologies Privacy information can be found at https://www.dell.com/en-us/lp/privacy-center.
 
