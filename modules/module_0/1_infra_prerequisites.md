@@ -9,7 +9,8 @@ Contents <!-- omit in toc -->
 - [Lab Deployment on Physical Hardware](#lab-deployment-on-physical-hardware)
   - [Architecture](#architecture)
   - [Will my hardware support this?](#will-my-hardware-support-this)
-  - [Physical hardware sizing?](#physical-hardware-sizing)
+  - [Physical hardware sizing](#physical-hardware-sizing)
+  - [Configuring your Hyper-V Host](#configuring-your-hyper-v-host)
 - [Lab Deployment in Azure](#lab-deployment-in-azure)
 - [Next Steps](#next-steps)
 - [Raising issues](#raising-issues)
@@ -21,7 +22,7 @@ As previously discussed, the workshop is broken down into a number of modules an
 
 Within each module, you'll find a mix of presentation to add extra context, alongside hands-on-lab guidance to help provide a guided and consistent way to experience the solutions first-hand.
 
-In order to participate in the hands-on-labs, and follow along with the guided instructions in the workshop, you'll need an environment where you can deploy the virtualized infrastucture and hybrid workloads. For this, you have a couple of options:
+In order to participate in the hands-on-labs, and follow along with the guided instructions in the workshop, you'll need an environment where you can deploy the virtualized infrastucture and hybrid workloads. For this, **you have a couple of options**:
 
 - Single physical server/desktop/laptop
 - Single Azure virtual machine
@@ -92,28 +93,57 @@ Obviously, if you have a larger physical system, such as a workstation, or serve
 
 If your physical system doesn't meet these recommended requirements, you're still free to test, and see if you can proceed with lower numbers, but it may be a better approach to [deploy in Azure instead.](#deployment-in-azure "Deployment in Azure")
 
-### Physical hardware sizing?
+### Physical hardware sizing
+Below, you will find a table which details the different modules and hands-on-labs, and their specific hardware requirements. As you can see, the amount of memory is largely the key bottleneck, so the more memory you have available in your physical system, the better!
 
+**INSERT TABLE HERE**
 
+### Configuring your Hyper-V Host
+For the purpose of this guide, we'll assume you've deployed one of the following operating systems (all of which support Hyper-V) onto a [suitable piece of hardware](#will-my-hardware-support-this)
 
+* Windows Server 2019
+* Windows Server 2022
+* Windows 10 / 11 Pro
+* Windows 10 / 11 Enterprise
+* Windows 10 / 11 Education
 
+**NOTE** - The Hyper-V role **cannot** be installed on Windows 10 / 11 Home.
 
+We'll also assume that your physical host is fully up to date, but if not, now is a good time to check for updates:
 
+1. Open the **Start Menu** and search for **Update**
+2. In the results, select **Check for Updates**
+3. In the Updates window, click **Check for updates**. If any are required, ensure they are downloaded and installed.
+4. Restart if required, and once completed, log back into your physical system.
 
+With the OS updated, and back online after any required reboot, it's now time to enable the Hyper-V role and accompanying PowerShell management modules.
 
+#### Enable Hyper-V
+In order to run our nested workloads, you first need to enable the Hyper-V role, and the accompanying PowerShell modules. In addition, you'll create a special NAT switch, to ensure that your nested workloads can access the internet, using the Windows Server 2019 host as the NAT gateway.
 
+The quickest, and easiest way to enable the required Hyper-V role and accompanying management tools, is using PowerShell.  Firstly, open PowerShell **as an administrator** and run the following command:
 
+##### To enable Hyper-V on Windows Server 2019/2022
 
+```powershell
+# Install the Hyper-V role and management tools, including PowerShell
+Install-WindowsFeature -Name Hyper-V -IncludeManagementTools -Restart
+```
 
+##### To enable Hyper-V on Windows 10 / 11
 
+```powershell
+# Install the Hyper-V role and management tools, including PowerShell
+Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+```
 
+Ensure you **restart the system** after installing Hyper-V, if prompted.
 
+The final part of the process is to enable Enhanced Session mode. Enhanced Session mode can be useful to enhance the user experience, particularly when using the Windows 10 Management VM later, when connecting to a VM over VMConnect. To enable Enhanced Session Mode with PowerShell, run the following on your Hyper-V host:
 
-
-
-
-
-
+```powershell
+Set-VMhost -EnableEnhancedSessionMode $True
+```
 
 Lab Deployment in Azure
 -----------
@@ -127,14 +157,11 @@ In this configuration, you'll take advantage of the nested virtualization suppor
 
 To reiterate, in this case the whole configuration will run **inside the single Azure VM**.
 
-
-
-
-
 Next Steps
 -----------
 Now that you understand the infrastructure requirements for the workshop, in the next step, we'll break down the different Azure requirements that need to be met in order to work through the various guides in the workshop.
 
+Head over to review the [Hybrid Cloud Workshop | Azure Prerequisites](/modules/module_0/2_azure_prerequisites.md)
 
 Raising issues
 -----------
