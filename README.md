@@ -66,7 +66,7 @@ Getting Started
 -----------
 If you're ready to start your learning, head on over to the first module, to familiarize yourself with the hardware/software requirements for the workshop, and learn more about the tooling you'll use to deploy the solutions, most specifically, MSLab.
 
-**Head over to [Workshop Prerequisites](modules/prerequisites.md)**
+**Head over to the [Hybrid Workshop | Infrastructure Prerequisites](/modules/module_0/1_infra_prerequisites.md)**
 
 Raising issues
 -----------
