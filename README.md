@@ -14,7 +14,7 @@ In this workshop, you'll learn about, and gain hands-on experience with a number
 
 There's a lot to digest in this graphic, so let's break down the different layers.
 
-At the base, you have the foundation of this hybrid solution; **Azure Stack HCI**, the new purpose-built hyperconverged infrastructure operarting system from Microsoft, running on the enterprise-grade hardware platform from Dell Technologies, specifically, the **Dell EMC Integrated System for Microsoft Azure Stack HCI**. This is managed both from **Windows Admin Center**, which includes integration with **Dell EMC OpenManage**, but in addition, there's growing integration with **Azure Arc** that you'll explore in this workshop. This hyperconverged solution is ideal for running traditional virtualized workloads, but in addition, virtual desktops, through integration with **Azure Virtual Desktop**.
+At the base, you have the foundation of this hybrid solution; **Azure Stack HCI**, the new purpose-built hyperconverged infrastructure operarting system from Microsoft, running on the enterprise-grade hardware platform from Dell Technologies, specifically, the **Dell EMC Integrated System for Microsoft Azure Stack HCI**. This is managed through **Windows Admin Center**, which includes integration with **Dell EMC OpenManage**, but in addition, there's growing integration with **Azure Arc** that you'll explore in this workshop. This hyperconverged solution is ideal for running traditional virtualized workloads, but in addition, virtual desktops, through integration with **Azure Virtual Desktop**.
 
 In addition to traditional virtualized workloads, more and more organizations are exploring ways to modernize their applications - Kubernetes is an increasingly popular way to do this, yet Kubernetes is complex....unless you're using **Azure Kubernetes Service on Azure Stack HCI**. With AKS-HCI, you really do have the "easy button" to deploy and manage Kubernetes on your infrastructure, and in this workshop, you'll see that first hand.
 
@@ -22,23 +22,36 @@ Finally, through the power of **Azure Arc**, you're able to bring a number of Az
 
 This is just the start - we'll continue to grow this repository as more and more features and funcionality appear in the technologies, and as more compelling scenarios are designed and delivered.
 
+### Workshop Modules
 This workshop takes a modular approach to education and experiences - it starts with a focus on the foundation of the hybrid offering, specifically Azure Stack HCI, before moving up the stack to cover solutions that focus more on your applications and workloads, including Kubernetes, Data services and PaaS platforms.
 
 You are free to choose the modules that are most appropriate for your learning - for instance, after completing the initial Azure Stack HCI module, you could focus on a deeper experience with Azure Stack HCI, or alternatively, you could switch focus to containerization and explore the Kubernetes-focused modules. There's no right or wrong path!
 
-### Workshop Modules
-The workshop is broken down into the following list of modules. As previously mentioned, after the **prerequsities** and **initial introductory** modules, the core focus will shift to Azure Stack HCI, including a number of hands-on exercises to help you experience the deployment and configuration of the solution.
+After the **prerequsities** and **initial introductory** modules, the core focus will shift to Azure Stack HCI, including a number of hands-on exercises to help you experience the deployment and configuration of the solution.
 
 From there, you're free to focus on the modules that are most appropriate to your goals.
 
-- **Module 1** - Introduction - The Hybrid Landscape
-- **Module 2** - Hybrid Infrastructure with Azure Stack HCI & Azure Arc
-  - Sub-Module 1
-  - Sub-Module 2
-  - Sub-Module 3
-- **Module 3** - Modernizing hybrid apps with Kubernetes & Azure Arc
-- **Module 4** - Modernizing hybrid apps with Azure Arc enabled App Services
-- **Module 5** - Enhancing the hybrid workplace with Azure Virtual Desktop for Azure Stack HCI
+**Module 1 - Introduction - The Hybrid Landscape**
+In this module, we'll cover the hybrid landscape, why hybrid is so important to so many organizations, explore some of the core use cases and outline the overall hybrid solution from Dell Technologies and Microsoft.
+
+**Module 2 - Hybrid Infrastructure with Azure Stack HCI & Azure Arc**
+In this module, we'll dive deeper into Azure Stack HCI, including how it integrates with Dell EMC OpenManage, and Azure. In addition, you'll explore a number of the core operations around Azure Stack HCI, including creating VMs, managing storage, networking, and integrating with a variety of Azure services. As part of this module, there are a number of hands-on-labs to explore the functionality of Azure Stack HCI.
+
+**Module 3 - Modernizing hybrid apps with Kubernetes & Azure Arc**
+We'll shift gears in this module, and start to focus more on applications, specifically, containerized applications. In this module, you'll explore AKS on Azure Stack HCI and learn first-hand how easy it is to deploy, and get up and running with your first containerized application. From there, you'll expore the Azure integration with Arc-enabled Kubernetes, GitOps, Azure Policy and more, all with hands-on-experience in the labs.
+
+**Module 4 - Modernizing hybrid apps with Azure Arc-enabled App Services**
+With AKS on Azure Stack HCI deployed, we'll continue our focus on applications, this time, looking more deeply at the Azure App Service, which is also now Arc-enabled. You'll learn what Arc-enabled App Service is all about, and in addition, go through a deployment of the solution, as well as some sample applications.
+
+**Module 5 - Modernizing hybrid apps with Azure Arc-enabled Data Services**
+One of the most important aspects of any application, is how you manage it's data. In this module, you'll explore the key capabilities of Azure Arc-enabled data services and learn how they are delivered down to your on-premises infrastructure, to provide an Azure-consistent means to managing your data footprint.
+
+**Module 5 - Embracing Cognitive Services with Azure Arc-enabled Machine Learning**
+In this module, you'll learn just what Azure Arc-enabled Machine Learning is, and how to configure and use your Azure Arc-enabled Kubernetes cluster to train, inference, and manage machine learning models in Azure Machine Learning.
+
+**Module 6 - Enhancing the hybrid workplace with Azure Virtual Desktop for Azure Stack HCI**
+One of the newest additions to the hybrid portfolio is Azure Virtual Desktop for Azure Stack HCI. In this module, you'll get a solid grounding on Azure Virtual Desktop, before we move into the specifics when running on top of Azure Stack HCI - you'll learn about deployment and management of your virtual desktop environment, and understand how the solution helps you to meet your performance or data locality needs.
+
 
 ### Is this workshop right for me?
 The goal of this workshop is to immerse you in the hybrid solutions from Dell Technolgies and Microsoft. As part of the workshop, you'll be exposed to a number of more technically complex features and functionality across a number of the solutions. This will involve hands-on time with both GUI and Console/PowerShell-based interfaces. With that in mind, this workshop is aimed at, but by no means limited to:
