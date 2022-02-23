@@ -20,7 +20,7 @@ configuration HybridHost
     Import-DscResource -ModuleName 'cChoco'
     Import-DscResource -ModuleName 'DSCR_Shortcut'
 
-    $ipConfig = (Get-NetAdapter -Physical | Where-Object { $_.InterfaceDescription -like "*Hyper-V*" } | Get-NetIPConfiguration | Where-Object IPv4DefaultGateway)
+    $ipConfig = (Get-NetAdapter -Physical | Where-Object Status -EQ Up | Get-NetIPConfiguration | Where-Object IPv4DefaultGateway)
     $netAdapters = Get-NetAdapter -Name ($ipConfig.InterfaceAlias) | Select-Object -First 1
     $InterfaceAlias = $($netAdapters.Name)
 
@@ -36,44 +36,44 @@ configuration HybridHost
 
         Script StoragePool {
             SetScript  = {
-                New-StoragePool -FriendlyName AzSHCIPool -StorageSubSystemFriendlyName '*storage*' -PhysicalDisks (Get-PhysicalDisk -CanPool $true)
+                New-StoragePool -FriendlyName HybridHostPool -StorageSubSystemFriendlyName '*storage*' -PhysicalDisks (Get-PhysicalDisk -CanPool $true)
             }
             TestScript = {
-                (Get-StoragePool -ErrorAction SilentlyContinue -FriendlyName AzSHCIPool).OperationalStatus -eq 'OK'
+                (Get-StoragePool -ErrorAction SilentlyContinue -FriendlyName HybridHostPool).OperationalStatus -eq 'OK'
             }
             GetScript  = {
-                @{Ensure = if ((Get-StoragePool -FriendlyName AzSHCIPool).OperationalStatus -eq 'OK') { 'Present' } Else { 'Absent' } }
+                @{Ensure = if ((Get-StoragePool -FriendlyName HybridHostPool).OperationalStatus -eq 'OK') { 'Present' } Else { 'Absent' } }
             }
         }
         Script VirtualDisk {
             SetScript  = {
-                $disks = Get-StoragePool -FriendlyName AzSHCIPool -IsPrimordial $False | Get-PhysicalDisk
+                $disks = Get-StoragePool -FriendlyName HybridHostPool -IsPrimordial $False | Get-PhysicalDisk
                 $diskNum = $disks.Count
-                New-VirtualDisk -StoragePoolFriendlyName AzSHCIPool -FriendlyName AzSHCIDisk -ResiliencySettingName Simple -NumberOfColumns $diskNum -UseMaximumSize
+                New-VirtualDisk -StoragePoolFriendlyName HybridHostPool -FriendlyName HybridHostDisk -ResiliencySettingName Simple -NumberOfColumns $diskNum -UseMaximumSize
             }
             TestScript = {
-                (Get-VirtualDisk -ErrorAction SilentlyContinue -FriendlyName AzSHCIDisk).OperationalStatus -eq 'OK'
+                (Get-VirtualDisk -ErrorAction SilentlyContinue -FriendlyName HybridHostDisk).OperationalStatus -eq 'OK'
             }
             GetScript  = {
-                @{Ensure = if ((Get-VirtualDisk -FriendlyName AzSHCIDisk).OperationalStatus -eq 'OK') { 'Present' } Else { 'Absent' } }
+                @{Ensure = if ((Get-VirtualDisk -FriendlyName HybridHostDisk).OperationalStatus -eq 'OK') { 'Present' } Else { 'Absent' } }
             }
             DependsOn  = "[Script]StoragePool"
         }
         Script FormatDisk {
             SetScript  = {
-                $vDisk = Get-VirtualDisk -FriendlyName AzSHCIDisk
+                $vDisk = Get-VirtualDisk -FriendlyName HybridHostDisk
                 if ($vDisk | Get-Disk | Where-Object PartitionStyle -eq 'raw') {
-                    $vDisk | Get-Disk | Initialize-Disk -Passthru | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel AzSHCIData -AllocationUnitSize 64KB -FileSystem NTFS
+                    $vDisk | Get-Disk | Initialize-Disk -Passthru | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel HybridHostData -AllocationUnitSize 64KB -FileSystem NTFS
                 }
                 elseif ($vDisk | Get-Disk | Where-Object PartitionStyle -eq 'GPT') {
-                    $vDisk | Get-Disk | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel AzSHCIData -AllocationUnitSize 64KB -FileSystem NTFS
+                    $vDisk | Get-Disk | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel HybridHostData -AllocationUnitSize 64KB -FileSystem NTFS
                 }
             }
             TestScript = { 
-                (Get-Volume -ErrorAction SilentlyContinue -FileSystemLabel AzSHCIData).FileSystem -eq 'NTFS'
+                (Get-Volume -ErrorAction SilentlyContinue -FileSystemLabel HybridHostData).FileSystem -eq 'NTFS'
             }
             GetScript  = {
-                @{Ensure = if ((Get-Volume -FileSystemLabel AzSHCIData).FileSystem -eq 'NTFS') { 'Present' } Else { 'Absent' } }
+                @{Ensure = if ((Get-Volume -FileSystemLabel HybridHostData).FileSystem -eq 'NTFS') { 'Present' } Else { 'Absent' } }
             }
             DependsOn  = "[Script]VirtualDisk"
         }
@@ -296,6 +296,27 @@ configuration HybridHost
             Ensure      = 'Present'
             AutoUpgrade = $true
             DependsOn   = '[cChocoInstaller]installChoco'
+        }
+
+        script "SetRunFlag" {
+            GetScript  = {
+                $result = Test-Path -Path "C:\HybridHostAzureEval.txt"
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                #This is a simple flag to monitor number of runs
+                [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+                try { Invoke-WebRequest "http://bit.ly/HybridHostAzureEval" -UseBasicParsing -DisableKeepAlive | Out-Null } catch { $_.Exception.Response.StatusCode.Value__ }
+                New-item -Path C:\ -Name "HybridHostAzureEval.txt" -ItemType File -Force
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = '[cChocoInstaller]installChoco'
         }
     }
 }
