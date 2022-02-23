@@ -159,7 +159,7 @@ In this step, you've successfully created and automatically configured your Azur
 
 Troubleshooting
 -----------
-From time to time, a transient, random deployment error may cause the Azure VM to show a failed deployment. This is typically caused by reboots and timeouts within the VM as part of the PowerShell DSC configuration process, in particular, when the Hyper-V role is enabled and the system reboots multiple times in quick succession. We've also seen instances where changes with Chocolatey Package Manager cause deployment issues.
+From time to time, a transient, random deployment error may cause the Azure VM to show a failed deployment. This is typically caused by reboots and timeouts within the VM as part of the PowerShell DSC configuration process, in particular, when the Hyper-V role is enabled and the system reboots multiple times in quick succession. We've also seen instances where changes with the Chocolatey Package Manager cause deployment issues.
 
 ![Azure VM deployment error](/media/vm_deployment_error.png "Azure VM deployment error")
 
