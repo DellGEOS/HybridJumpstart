@@ -16,6 +16,11 @@ Contents <!-- omit in toc -->
 - [Architecture](#architecture)
 - [Azure VM Size Considerations](#azure-vm-size-considerations)
 - [Deploying the Azure VM](#deploying-the-azure-vm)
+- [Access your Azure VM](#access-your-azure-vm)
+  - [Connect to your Azure VM](#connect-to-your-azure-vm)
+- [Please Read - Finish Setup](#please-read---finish-setup)
+- [Next Steps](#next-steps)
+- [Troubleshooting](#troubleshooting)
 - [Raising issues](#raising-issues)
 
 Architecture
@@ -81,7 +86,7 @@ As part of the deployment, the following steps will be **automated for you**:
 4. An Internal vSwitch will be created and NAT configured to enable outbound networking
 5. The Microsoft Edge browser will be installed
 
-This automated deployment **should take around 20 minutes**.
+This automated deployment **should take around 10 minutes**.
 
 ### Creating the VM with an Azure Resource Manager JSON Template <!-- omit in toc -->
 To keep things simple, and graphical, we'll show you how to deploy your VM via an Azure Resource Manager template. To simplify things further, we'll use the following buttons.
@@ -119,7 +124,87 @@ With that completed, skip on to [connecting to your Azure VM](#connect-to-your-a
 #### Deployment errors ####
 If your Azure VM fails to deploy successfully, and the error relates to the **HybridHost001/ConfigureHybridHost** PowerShell DSC extension, please refer to the [troubleshooting steps below](#troubleshooting).
 
+Access your Azure VM
+-----------
 
+With your Azure VM (HybridHost001) successfully deployed and configured, you're ready to connect to the VM and finish the final preparations for the workshop.
+
+### Connect to your Azure VM ###
+Firstly, you'll need to connect into the VM, with the easiest approach being via Remote Desktop. If you're not already logged into the Azure portal, visit https://portal.azure.com/, and login with the same credentials used earlier.  Once logged in, using the search box on the dashboard, enter "**HybridHost001**". You may see a number of results under "Resources", so click "See all":
+
+![Search results in Azure](/media/azure_vm_search1.png "Search results in Azure")
+
+and once the results are returned, **click on your HybridHost001 virtual machine**.
+
+![Virtual machine located in Azure](/media/azure_vm_search2.png "Virtual machine located in Azure")
+
+Once you're on the Overview blade for your VM, along the top of the blade, click on **Connect** and from the drop-down options.
+
+![Connect to a virtual machine in Azure](/media/connect_to_vm.png "Connect to a virtual machine in Azure")
+
+Select **RDP**. On the newly opened Connect blade, ensure the **Public IP** is selected. Ensure the RDP port matches what you provided at deployment time. By default, this should be **3389**. Then click **Download RDP File** and select a suitable folder to store the .rdp file.
+
+![Configure RDP settings for Azure VM](/media/connect_to_vm_properties.png "Configure RDP settings for Azure VM")
+
+Once downloaded, locate the .rdp file on your local machine, and double-click to open it. Click **connect** and when prompted, enter the credentials you supplied when creating the VM earlier.  **NOTE**, this should be a **domain account**, which by default, is **azureuser**.
+
+**Username:** azureuser
+**Password:** password-you-used-at-VM-deployment-time
+
+Accept any certificate prompts, and within a few moments, you should be successfully logged into the Windows Server 2019 VM.
+
+Please Read - Finish Setup
+-----------
+Once the Azure VM deployment process has completed, your Azure Stack HCI 21H2 nodes are still processing changes, including adding roles and features inside the nested hosts. Please allow ~5 minutes for this process to complete and stabilize.
+
+You can then optionally shut down your Azure VM, should you wish to continue your evaluation on another day.
+
+Next Steps
+-----------
+In this step, you've successfully created and automatically configured your Azure VM, which will serve as the host for all of the hands-on-labs for the workshop. You're now ready to move on to the next step, where you'll learn more about MSLab, and how it forms a critical part of the overall workshop solution.
+
+* [Get started with MSLab](/modules/module_0/4_mslab.md "Get started with MSLab")
+
+Troubleshooting
+-----------
+From time to time, a transient, random deployment error may cause the Azure VM to show a failed deployment. This is typically caused by reboots and timeouts within the VM as part of the PowerShell DSC configuration process, in particular, when the Hyper-V role is enabled and the system reboots multiple times in quick succession. We've also seen instances where changes with Chocolatey Package Manager cause deployment issues.
+
+![Azure VM deployment error](/deployment/media/vm_deployment_error.png "Azure VM deployment error")
+
+If the error is related to the **AzSHCIHost001/ConfigureAzSHCIHost**, most likely the installation did complete successfully in the end, but to double-check, you can perform these steps:
+
+1. Follow the steps above to [connect to your Azure VM](#connect-to-your-azure-vm)
+2. Once successfully connected, open a **PowerShell console as administrator** and run the following command to confirm the status of the last run:
+
+```powershell
+# Check for last run
+Get-DscConfigurationStatus
+```
+
+**NOTE** - if you receive an error message similar to *"Get-DscConfigurationStatus : Cannot invoke the Get-DscConfigurationStatus cmdlet. The `<Some DSC Process`> cmdlet is in progress and must return before Get-DscConfigurationStatus can be invoked"* you will need to **wait** until the current DSC process has completed. Once completed, you should be able to successfully run the command.
+
+3. When you run **Get-DscConfigurationStatus**, if you get a status of **Failure** you can re-run the DSC configuration by **running the following commands**:
+
+```powershell
+cd "C:\Packages\Plugins\Microsoft.Powershell.DSC\*\DSCWork\azshcihost.0\AzSHCIHost"
+Set-DscLocalConfigurationManager  -Path . -Force
+Start-DscConfiguration -Path . -Wait -Force -Verbose
+```
+
+4. Depending on where the initial failure happened, your VM may reboot and you will be disconnected. If that's the case, log back into the VM and wait for deployment to complete. See #2 above to check progress. Generally speaking, once you see the **Edge** and **Windows Admin Center** icons on your desktop, the process has completed.
+
+![Edge and Windows Admin Center icons](/deployment/media/deployment_complete.png "Edge and Windows Admin Center icons")
+
+5. If all goes well, you should see the DSC configuration reapplied without issues. If you then re-run the following PowerShell command, you should see success, with over **100 resources** deployed/configured.
+
+```powershell
+# Check for last run
+Get-DscConfigurationStatus
+```
+
+![Result of Get-DscConfigurationStatus](/deployment/media/get-dscconfigurationstatus.png "Result of Get-DscConfigurationStatus")
+
+**NOTE** - If this doesn't fix your issue, consider redeploying your Azure VM. If the issue persists, please **raise an issue!**
 
 
 
