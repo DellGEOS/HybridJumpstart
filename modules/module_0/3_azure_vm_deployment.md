@@ -28,7 +28,7 @@ From an architecture perspective, the following graphic showcases the different 
 
 ![Architecture diagram for Azure Stack HCI in Azure](/media/nested_virt_arch.png "Architecture diagram for Azure Stack HCI in Azure")
 
-The outer box represents the Azure Resource Group, which will contain all of the artifacts deployed in Azure, including the virtual machine itself, and accompaying network adapter, storage and so on. You'll deploy an Azure VM running Windows Server 2022 Datacenter. On top of this, you'll run an **Azure Stack HCI 21H2 cluster**, and deploy a number of different workloads on top, as you progress through the different modules in the workshop.
+The outer box represents the Azure Resource Group, which will contain all of the artifacts deployed in Azure, including the virtual machine itself, and accompaying network adapter, storage and so on. You'll deploy an Azure VM running Windows Server 2022 Datacenter. On top of this, you'll run an **Azure Stack HCI cluster**, and deploy a number of different workloads on top, as you progress through the different modules in the workshop.
 
 Azure VM Size Considerations
 -----------
