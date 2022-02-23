@@ -95,7 +95,7 @@ With 16GB memory, running on a laptop, we'll need to ensure that we're taking ad
 
 Obviously, if you have a larger physical system, such as a workstation, or server, you'll likely have a greater amount of memory available to you, therefore you can adjust the memory levels for the different resources accordingly.
 
-If your physical system doesn't meet these recommended requirements, you're still free to test, and see if you can proceed with lower numbers, but it may be a better approach to [deploy in Azure instead.](#deployment-in-azure "Deployment in Azure")
+If your physical system doesn't meet these recommended requirements, you're still free to test, and see if you can proceed with lower numbers, but it may be a better approach to [deploy in Azure instead.](/modules/module_0/3_azure_vm_deployment.md "Deployment in Azure")
 
 ### Physical hardware sizing
 Below, you will find a table which details the different modules and hands-on-labs, and their specific hardware requirements. As you can see, the amount of memory is largely the key bottleneck, so the more memory you have available in your physical system, the better!

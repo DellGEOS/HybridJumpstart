@@ -1,4 +1,4 @@
-Deploy your Azure VM (Prerequisite)
+Hybrid Cloud Workshop | Deployment in Azure
 ==============
 
 Overview <!-- omit in toc -->
@@ -77,7 +77,7 @@ As part of the deployment, the following steps will be **automated for you**:
 This automated deployment **should take around 20 minutes**.
 
 ### Creating the VM with an Azure Resource Manager JSON Template
-To keep things simple, and graphical, we'll show you how to deploy your VM via an Azure Resource Manager template.  To simplify things further, we'll use the following buttons.
+To keep things simple, and graphical, we'll show you how to deploy your VM via an Azure Resource Manager template. To simplify things further, we'll use the following buttons.
 
 Firstly, the **Visualize** button will launch the ARMVIZ designer view, where you will see a graphic representing the core components of the deployment, including the VM, NIC, disk and more. If you want to open this in a new tab, **hold CTRL** when you click the button.
 
