@@ -62,6 +62,11 @@ The goal of this workshop is to immerse you in the hybrid solutions from Dell Te
 
 With that said, one goal of the workshop is to ensure that the more complex elements are simplified for broader audiences, so even if your role and experience doesn't fit with those previously mentioned, give the workshop a try, and provide us feedback on how we can make it better for you!
 
+### How much time do I need?
+Well, that depends :-) - The workshop is incredibly flexible, you can pick and choose the modules and hands-on-lab experiences that are most important for you. If you'd like to go deeper on the Azure Stack HCI specifics, focus your time and energy in that space, and there are several hours of content that can support your learning there. If you prefer to focus on the higher level app platforms and modernizing there, again, plenty of content is available for you to grow your skills.
+
+If you wanted to walk through all the content and hands-on-labs, I'd **allocate at least one day** to walk through the different scenarios.
+
 Getting Started
 -----------
 If you're ready to start your learning, head on over to the first module, to familiarize yourself with the hardware/software requirements for the workshop, and learn more about the tooling you'll use to deploy the solutions, most specifically, MSLab.

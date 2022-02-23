@@ -1,6 +1,10 @@
 Hybrid Cloud Workshop | Infrastructure Prerequisites
 ==========
 
+Overview <!-- omit in toc -->
+--------
+In this section, we'll review the infrastructure requirements to participate in the Hybrid Cloud Workshop. You'll have a choice of either deploying on physical hardware if you have any available, or, if you prefer, inside an Azure virtual machine. In either case, you'll be set up to explore some of the key capabilities within the hybrid portfolio.
+
 Contents <!-- omit in toc -->
 ----------
 
@@ -101,8 +105,7 @@ Below, you will find a table which details the different modules and hands-on-la
 ### Configuring your Hyper-V Host
 For the purpose of this guide, we'll assume you've deployed one of the following operating systems (all of which support Hyper-V) onto a [suitable piece of hardware](#will-my-hardware-support-this)
 
-* Windows Server 2019
-* Windows Server 2022
+* Windows Server 2019 / 2022
 * Windows 10 / 11 Pro
 * Windows 10 / 11 Enterprise
 * Windows 10 / 11 Education
@@ -161,7 +164,7 @@ Next Steps
 -----------
 Now that you understand the infrastructure requirements for the workshop, in the next step, we'll break down the different Azure requirements that need to be met in order to work through the various guides in the workshop.
 
-Head over to review the [Hybrid Cloud Workshop | Azure Prerequisites](/modules/module_0/2_azure_prerequisites.md)
+Head over to review the **[Hybrid Cloud Workshop | Azure Prerequisites](/modules/module_0/2_azure_prerequisites.md)**
 
 Raising issues
 -----------
