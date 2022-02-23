@@ -7,7 +7,8 @@ configuration HybridHost
         [Parameter(Mandatory)]
         [string]$customRdpPort,
         [string]$vSwitchNameHost = "InternalNAT",
-        [String]$targetDrive = "V"
+        [String]$targetDrive = "V",
+        [String]$targetVMPath = "$targetDrive" + ":\VMs"
     )
     
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'

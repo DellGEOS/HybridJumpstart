@@ -4,12 +4,19 @@ Hybrid Cloud Workshop | Deployment in Azure
 Overview <!-- omit in toc -->
 -----------
 As mentioned earlier, with the introduction of [nested virtualization support in Azure](https://azure.microsoft.com/en-us/blog/nested-virtualization-in-azure/ "Nested virtualization announcement blog post") back in 2017, Microsoft has opened the door to a number of new and interesting scenarios. Nested virtualization in Azure is particularly useful for validating configurations that would require additional hardware in your environment, such as running Azure Stack HCI clusters.
+__________________________
 
-In this section, we'll walk you through deploying an Azure virtual machine that will support the different modules of the workshop.
+### Important Note <!-- omit in toc -->
+If you have existing suitable physical hardware to participate in the workshop, you do not need to deploy an Azure VM. You may proceed onto the next step - [**get started with MSLab**](/modules/module_0/4_mslab.md), and learn how it forms a critical part of the hands-on-lab experience.
+__________________________
 
 Contents <!-- omit in toc -->
 --------
+
 - [Architecture](#architecture)
+- [Azure VM Size Considerations](#azure-vm-size-considerations)
+- [Deploying the Azure VM](#deploying-the-azure-vm)
+- [Raising issues](#raising-issues)
 
 Architecture
 -----------
@@ -65,7 +72,7 @@ Deploying the Azure VM
 -----------
 The guidance below provides a simple template-based option for deploying the Azure VM. The template deployment will be automated to the point of which you can proceed to the next step, learning about MSLab, and progress through your workshop from there.
 
-### Deployment detail
+### Deployment detail <!-- omit in toc -->
 As part of the deployment, the following steps will be **automated for you**:
 
 1. A Windows Server 2022 Datacenter VM will be deployed in Azure
@@ -76,7 +83,7 @@ As part of the deployment, the following steps will be **automated for you**:
 
 This automated deployment **should take around 20 minutes**.
 
-### Creating the VM with an Azure Resource Manager JSON Template
+### Creating the VM with an Azure Resource Manager JSON Template <!-- omit in toc -->
 To keep things simple, and graphical, we'll show you how to deploy your VM via an Azure Resource Manager template. To simplify things further, we'll use the following buttons.
 
 Firstly, the **Visualize** button will launch the ARMVIZ designer view, where you will see a graphic representing the core components of the deployment, including the VM, NIC, disk and more. If you want to open this in a new tab, **hold CTRL** when you click the button.
@@ -89,7 +96,7 @@ Secondly, the **Deploy to Azure** button, when clicked, will take you directly t
 
 Upon clicking the **Deploy to Azure** button, enter the details, which should look something similar to those shown below, and click **Purchase**.
 
-![Custom template deployment in Azure](/media/azure_vm_custom_template_new.png "Custom template deployment in Azure")
+![Custom template deployment in Azure](/media/azure_vm_custom_template.png "Custom template deployment in Azure")
 
 **NOTE** - For customers with Software Assurance, Azure Hybrid Benefit for Windows Server allows you to use your on-premises Windows Server licenses and run Windows virtual machines on Azure at a reduced cost. By selecting **Yes** for the "Already have a Windows Server License", **you confirm I have an eligible Windows Server license with Software Assurance or Windows Server subscription to apply this Azure Hybrid Benefit** and have reviewed the [Azure hybrid benefit compliance](http://go.microsoft.com/fwlink/?LinkId=859786 "Azure hybrid benefit compliance document")
 
