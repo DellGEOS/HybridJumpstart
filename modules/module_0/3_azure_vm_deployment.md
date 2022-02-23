@@ -17,8 +17,6 @@ Contents <!-- omit in toc -->
 - [Azure VM Size Considerations](#azure-vm-size-considerations)
 - [Deploying the Azure VM](#deploying-the-azure-vm)
 - [Access your Azure VM](#access-your-azure-vm)
-  - [Connect to your Azure VM](#connect-to-your-azure-vm)
-- [Please Read - Finish Setup](#please-read---finish-setup)
 - [Next Steps](#next-steps)
 - [Troubleshooting](#troubleshooting)
 - [Raising issues](#raising-issues)
@@ -129,7 +127,7 @@ Access your Azure VM
 
 With your Azure VM (HybridHost001) successfully deployed and configured, you're ready to connect to the VM and finish the final preparations for the workshop.
 
-### Connect to your Azure VM ###
+### Connect to your Azure VM <!-- omit in toc -->
 Firstly, you'll need to connect into the VM, with the easiest approach being via Remote Desktop. If you're not already logged into the Azure portal, visit https://portal.azure.com/, and login with the same credentials used earlier.  Once logged in, using the search box on the dashboard, enter "**HybridHost001**". You may see a number of results under "Resources", so click "See all":
 
 ![Search results in Azure](/media/azure_vm_search1.png "Search results in Azure")
@@ -151,13 +149,7 @@ Once downloaded, locate the .rdp file on your local machine, and double-click to
 **Username:** azureuser
 **Password:** password-you-used-at-VM-deployment-time
 
-Accept any certificate prompts, and within a few moments, you should be successfully logged into the Windows Server 2019 VM.
-
-Please Read - Finish Setup
------------
-Once the Azure VM deployment process has completed, your Azure Stack HCI 21H2 nodes are still processing changes, including adding roles and features inside the nested hosts. Please allow ~5 minutes for this process to complete and stabilize.
-
-You can then optionally shut down your Azure VM, should you wish to continue your evaluation on another day.
+Accept any certificate prompts, and within a few moments, you should be successfully logged into the Windows Server 2022 VM.
 
 Next Steps
 -----------
