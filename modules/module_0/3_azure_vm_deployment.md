@@ -169,9 +169,9 @@ Troubleshooting
 -----------
 From time to time, a transient, random deployment error may cause the Azure VM to show a failed deployment. This is typically caused by reboots and timeouts within the VM as part of the PowerShell DSC configuration process, in particular, when the Hyper-V role is enabled and the system reboots multiple times in quick succession. We've also seen instances where changes with Chocolatey Package Manager cause deployment issues.
 
-![Azure VM deployment error](/deployment/media/vm_deployment_error.png "Azure VM deployment error")
+![Azure VM deployment error](/media/vm_deployment_error.png "Azure VM deployment error")
 
-If the error is related to the **AzSHCIHost001/ConfigureAzSHCIHost**, most likely the installation did complete successfully in the end, but to double-check, you can perform these steps:
+If the error is related to the **HybridHost001/ConfigureHybridHost**, most likely the installation did complete successfully in the end, but to double-check, you can perform these steps:
 
 1. Follow the steps above to [connect to your Azure VM](#connect-to-your-azure-vm)
 2. Once successfully connected, open a **PowerShell console as administrator** and run the following command to confirm the status of the last run:
@@ -186,14 +186,14 @@ Get-DscConfigurationStatus
 3. When you run **Get-DscConfigurationStatus**, if you get a status of **Failure** you can re-run the DSC configuration by **running the following commands**:
 
 ```powershell
-cd "C:\Packages\Plugins\Microsoft.Powershell.DSC\*\DSCWork\azshcihost.0\AzSHCIHost"
+cd "C:\Packages\Plugins\Microsoft.Powershell.DSC\*\DSCWork\hybridhost.0\HybridHost"
 Set-DscLocalConfigurationManager  -Path . -Force
 Start-DscConfiguration -Path . -Wait -Force -Verbose
 ```
 
-4. Depending on where the initial failure happened, your VM may reboot and you will be disconnected. If that's the case, log back into the VM and wait for deployment to complete. See #2 above to check progress. Generally speaking, once you see the **Edge** and **Windows Admin Center** icons on your desktop, the process has completed.
+4. Depending on where the initial failure happened, your VM may reboot and you will be disconnected. If that's the case, log back into the VM and wait for deployment to complete. See #2 above to check progress. Generally speaking, once you see the **Edge** icon, along with the Recycle bin icon on your desktop, the process has completed.
 
-![Edge and Windows Admin Center icons](/deployment/media/deployment_complete.png "Edge and Windows Admin Center icons")
+![Edge and Recycle Bin icons](/media/deployment_complete.png "Edge and Reccyle Bin icons")
 
 5. If all goes well, you should see the DSC configuration reapplied without issues. If you then re-run the following PowerShell command, you should see success, with over **100 resources** deployed/configured.
 
@@ -202,12 +202,9 @@ Start-DscConfiguration -Path . -Wait -Force -Verbose
 Get-DscConfigurationStatus
 ```
 
-![Result of Get-DscConfigurationStatus](/deployment/media/get-dscconfigurationstatus.png "Result of Get-DscConfigurationStatus")
+![Result of Get-DscConfigurationStatus](/media/get-dscconfigurationstatus.png "Result of Get-DscConfigurationStatus")
 
 **NOTE** - If this doesn't fix your issue, consider redeploying your Azure VM. If the issue persists, please **raise an issue!**
-
-
-
 
 Raising issues
 -----------
