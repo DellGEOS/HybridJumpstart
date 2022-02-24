@@ -1,9 +1,9 @@
-Hybrid Cloud Workshop | Configuring MSLab
+Hybrid Cloud Workshop | Lab Deployment
 ==============
 
 Overview <!-- omit in toc -->
 -----------
-In order to deploy and work through the different labs in the workshop, we'll be using MSLab. Developed by Dell Technologies GEOS member, Jaromir Kaspar, MSLab is an open-source project that helps to quickly and easily deploy standardized virtualized environments for the purpose of learning, feature testing and more. The use of MSLab in this workshop ensures that all participants can experience a more standardized and structured flow through the different technologies within the Hybrid Cloud Workshop.
+In order to deploy and work through the different hands-on-labs in the workshop, we'll be using MSLab. Developed by Dell Technologies GEOS member, Jaromir Kaspar, MSLab is an open-source project that helps to quickly and easily deploy standardized virtualized environments for the purpose of learning, feature testing and more. The use of MSLab in this workshop ensures that all participants can experience a more standardized and structured flow through the different technologies within the Hybrid Cloud Workshop.
 
 Contents <!-- omit in toc -->
 --------
@@ -13,7 +13,7 @@ Contents <!-- omit in toc -->
 - [Step 3 - Lab hydration](#step-3---lab-hydration)
   - [Edit the LabConfig file](#edit-the-labconfig-file)
   - [Exploring the LabConfig file](#exploring-the-labconfig-file)
-  - [Run the MSlab Prereq Script](#run-the-mslab-prereq-script)
+  - [Run the MSLab Prereq Script](#run-the-mslab-prereq-script)
   - [Download the latest Cumulative Updates](#download-the-latest-cumulative-updates)
   - [Create your parent virtual hard disks](#create-your-parent-virtual-hard-disks)
 - [Step 4 - Lab deployment](#step-4---lab-deployment)
@@ -24,9 +24,9 @@ In the previous sections, you reviewed the infrastructure and Azure prerequisite
 
 1. On your **Hyper-V host** (physical, or the Azure VM previously deployed) **open your preferred web browser**, and navigate to **http://aka.ms/mslab/download**. The download should start automatically, and by default, will store the ZIP file in your **Downloads folder**.
 2. Still in the browser, you'll now need to download a Windows Server 2022 ISO file, for use with a number of the virtual machine images. There are a number of ways to do this, depending on what you have access to. If you're not sure, it's recommended to use the ISO file from the Eval Center. This will involve completing a short registration form.
-   1. [MSDN Downloads](https://my.visualstudio.com/downloads)
-   2. [Eval Center](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022) - Select "**Download the ISO**"
-   3. [VLSC Portal](https://www.microsoft.com/licensing/servicecenter)
+   1. [**MSDN Downloads**](https://my.visualstudio.com/downloads)
+   2. [**Eval Center**](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2022) - Select "**Download the ISO**"
+   3. [**VLSC Portal**](https://www.microsoft.com/licensing/servicecenter)
 3. Finally, you'll need to download the latest Azure Stack HCI operating system ISO, by navigating to **https://azure.microsoft.com/en-us/products/azure-stack/hci/hci-download/**, completing the short registration form, and downloading the ISO file.
 
 Once completed, you'll have the 3 files downloaded, and be ready to proceed.
@@ -35,7 +35,7 @@ Once completed, you'll have the 3 files downloaded, and be ready to proceed.
 
 Step 2 - Extract and review MSLab files
 --------
-With the files downloaded, you'll first need to extract the files into a location that has **at least 100GB available high performance SSD/NVMe storage**. In our case, this will be on our **V:**.
+With the files downloaded, you'll first need to extract the files into a location that has **at least 100GB of available, high performance SSD/NVMe storage**. In our case, this will be on our **V:**.
 
 1. To extract, simply **right-click the mslab_v##.##.# folder**, select **Extract All**
 2. Navigate to your chosen directory, **create a folder** named **MSLab** and click **Extract**
@@ -48,9 +48,9 @@ Expand-Archive -LiteralPath 'C:\<path to zip>.Zip' -DestinationPath 'V:\MSLab'
 
 ![All MSLab files extracted](/modules/module_0/media/mslab_extracted_files.png "All MSLab files extracted")
 
-With the files extracted, it's important to understand what each of these files actually does.
+With the files extracted, it's important to understand the purpose of each of these files.
 
-* **1_Prereq** - When run, this script automates the configuration of your host system to support the deployment of MSLab. It'll perform tasks such as defining the folder structure, download additional scripts, tools, PowerShell DSC modules, and configure telemetry.
+* **1_Prereq** - When run, this script automates the configuration of your host system to support the deployment of MSLab. It'll perform tasks such as defining the folder structure, download additional scripts, tools, PowerShell DSC modules, and define telemetry settings.
 * **2_CreateParentDisks** - The CreateParentDisks script automates transforming the ISO files that you previously downloaded, into space-efficient virtual hard disks that will be subsequently used by virtual machines deployed by MSLab. We'll explore the concept of Parent and differencing virtual hard disks later.
 * **3_Deploy** - The Deploy script automates the creation of the lab environment - this includes a number of virtual machines that serve different purposes in the lab - such as a domain controller, mamagement server and Azure Stack HCI cluster nodes.
 * **Cleanup** - As the name suggests, this removes all previously deployed resources, but does **not** remove the parent disks, as these are still valid for future re-deployments. Post-cleanup, the MSLab folder will be left in the same state it was **prior** to running the 3_Deploy script.
@@ -71,7 +71,12 @@ Now that we have an understanding of each of the MSLab files, we can get started
 $LabConfig=@{ DomainAdminName='LabAdmin'; AdminPassword='LS1setup!'; DCEdition='4'; Internet=$true ; VMs=@()}
 
 # Deploy domain-joined Azure Stack HCI Nodes
-1..4 | ForEach-Object {$VMNames="AzSHCI" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; ParentVHD = 'AzSHCI21H2_G2.vhdx' ; HDDNumber = 12; HDDSize= 4TB ; MemoryStartupBytes= 4GB; MGMTNICs=4 ; NestedVirt=$true}}
+1..4 | ForEach-Object { 
+    $VMNames = "AzSHCI" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; `
+            ParentVHD = 'AzSHCI21H2_G2.vhdx' ; HDDNumber = 12; HDDSize = 4TB ; `
+            MemoryStartupBytes = 4GB; MGMTNICs = 4 ; NestedVirt = $true
+    } 
+}
 
 # Deploy Windows Admin Center Management Server
 $LabConfig.VMs += @{ VMName = 'WACGW' ; ParentVHD = 'Win2022Core_G2.vhdx' ; MGMTNICs=1 }
@@ -90,7 +95,12 @@ There are a number of additional parameters that can be provided for this initia
 
 ```powershell
 # Deploy domain-joined Azure Stack HCI Nodes
-1..4 | ForEach-Object {$VMNames="AzSHCI" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; ParentVHD = 'AzSHCI21H2_G2.vhdx' ; HDDNumber = 12; HDDSize= 4TB ; MemoryStartupBytes= 4GB; MGMTNICs=4 ; NestedVirt=$true}}
+1..4 | ForEach-Object { 
+    $VMNames = "AzSHCI" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; `
+            ParentVHD = 'AzSHCI21H2_G2.vhdx' ; HDDNumber = 12; HDDSize = 4TB ; `
+            MemoryStartupBytes = 4GB; MGMTNICs = 4 ; NestedVirt = $true
+    } 
+}
 ```
 This section focuses on the Azure Stack HCI cluster nodes themselves - as you can see, for each of the 4 nodes, it **defines names**, **size** attributes such as **memory**, **storage**, **network adapters**, and references a specific **parent virtual hard disk** that will be used to instantiate these virtual machines.
 
@@ -100,7 +110,7 @@ $LabConfig.VMs += @{ VMName = 'WACGW' ; ParentVHD = 'Win2022Core_G2.vhdx' ; MGMT
 ```
 Finally, this section defines the characteristics for one final virtual machine - specifically one that will be used for management purposes, into which **Windows Admin Center** will be deployed. As you can see, it again references a parent virtual hard disk that would be created ahead of time.
 
-### Run the MSlab Prereq Script
+### Run the MSLab Prereq Script
 Now that the LabConfig file is understood, let's move on to hydrating the environment. Firstly, you need to run the 1_Prereq script. This process should take around 5 minutes, depending on your internet connection speed.
 
 1. In your MSLab folder, **right-click** the **1_Prereq** file, and click **Run with PowerShell**. The script will automatically elevate, so allow it to **Run as Administrator**.
