@@ -26,7 +26,7 @@ Architecture
 
 From an architecture perspective, the following graphic showcases the different layers and interconnections between the different components:
 
-![Architecture diagram for Azure Stack HCI in Azure](/media/nested_virt_arch.png "Architecture diagram for Azure Stack HCI in Azure")
+![Architecture diagram for Azure Stack HCI in Azure](/modules/module_0/media/nested_virt_arch.png "Architecture diagram for Azure Stack HCI in Azure")
 
 The outer box represents the Azure Resource Group, which will contain all of the artifacts deployed in Azure, including the virtual machine itself, and accompaying network adapter, storage and so on. You'll deploy an Azure VM running Windows Server 2022 Datacenter. On top of this, you'll run an **Azure Stack HCI cluster**, and deploy a number of different workloads on top, as you progress through the different modules in the workshop.
 
@@ -99,13 +99,13 @@ Secondly, the **Deploy to Azure** button, when clicked, will take you directly t
 
 Upon clicking the **Deploy to Azure** button, enter the details, which should look something similar to those shown below, and click **Purchase**.
 
-![Custom template deployment in Azure](/media/azure_vm_custom_template.png "Custom template deployment in Azure")
+![Custom template deployment in Azure](/modules/module_0/media/azure_vm_custom_template.png "Custom template deployment in Azure")
 
 **NOTE** - For customers with Software Assurance, Azure Hybrid Benefit for Windows Server allows you to use your on-premises Windows Server licenses and run Windows virtual machines on Azure at a reduced cost. By selecting **Yes** for the "Already have a Windows Server License", **you confirm I have an eligible Windows Server license with Software Assurance or Windows Server subscription to apply this Azure Hybrid Benefit** and have reviewed the [Azure hybrid benefit compliance](http://go.microsoft.com/fwlink/?LinkId=859786 "Azure hybrid benefit compliance document")
 
 The custom template will be validated, and if all of your entries are correct, you can click **Create**. Within a few minutes, your VM will be created.
 
-![Custom template deployment in Azure completed](/media/azure_vm_custom_template_completed.png "Custom template deployment in Azure completed")
+![Custom template deployment in Azure completed](/modules/module_0/media/azure_vm_custom_template_completed.png "Custom template deployment in Azure completed")
 
 If you chose to **enable** the auto-shutdown for the VM, and supplied a time, and time zone, but want to also add a notification alert, simply click on the **Go to resource group** button and then perform the following steps:
 
@@ -130,19 +130,19 @@ With your Azure VM (HybridHost001) successfully deployed and configured, you're 
 ### Connect to your Azure VM <!-- omit in toc -->
 Firstly, you'll need to connect into the VM, with the easiest approach being via Remote Desktop. If you're not already logged into the Azure portal, visit https://portal.azure.com/, and login with the same credentials used earlier.  Once logged in, using the search box on the dashboard, enter "**HybridHost001**". You may see a number of results under "Resources", so click "See all":
 
-![Search results in Azure](/media/azure_vm_search1.png "Search results in Azure")
+![Search results in Azure](/modules/module_0/media/azure_vm_search1.png "Search results in Azure")
 
 and once the results are returned, **click on your HybridHost001 virtual machine**.
 
-![Virtual machine located in Azure](/media/azure_vm_search2.png "Virtual machine located in Azure")
+![Virtual machine located in Azure](/modules/module_0/media/azure_vm_search2.png "Virtual machine located in Azure")
 
 Once you're on the Overview blade for your VM, along the top of the blade, click on **Connect** and from the drop-down options.
 
-![Connect to a virtual machine in Azure](/media/connect_to_vm.png "Connect to a virtual machine in Azure")
+![Connect to a virtual machine in Azure](/modules/module_0/media/connect_to_vm.png "Connect to a virtual machine in Azure")
 
 Select **RDP**. On the newly opened Connect blade, ensure the **Public IP** is selected. Ensure the RDP port matches what you provided at deployment time. By default, this should be **3389**. Then click **Download RDP File** and select a suitable folder to store the .rdp file.
 
-![Configure RDP settings for Azure VM](/media/connect_to_vm_properties.png "Configure RDP settings for Azure VM")
+![Configure RDP settings for Azure VM](/modules/module_0/media/connect_to_vm_properties.png "Configure RDP settings for Azure VM")
 
 Once downloaded, locate the .rdp file on your local machine, and double-click to open it. Click **connect** and when prompted, enter the credentials you supplied when creating the VM earlier.  **NOTE**, this should be a **domain account**, which by default, is **azureuser**.
 
@@ -161,7 +161,7 @@ Troubleshooting
 -----------
 From time to time, a transient, random deployment error may cause the Azure VM to show a failed deployment. This is typically caused by reboots and timeouts within the VM as part of the PowerShell DSC configuration process, in particular, when the Hyper-V role is enabled and the system reboots multiple times in quick succession. We've also seen instances where changes with the Chocolatey Package Manager cause deployment issues.
 
-![Azure VM deployment error](/media/vm_deployment_error.png "Azure VM deployment error")
+![Azure VM deployment error](/modules/module_0/media/vm_deployment_error.png "Azure VM deployment error")
 
 If the error is related to the **HybridHost001/ConfigureHybridHost**, most likely the installation did complete successfully in the end, but to double-check, you can perform these steps:
 
@@ -185,7 +185,7 @@ Start-DscConfiguration -Path . -Wait -Force -Verbose
 
 4. Depending on where the initial failure happened, your VM may reboot and you will be disconnected. If that's the case, log back into the VM and wait for deployment to complete. See #2 above to check progress. Generally speaking, once you see the **Edge** icon, along with the Recycle bin icon on your desktop, the process has completed.
 
-![Edge and Recycle Bin icons](/media/deployment_complete.png "Edge and Reccyle Bin icons")
+![Edge and Recycle Bin icons](/modules/module_0/media/deployment_complete.png "Edge and Reccyle Bin icons")
 
 5. If all goes well, you should see the DSC configuration reapplied without issues. If you then re-run the following PowerShell command, you should see success, with over **100 resources** deployed/configured.
 
@@ -194,7 +194,7 @@ Start-DscConfiguration -Path . -Wait -Force -Verbose
 Get-DscConfigurationStatus
 ```
 
-![Result of Get-DscConfigurationStatus](/media/get-dscconfigurationstatus.png "Result of Get-DscConfigurationStatus")
+![Result of Get-DscConfigurationStatus](/modules/module_0/media/get-dscconfigurationstatus.png "Result of Get-DscConfigurationStatus")
 
 **NOTE** - If this doesn't fix your issue, consider redeploying your Azure VM. If the issue persists, please **raise an issue!**
 
