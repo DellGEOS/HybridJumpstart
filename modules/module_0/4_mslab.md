@@ -167,12 +167,22 @@ If the concept of **parent virtual hard disks** is new to you, fear not, we'll k
 __________________________
 
 ### Understanding Differencing Disks <!-- omit in toc -->
-Blah
+In production environments, virtual machines typically have a single virtual hard disk for their operating system drive, and potentially some additional virtual hard disks for data drives.
+
+In a scenario where you have 4 Windows Server 2022 virtual machines, each with 100GB fixed-size virtual hard disks allocated to the respectiev operating systems, that's **400GB** of physical capacity used for those 4 virtual machines, even though the majority of the data inside those virtual hard disks, is identical.
+
+![Storage consumption without differencing disks](/modules/module_0/media/mslab_differencing1.png "Storage consumption without differencing disks")
+
+With the use of differencing disks however, you create a single "Gold image", which contains a generalized instance of the chosen operating system, in this case, Windows Server 2022, and each virtual machine that you create, instantiates a small differencing disk, or **child virtual hard drive** that has a direct relationship with a **single parent virtual hard disk**. As shown below however, multiple virtual machines can **share** the parent virtual hard disk.
+
+![Storage consumption with differencing disks](/modules/module_0/media/mslab_differencing2.png "Storage consumption with differencing disks")
+
+As you can see, in this simple example, our storage consumption **drops from 400GB, to 100GB**, plus any unique delta changes that occur within each of the individual virtual machines. Remember, the virtual machines themselves don't know about this parent-child relationship, nor do they know they are writing to a differencing disk, rather than the gold image. This approach means that we can be very efficient on physical storage consumption - great for lab and test environments, but also for virtual desktop scenarios.
 __________________________
 
-6. Once the parent virtual hard disk has been created, you have the option to clean up unnecessary files and folders - press **Enter** to perform the clean up, then press **Enter** again to close the window.
+1. Once the parent virtual hard disk has been created, you have the option to clean up unnecessary files and folders - press **Enter** to perform the clean up, then press **Enter** again to close the window.
 
-7. Back in the **MSLab folder**, in the **ParentDisks** subfolder, you should now see a set of virtual hard disks that will be used for the workshop.
+2. Back in the **MSLab folder**, in the **ParentDisks** subfolder, you should now see a set of virtual hard disks that will be used for the workshop.
 
 ![First set of virtual hard disks created](/modules/module_0/media/mslab_ws_parent_disks.png "First set of virtual hard disks created")
 
