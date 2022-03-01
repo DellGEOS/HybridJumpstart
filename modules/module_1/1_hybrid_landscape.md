@@ -1,4 +1,4 @@
-Hybrid Cloud Workshop - The Hybrid Landscape
+Hybrid Cloud Workshop - Module 1 - The Hybrid Landscape
 ==============
 Before we dive into the technology, it's important to spend some time understanding the key drivers behind why so many organizations are embracing a hybrid strategy, encompassing both cloud, core and edge, and how both Dell and Microsoft solutions can provide the best hybrid experience.
 
