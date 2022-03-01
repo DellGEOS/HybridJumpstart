@@ -32,7 +32,7 @@ Azure subscription & Azure Active Directory permissions
 -----------
 Depending on the particular module and hands-on-lab, the permissions required for both the Azure subscription and AAD tenant may vary. Below is a table summarizing the different permissions that are required for the main modules in the course. These permissions will also be available at the start of each hands-on-lab.
 
-| Module | Topic | Sub Permissions | AAD Permissions |
+| Module | Topic | Subscription Permissions | AAD Permissions |
 |:--|---|---|---|
 | 2 | Azure Stack HCI | Owner / User Access Administrator + Contributer / Custom | Global Admin / Cloud Application Administration / Custom
 | 3 | AKS on Azure Stack HCI | Owner / Custom Service Principal | Global Admin / Cloud Application Administration / Custom
