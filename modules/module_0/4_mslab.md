@@ -178,7 +178,7 @@ In a scenario where you have 4 Windows Server 2022 virtual machines, each with 1
 
 With the use of differencing disks however, you create a single "Gold image", which contains a generalized instance of the chosen operating system, in this case, Windows Server 2022, and each virtual machine that you create, instantiates a small differencing disk, or **child virtual hard drive** that has a direct relationship with a **single parent virtual hard disk**. As shown below however, multiple virtual machines can **share** the parent virtual hard disk.
 
-![Storage consumption with differencing disks](/modules/module_0/media/HybridWorkshop_differencing2.png "Storage consumption with differencing disks")
+![Storage consumption with differencing disks](/modules/module_0/media/mslab_differencing2.png "Storage consumption with differencing disks")
 
 As you can see, in this simple example, our storage consumption **drops from 400GB, to 100GB**, plus any unique delta changes that occur within each of the individual virtual machines. Remember, the virtual machines themselves don't know about this parent-child relationship, nor do they know they are writing to a differencing disk, rather than the gold image. This approach means that we can be very efficient on physical storage consumption - great for lab and test environments, but also for virtual desktop scenarios.
 __________________________
@@ -189,7 +189,7 @@ __________________________
 
 8. Back in the **HybridWorkshop folder**, in the **ParentDisks** subfolder, you should now see a set of virtual hard disks that will be used for the workshop.
 
-![First set of virtual hard disks created](/modules/module_0/media/HybridWorkshop_ws_parent_disks.png "First set of virtual hard disks created")
+![First set of virtual hard disks created](/modules/module_0/media/mslab_ws_parent_disks.png "First set of virtual hard disks created")
 
 9. Back in the **HybridWorkshop\ParentDisks** folder, right click on **CreateParentDisk** and click **Run with PowerShell**.
 10. In the **Please select ISO image** window, navigate to your **Azure Stack HCI ISO file** and click **Open**.
