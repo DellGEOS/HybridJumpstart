@@ -2,15 +2,6 @@ Hybrid Cloud Workshop - Module 1 - The Hybrid Landscape
 ==============
 Before we dive into the technology, it's important to spend some time understanding the key drivers behind why so many organizations are embracing a hybrid strategy, encompassing both cloud, core and edge, and how both Dell and Microsoft solutions can provide the best hybrid experience.
 
-
-Contents <!-- omit in toc -->
------------
-- [Video: The Hybrid Landscape with Dell and Microsoft](#video-the-hybrid-landscape-with-dell-and-microsoft)
-- [Next Steps](#next-steps)
-- [Raising issues](#raising-issues)
-
-Video: The Hybrid Landscape with Dell and Microsoft
------------
 Sit back, relax, and enjoy this short video discussing the hybrid landscape, and the key Dell and Microsoft building blocks of the hybrid solution portfolio.
 
 ![Video Placeholder](/media/VideoPlaceholder.png "Video Placeholder")

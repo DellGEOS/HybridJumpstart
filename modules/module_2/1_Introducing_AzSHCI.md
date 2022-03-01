@@ -2,14 +2,6 @@ Hybrid Cloud Workshop - Module 2:1 - Introducing Azure Stack HCI
 ==============
 In the first section of this module, you'll learn more about Azure Stack HCI; the new, purpose-built hyperconverged infrastructure (HCI) cluster solution that hosts virtualized Windows and Linux workloads in a hybrid environment, that combines on-premises infrastructure with Azure cloud services.
 
-Contents <!-- omit in toc -->
------------
-- [Video: Introducing Azure Stack HCI](#video-introducing-azure-stack-hci)
-- [Next Steps](#next-steps)
-- [Raising issues](#raising-issues)
-
-Video: Introducing Azure Stack HCI
------------
 Sit back, relax, and enjoy this short video discussing the hybrid landscape, and the key Dell and Microsoft building blocks of the hybrid solution portfolio.
 
 ![Video Placeholder](/media/VideoPlaceholder.png "Video Placeholder")
