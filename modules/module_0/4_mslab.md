@@ -71,7 +71,9 @@ Now that we have an understanding of each of the MSLab files, we can get started
 
 ```powershell
 # Define core lab characteristics
-$LabConfig=@{ DomainAdminName='LabAdmin'; AdminPassword='LS1setup!'; DCEdition='4'; Internet=$true ; VMs=@()}
+$LabConfig = @{ DomainAdminName = 'LabAdmin'; AdminPassword = 'LS1setup!'; DCEdition = '4'; `
+        DomainNetbiosName = 'Dell'; DomainName = "Dell.hybrid"; Internet = $true ; VMs = @()
+}
 
 # Deploy domain-joined Azure Stack HCI Nodes
 1..4 | ForEach-Object { 
@@ -90,9 +92,11 @@ Let's break down what this LabConfig file does.
 
 ```powershell
 # Define core lab characteristics
-$LabConfig=@{ DomainAdminName='LabAdmin'; AdminPassword='LS1setup!'; DCEdition='4'; Internet=$true ; VMs=@()}
+$LabConfig = @{ DomainAdminName = 'LabAdmin'; AdminPassword = 'LS1setup!'; DCEdition = '4'; `
+        DomainNetbiosName = 'Dell'; DomainName = "Dell.hybrid"; Internet = $true ; VMs = @()
+}
 ```
-This section first defines the **credentials** of the Active Directory domain that will be used throughout the deployment, then specifies the **edition of Windows Server** that will be used for the parent disk, in this case, **DCEdition='4'** would deploy Windows Server 2022 Datacenter with Desktop Experience (GUI) and **DCEdition='3'** would deploy the Server Core deployment of the same OS. Finally, we specify the **Internet=$true**, which tells MSLab's automation processes to configure networking to allow external access from the virtual environment.
+This section first defines the **credentials** of the Active Directory domain that will be used throughout the deployment, then specifies the **edition of Windows Server** that will be used for the parent disk, in this case, **DCEdition='4'** would deploy Windows Server 2022 Datacenter with Desktop Experience (GUI) and **DCEdition='3'** would deploy the Server Core deployment of the same OS. The script also defines a custom domain name, then finally, we specify the **Internet=$true**, which tells MSLab's automation processes to configure networking to allow external access from the virtual environment.
 
 There are a number of additional parameters that can be provided for this initial configuration, all of which you can review at the [MSLAb source](https://raw.githubusercontent.com/microsoft/MSLab/master/Scripts/LabConfig.ps1).
 
@@ -321,7 +325,7 @@ foreach ($computer in $computers) {
 
 Next Steps
 -----------
-Now that you've completed the necessary prerequisites, you're ready to deploy your first Azure Stack HCI cluster. However, before doing so, it's recommended that you spend some time familiarizing yourself with the [**hybrid landscape in module 1**](/modules/module_1/hybrid_landscape.md.
+Now that you've completed the necessary prerequisites, you're ready to deploy your first Azure Stack HCI cluster. However, before doing so, it's recommended that you spend some time familiarizing yourself with the [**hybrid landscape in module 1**](/modules/module_1/1_hybrid_landscape.md).
 
 Raising issues
 -----------
