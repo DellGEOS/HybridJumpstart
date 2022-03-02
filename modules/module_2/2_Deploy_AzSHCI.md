@@ -28,7 +28,7 @@ Next Steps
 -----------
 Select your deployment preference:
 
-* [**Windows Admin Center**](/modules/module_2/2b_DeployAzSHCI_WAC.md)
+* [**Windows Admin Center**](/modules/module_2/2a_DeployAzSHCI_WAC.md)
 * [**PowerShell**](/modules/module_2/2b_DeployAzSHCI_PS.md)
 
 Raising issues
