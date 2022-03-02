@@ -9,7 +9,7 @@ At this stage, you should already have a number of Azure Stack HCI nodes up and 
 * **Get an Azure subscription** - if you don't have one, read [more information here](/modules/module_0/2_azure_prerequisites.md#get-an-azure-subscription)
 * **Azure subscription permissions** - Owner **or** User Access Administrator + Contributer **or** Custom ([Instructions here](https://docs.microsoft.com/en-us/azure-stack/hci/deploy/register-with-azure#azure-subscription-and-permissions))
 * **Azure Active Directory permissions** - Global Admin **or** Cloud Application Administration **or** Custom ([Instructions here](https://docs.microsoft.com/en-us/azure-stack/hci/manage/manage-azure-registration#option-3-create-a-custom-active-directory-role-and-consent-policy))
-* **Firewall / Proxy** - If you are running the environment inside your own lab, ensure that your lab deployment has access to all resources listed below:
+* **Firewall / Proxy** - If you are running the environment inside your own lab, ensure that your lab deployment has access to all external resources listed below:
   * [Host requirements](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/firewall-requirements)
   * [Arc-enabled Servers requirements](https://docs.microsoft.com/en-us/azure/azure-arc/servers/agent-overview#networking-configuration)
 
@@ -18,7 +18,7 @@ Architecture
 
 As shown on the architecture graphic below, in this step, you'll take the nodes that were previously deployed, and be **clustering them into an Azure Stack HCI cluster**. You'll be focused on **creating a cluster in a single site**.
 
-![Architecture diagram for Azure Stack HCI nested](/deployment/media/nested_virt_arch_ga_oct21.png "Architecture diagram for Azure Stack HCI nested")
+![Architecture diagram for Azure Stack HCI nested](/modules/module_0/media/nested_virt_arch.png "Architecture diagram for Azure Stack HCI nested")
 
 Deployment choices
 -----------
@@ -28,8 +28,8 @@ Next Steps
 -----------
 Select your deployment preference:
 
-* [**Windows Admin Center**](/modules/module_2/2b_DeployAzSHCI_WAC.md).
-* [**PowerShell**](/modules/module_2/2b_DeployAzSHCI_PS.md).
+* [**Windows Admin Center**](/modules/module_2/2b_DeployAzSHCI_WAC.md)
+* [**PowerShell**](/modules/module_2/2b_DeployAzSHCI_PS.md)
 
 Raising issues
 -----------
