@@ -9,9 +9,10 @@ Contents <!-- omit in toc -->
 - [Step 2 - Initial OS Configuration](#step-2---initial-os-configuration)
 - [Step 3 - Install required features](#step-3---install-required-features)
 - [Step 4 - Configuring networking](#step-4---configuring-networking)
-  - [Shared compute and management with separate storage](#shared-compute-and-management-with-separate-storage)
-  - [Shared compute and storage with separate management](#shared-compute-and-storage-with-separate-management)
-  - [Shared compute and storage with separate management](#shared-compute-and-storage-with-separate-management-1)
+- [Step 5 - Creating the Azure Stack HCI cluster](#step-5---creating-the-azure-stack-hci-cluster)
+- [Step 6 - Configuring the cluster witness](#step-6---configuring-the-cluster-witness)
+  - [Option 1 - File Share Witness](#option-1---file-share-witness)
+  - [Option 2 - Cloud Witness](#option-2---cloud-witness)
 
 Before you begin
 -----------
@@ -125,7 +126,7 @@ With as few as 2 physical NICs in a host, how can you ensure that you have multi
 
 Fortunately, Azure Stack HCI provides a broad number of choices when it comes to defining the network infrastructure. Here's a few examples:
 
-### Shared compute and management with separate storage
+### Shared compute and management with separate storage <!-- omit in toc -->
 In the below example, the Azure Stack HCI node has 4 physical NICs (pNICS) - 
 
 ![Network diagram with shared compute and management with separate storage](/modules/module_2/media/network-atc-6-disaggregated-management-compute.png "Network diagram with shared compute and management with separate storage")
@@ -136,7 +137,7 @@ From there, a single virtual network adapter (vNIC) is created for the Host, tha
 
 The remaining 2 pNICs are dedicated to storage traffic between the Azure Stack HCI nodes in the cluster. These don't need teaming, as the redundancy and performance across both adapters is provided by SMB Multichannel.
 
-### Shared compute and storage with separate management
+### Shared compute and storage with separate management <!-- omit in toc -->
 In the below example, again, the Azure Stack HCI node has 4 physical NICs (pNICS) - 
 
 ![Network diagram with compute and storage with separate management](/modules/module_2/media/network-atc-3-separate-management-compute-storage.png "Network diagram with compute and storage with separate management")
@@ -145,7 +146,7 @@ This example is particularly common when pNIC01 and pNIC02 are the onboard 1GbE 
 
 In this case, the pNICs are aggregated into 2 separate SET switches, one for management and one for the shared compute and storage, and corresponding host vNICs are created to allow the isolation of those different traffic types. Virtual machines would connect to the "Compute and Storage Team" in this example, sharing the total bandwidth provided by pNIC03 and pNIC04.
 
-### Shared compute and storage with separate management
+### Shared compute and storage with separate management <!-- omit in toc -->
 In the below example, the Azure Stack HCI node has just 2 physical NICs (pNICS) - 
 
 ![Network diagram with a fully converged network configuration](/modules/module_2/media/network-atc-2-full-converge.png "Network diagram with a fully converged network configuration")
@@ -257,16 +258,16 @@ Get-VMNetworkAdapter -CimSession $Servers -ManagementOS
 
 8. Next, you'll configure the IP addresses for the storage networks to match this table. You'll create 2 separate subnets that will be applied to the dedicated host storage virtual network adapters, across all nodes.
 
-| Node | Name | IP Address | Subnet Mask | VLAN
-| :-- | :-- | :-- | :-- | :-- |
-| AZSHCI1 | SMB01 | 172.16.1.1 | 24 | 1
-| AZSHCI1 | SMB02 | 172.16.2.1 | 24 | 1
-| AZSHCI2 | SMB01 | 172.16.1.2 | 24 | 1
-| AZSHCI2 | SMB02 | 172.16.2.2 | 24 | 1
-| AZSHCI3 | SMB01 | 172.16.1.3 | 24 | 1
-| AZSHCI3 | SMB02 | 172.16.2.3 | 24 | 1
-| AZSHCI4 | SMB01 | 172.16.1.4 | 24 | 1
-| AZSHCI4 | SMB02 | 172.16.2.4 | 24 | 1
+| Node    | Name  | IP Address | Subnet Mask | VLAN |
+| :------ | :---- | :--------- | :---------- | :--- |
+| AZSHCI1 | SMB01 | 172.16.1.1 | 24          | 1    |
+| AZSHCI1 | SMB02 | 172.16.2.1 | 24          | 1    |
+| AZSHCI2 | SMB01 | 172.16.1.2 | 24          | 1    |
+| AZSHCI2 | SMB02 | 172.16.2.2 | 24          | 1    |
+| AZSHCI3 | SMB01 | 172.16.1.3 | 24          | 1    |
+| AZSHCI3 | SMB02 | 172.16.2.3 | 24          | 1    |
+| AZSHCI4 | SMB01 | 172.16.1.4 | 24          | 1    |
+| AZSHCI4 | SMB02 | 172.16.2.4 | 24          | 1    |
 
 To do so, you'll run the following PowerShell code:
 
@@ -380,3 +381,57 @@ ________________________
 **NOTE** - There are a number of settings which have not been included in this section, as they do not function in a nested virtualization environment. Features such as **RDMA**, **Network QoS**, **Datacenter Bridging (DCBX)** etc. only really function correctly with the appropriate physical hardware, including compatible switches. These elements will be covered in a different module, at a later date.
 ________________________
 
+Step 5 - Creating the Azure Stack HCI cluster
+-------
+
+With the networking configured, you can now proceed on to creating the Azure Stack HCI cluster with PowerShell. Run the following PowerShell commands to start the creation of your cluster.
+
+```powershell
+$ClusterName = "AzSHCI-Cluster"
+$Servers = "AzSHCI1", "AzSHCI2", "AzSHCI3", "AzSHCI4"
+$ClusterIP = "10.0.0.111"
+
+# Test Cluster first
+Test-Cluster -Node $servers -Include "Storage Spaces Direct", "Inventory", "Network", "System Configuration", "Hyper-V Configuration"
+
+# Traditional Cluster with Static IP
+New-Cluster -Name $ClusterName -Node $servers -StaticAddress $ClusterIP
+# Cluster with IP from DHCP
+# New-Cluster -Name $ClusterName -Node $servers
+# Cluster with Distributed Domain Name
+# New-Cluster -Name $ClusterName -Node $servers -ManagementPointNetworkType "Distributed"
+```
+
+> The above code will first define a name for your cluster, and associate a static IP address. An alternative way to create the cluster without using a static IP, is to use a **Distributed Domain Name**, however for the purpose if this guide, we will use the static IP approach. The commands to create a cluster with DHCP or Distributed Domain Name have been included for reference. The code will also test the configuration to ensure it's suitable for clustering.
+
+![Cluster validation and creation complete](/modules/module_2/media/ps_cluster_validated.png "Cluster validation and creation complete")
+
+Once the complete, you will have the option to view the **Validation Report** for the cluster. It will be located at **C:\Users\labadmin\AppData\Local\Temp\Validation Report_date_and_time.htm**.
+
+![Cluster validation report](/modules/module_2/media/ps_cluster_report.png "Cluster validation report")
+
+________________________
+**NOTE** - Cluster validation is intended to catch hardware or configuration problems before a cluster goes into production. Cluster validation helps to ensure that the Azure Stack HCI solution that you're about to deploy is truly dependable. You can also use cluster validation on configured failover clusters as a diagnostic tool. If you're interested in learning more about Cluster Validation, [check out the official docs](https://docs.microsoft.com/en-us/azure-stack/hci/deploy/validate "Cluster validation official documentation").
+________________________
+
+Step 6 - Configuring the cluster witness
+-----------
+By deploying an Azure Stack HCI cluster, you're providing high availability for workloads. These resources are considered highly available if the nodes that host resources are up; however, the cluster generally requires more than half the nodes to be running, which is known as having **quorum**.
+
+Quorum is designed to prevent split-brain scenarios which can happen when there is a partition in the network and subsets of nodes cannot communicate with each other. This can cause both subsets of nodes to try to own the workload and write to the same disk which can lead to numerous problems. However, this is prevented with Failover Clustering's concept of quorum which forces only one of these groups of nodes to continue running, so only one of these groups will stay online.
+
+In addition to the nodes themselves, a **witness** can be used to add an additional vote and help to ensure the split-brain scenario doesn't occur.
+
+If you want to learn more about quorum, and the witness concept [check out the official documentation.](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/quorum "Official documentation about Cluster quorum")
+
+With Azure Stack HCI, there are 2 options for the witness:
+
+* File Share Witness
+* Cloud Witness
+
+We'll document both options below - feel free to choose the one that's most appropriate for you.
+
+### Option 1 - File Share Witness
+
+
+### Option 2 - Cloud Witness
