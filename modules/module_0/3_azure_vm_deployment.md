@@ -17,7 +17,7 @@ Contents <!-- omit in toc -->
 - [Azure VM Size Considerations](#azure-vm-size-considerations)
 - [Deploying the Azure VM](#deploying-the-azure-vm)
 - [Access your Azure VM](#access-your-azure-vm)
-- [Next Steps](#next-steps)
+- [Next steps](#next-steps)
 - [Troubleshooting](#troubleshooting)
 - [Raising issues](#raising-issues)
 
@@ -151,7 +151,7 @@ Once downloaded, locate the .rdp file on your local machine, and double-click to
 
 Accept any certificate prompts, and within a few moments, you should be successfully logged into the Windows Server 2022 VM.
 
-Next Steps
+Next steps
 -----------
 In this step, you've successfully created and automatically configured your Azure VM, which will serve as the host for all of the hands-on-labs for the workshop. You're now ready to move on to the next step, where you'll learn more about MSLab, and how it forms a critical part of the overall workshop solution.
 

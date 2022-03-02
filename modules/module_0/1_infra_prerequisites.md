@@ -16,7 +16,7 @@ Contents <!-- omit in toc -->
   - [Physical hardware sizing](#physical-hardware-sizing)
   - [Configuring your Hyper-V Host](#configuring-your-hyper-v-host)
 - [Lab Deployment in Azure](#lab-deployment-in-azure)
-- [Next Steps](#next-steps)
+- [Next steps](#next-steps)
 - [Raising issues](#raising-issues)
 
 Introduction
@@ -160,7 +160,7 @@ In this configuration, you'll take advantage of the nested virtualization suppor
 
 To reiterate, in this case the whole configuration will run **inside the single Azure VM**.
 
-Next Steps
+Next steps
 -----------
 Now that you understand the infrastructure requirements for the workshop, in the next step, we'll break down the different Azure requirements that need to be met in order to work through the various guides in the workshop.
 

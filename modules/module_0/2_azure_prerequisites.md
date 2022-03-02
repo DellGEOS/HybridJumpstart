@@ -11,7 +11,7 @@ Contents <!-- omit in toc -->
 - [Get an Azure subscription](#get-an-azure-subscription)
 - [Azure subscription & Azure Active Directory permissions](#azure-subscription--azure-active-directory-permissions)
 - [Firewall / Proxy Configuration](#firewall--proxy-configuration)
-- [Next Steps](#next-steps)
+- [Next steps](#next-steps)
 - [Raising issues](#raising-issues)
 
 Get an Azure subscription
@@ -51,7 +51,7 @@ If you are deploying the infrastructure on your own physical hardware, you may n
 
 With the Azure requirements and prerequisites reviewed, it's time to begin your deployment of the lab environment.
 
-Next Steps
+Next steps
 -----------
 Based on your available hardware, choose one of the following options:
 

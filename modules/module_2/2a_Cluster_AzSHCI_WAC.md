@@ -1,13 +1,26 @@
-Hybrid Cloud Workshop - Module 2:2a - Deploying Azure Stack HCI with Windows Admin Center
+Module 2 - Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center
 ============
-In this section, you'll walk through deployment of an Azure Stack HCI cluster using **Windows Admin Center**. If you have a preference for deployment with PowerShell, head over to the [PowerShell cluster creation guidance](/modules/module_2/2b_DeployAzSHCI_PS.md).
+In this section, you'll walk through deployment of an Azure Stack HCI cluster using **Windows Admin Center**. If you have a preference for deployment with PowerShell, head over to the [PowerShell cluster creation guidance](/modules/module_2/2b_Cluster_AzSHCI_PS.md).
+
+Contents <!-- omit in toc -->
+-----------
+- [Before you begin](#before-you-begin)
+- [Creating a (local) cluster](#creating-a-local-cluster)
+- [Configuring the cluster witness](#configuring-the-cluster-witness)
+- [Next steps](#next-steps)
+- [Raising issues](#raising-issues)
 
 Before you begin
 -----------
-With Windows Admin Center, you now have the ability to construct Azure Stack HCI clusters from the previously deployed nodes. There are no additional extensions to install, the workflow is built in and ready to go, however, it's worth checking to ensure that your Cluster Creation extension is fully up to date and make a few changes to the Edge browser to streamline things later.
+At this stage, you should have completed the previous section of the workshop, [Deploying the Azure Stack HCI Infrastructure](/modules/module_2/2_Deploy_AzSHCI.md) and you should have a set of virtual machines running in your environment, visible in Hyper-V Manager:
 
-Allow popups in Edge browser
------------
+![Workshop machines running](/modules/module_0/media/mslab_vms_running.png "Workshop machines running")
+
+If you don't have those VMs running, go over and do that now - it should take about 10 minutes.
+
+Moving on to Windows Admin Center, you now have the ability to construct Azure Stack HCI clusters from the previously deployed nodes. There are no additional extensions to install, the workflow is built-in and ready to go, however, it's worth checking to ensure that your Cluster Creation extension is fully up to date and make a few changes to the Edge browser to streamline things later.
+
+### Allow popups in Edge browser <!-- omit in toc -->
 To give the optimal experience with Windows Admin Center, you should enable **Microsoft Edge** to allow popups for Windows Admin Center.
 
 1. If you're not already logged in, log into the **HybridWorkshop-DC** virtual machine, open the **Microsoft Edge icon** on your taskbar.
@@ -16,8 +29,7 @@ To give the optimal experience with Windows Admin Center, you should enable **Mi
 4. Click the slider button to **disable** pop-up blocking
 5. Close the **settings tab**.
 
-### Configure Windows Admin Center ###
-
+### Configure Windows Admin Center ### <!-- omit in toc -->
 During the [lab deployment earlier](/modules/module_0/4_mslab.md#step-5---installing-windows-admin-center), you installed the latest version of Windows Admin Center, however there are some additional configuration steps that must be performed before you can use it to deploy Azure Stack HCI.
 
 1. In your Edge browser, navigate to **https://wacgw**.
@@ -46,7 +58,7 @@ You're now ready to begin deployment of your Azure Stack HCI cluster with Window
 * **Storage** - Configures Storage Spaces Direct
 * **SDN** - Configures Software Defined Networking (Optional)
 
-### Decide on cluster type ###
+### Decide on cluster type ### <!-- omit in toc -->
 Not only does Azure Stack HCI support a cluster in a single site (or a **local cluster** as we'll refer to it going forward) consisting of between 2 and 16 nodes, but, also supports a **Stretch Cluster**, where a single cluster can have nodes distrubuted across two sites.
 
 * If you have 2 Azure Stack HCI nodes, you will be able to create a **local cluster**
@@ -62,8 +74,7 @@ This section will walk through the key steps for you to set up the Azure Stack H
 2. Once logged into Windows Admin Center, under **All connections**, click **Add**
 3. On the **Add or create resources popup**, under **Server clusters**, click **Create new** to open the **Cluster Creation wizard**
 
-### Get started ###
-
+### Get started ### <!-- omit in toc -->
 ![Choose cluster type in the Create Cluster wizard](/modules/module_2/media/wac_cluster_type_ga.png "Choose cluster type in the Create Cluster wizard")
 
 1. Ensure you select **Azure Stack HCI**, select **All servers in one site** and cick **Create**
@@ -100,20 +111,55 @@ _____________
 
 ![Restart nodes in the Create Cluster wizard](/modules/module_2/media/wac_restart_ga.png "Restart nodes in the Create Cluster wizard")
 
-### Networking ###
+### Networking <!-- omit in toc -->
 With the servers configured with the appropriate features, updated and rebooted, you're ready to configure the network for your Azure Stack HCI nodes.
 
-Straight away, you have a choice to make - you can configure the network settings **manually**, or you can use the new **Network ATC**:
+By default, your nested Azure Stack HCI nodes have 4 host network adapters (pNICs), however many new production systems are shipping with just 2 NICs, albeit with significantly higher performance and bandwidth available - in some cases, each NIC is 100GbE!
+
+With as few as 2 physical NICs in a host, how can you ensure that you have multiple "separate networks" for traffic types like **Management**, **Virtual Machines** and **Storage**?
+
+Fortunately, Azure Stack HCI provides a broad number of choices when it comes to defining the network infrastructure. Here's a few examples:
+
+#### Shared compute and management with separate storage
+In the below example, the Azure Stack HCI node has 4 physical NICs (pNICS) - 
+
+![Network diagram with shared compute and management with separate storage](/modules/module_2/media/network-atc-6-disaggregated-management-compute.png "Network diagram with shared compute and management with separate storage")
+
+2 of the NICs are aggregated into a **Switch Embedded Team (SET)** - a specialized type of vSwitch-enabled NIC team that exists on the Hyper-V host, that aggregates the physical NICs, and the teaming/vSwitch functionality.
+
+From there, a single virtual network adapter (vNIC) is created for the Host, that will reside on the designated management network, for example, the 192.168.0.0/24 network. Virtual Machines will also connect to this Team, and their traffic will also flow out via the teamed pNICs.
+
+The remaining 2 pNICs are dedicated to storage traffic between the Azure Stack HCI nodes in the cluster. These don't need teaming, as the redundancy and performance across both adapters is provided by SMB Multichannel.
+
+#### Shared compute and storage with separate management
+In the below example, again, the Azure Stack HCI node has 4 physical NICs (pNICS) - 
+
+![Network diagram with compute and storage with separate management](/modules/module_2/media/network-atc-3-separate-management-compute-storage.png "Network diagram with compute and storage with separate management")
+
+This example is particularly common when pNIC01 and pNIC02 are the onboard 1GbE adapters, which are most suited to management traffic, and the remaining 2 pNICs are high-performance adapters, useful for storage traffic, and the traffic coming in and leaving your virtual machines.
+
+In this case, the pNICs are aggregated into 2 separate SET switches, one for management and one for the shared compute and storage, and corresponding host vNICs are created to allow the isolation of those different traffic types. Virtual machines would connect to the "Compute and Storage Team" in this example, sharing the total bandwidth provided by pNIC03 and pNIC04.
+
+#### Shared compute and storage with separate management
+In the below example, the Azure Stack HCI node has just 2 physical NICs (pNICS) - 
+
+![Network diagram with a fully converged network configuration](/modules/module_2/media/network-atc-2-full-converge.png "Network diagram with a fully converged network configuration")
+
+In this example, we just have 2 high-performance NICs, yet multiple different traffic types (Compute, Management, Storage) to account for. With this example, you simply aggregate the 2 pNICs into a SET switch, and from there, create the appropriate host vNICs to provide the networks for the different traffic types. All different traffic types share the available pNIC SET bandwidth, so it's important to factor in QoS and traffic management here.
+
+Now that you understand more about the options for network configurations, how do you actually go about **applying** the network configurations?
+
+With Windows Admin Center, there are 2 ways: **Manually**, or with the new **Network ATC**.
 
 ![Select host networking in Windows Admin Center](/modules/module_2/media/select_host_networking.png "Select host networking in Windows Admin Center")
 
-__________________
-**Network ATC** simplifies the deployment and network configuration management for Azure Stack HCI clusters. This provides an intent-based approach to host network deployment. By specifying one or more intents (management, compute, or storage) for a network adapter, you can automate the deployment of the intended configuration. For more information on Network ATC, including an overview and definitions, see the [Network ATC overview](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/network-atc-overview).
+With the **manual** approach, you're configuring each layer of the network across each node in the cluster - this can be complex, there are a number of moving parts, and things are easy to misconfigure or overlook. Also, occasionally things can change over time, configurations drift, which leads to additional challenges, especially around troubleshooting. Windows Admin Center aims to simplify the configuration as much as possible for you.
 
-**However**, deploying Network ATC in virtual environments is **not supported**. Several of the host networking properties it configures are not available in virtual machines, which will result in errors.
-__________________
+**Network ATC** however, simplifies the deployment and network configuration management for Azure Stack HCI clusters. This provides an intent-based approach to host network deployment. By specifying one or more intents (management, compute, or storage) for a network adapter, you can automate the deployment of the intended configuration. For more information on Network ATC, including an overview and definitions, see the [Network ATC overview](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/network-atc-overview).
 
-For the purpose of this section, we will manually configure our host networking. Ensure that **Manually configure host networking** is selected, and click **Next:Networking**
+> Unfortunately, **deploying Network ATC in virtual environments is not supported**. Several of the host networking properties it configures are not available in virtual machines, which will result in errors.
+
+For the purpose of this guide therefore, we'll be configuring the networking settings manually, and the steps below are tailored for use inside nested virtual machines. We'll choose the **Shared compute and storage with separate management** example from above. Ensure that **Manually configure host networking** is selected, and click **Next:Networking**
 
 Firstly, Windows Admin Center will verify your networking setup - it'll tell you how many NICs are in each node, along with relevant hardware information, MAC address and status information.  Review for accuracy, and then click **Next**
 
@@ -123,7 +169,7 @@ The first key step with setting up the networking with Windows Admin Center, is 
 
 As it stands, this is the way that Windows Admin Center approaches the network configuration, however, if you were not using Windows Admin Center, through PowerShell, there are a number of different ways to configure the network to meet your needs. We will work through the Windows Admin Center approach in this guide.
 
-#### Network Setup Overview ####
+#### Network Setup Overview #### 
 Each of your Azure Stack HCI nodes should have 4 NICs. For this simple evaluation, you'll dedicate the NICs in the following way:
 
 * 2 NICs will be dedicated to management. These NICs will be renamed, teamed and a new virtual network adapter will be created and used for management traffic
@@ -162,7 +208,10 @@ Again, this is just one **example** network configuration for the simple purpose
 
 8. On the **Define networks** page, this is where you can define the specific networks, separate subnets, and optionally apply VLANs.  In this **nested environment**, we have 2 Host vNICs remaining, specifically for Storage. Configure your remaining NICs as follows, by clicking on a field in the table and entering the appropriate information.
 
+____________________________
+
 **NOTE** - we have a simple flat network in this configuration. One of the NICs have been claimed by the Management NIC, The remaining NICs will be show in the table in WAC, so ensure they align with the information below. WAC won't allow you to proceed unless everything aligns correctly.
+____________________________
 
 | Node | Name | IP Address | Subnet Mask | VLAN
 | :-- | :-- | :-- | :-- | :-- |
@@ -185,9 +234,9 @@ You should delete any **default gateway** information from the form. When you cl
 
 9. Once the networks have been verified, you can optionally review the networking test report, and once complete, click **Next**
 
-10. Once changes have been successfully applied, click **Next: Clustering**
+10.  Once changes have been successfully applied, click **Next: Clustering**
 
-### Clustering ###
+### Clustering ### <!-- omit in toc -->
 With the network configured for the workshop environment, it's time to construct the local cluster.
 
 1. At the start of the **Cluster** wizard, on the **Validate the cluster** page, click **Validate**.
@@ -210,6 +259,7 @@ With the network configured for the workshop environment, it's time to construct
 
 ![Cluster creation successful in the Create Cluster wizard](/modules/module_2/media/wac_cluster_success.png "Cluster creation successful in the Create Cluster wizard")
 
+### Storage ### <!-- omit in toc -->
 With the cluster successfully created, you're now good to proceed on to configuring your storage.  Whilst less important in a fresh nested environment, it's always good to start from a clean slate, so first, you'll clean the drives before configuring storage.
 
 1. On the storage landing page within the Create Cluster wizard, click **Erase Drives**, and when prompted, with **You're about to erase all existing data**, click **Erase drives**.  Once complete, you should have a successful confirmation message, then click **Next**
@@ -234,8 +284,7 @@ With the cluster successfully created, you're now good to proceed on to configur
 
 6. With Storage Spaces Direct enabled, click **Next:SDN**
 
-### SDN ###
-
+### SDN ### <!-- omit in toc -->
 With Storage configured, for the purpose of this section, we will skip the SDN configuration, but will revisit SDN in a different part of this module.
 
 1. On the **Define the Network Controller cluster** page, click **Skip**
@@ -296,9 +345,13 @@ As part of this guide, we're going to set up cluster quorum, using **Windows Adm
 
 18. Within a few moments, your witness settings should be successfully applied and you have now completed configuring the quorum settings for the **AzSHCI-Cluster** cluster.
 
-### Congratulations! ###
+### Congratulations! ### <!-- omit in toc -->
 You've now successfully deployed and configured your Azure Stack HCI cluster!
 
-Next Steps
+Next steps
 -----------
 In this step, you've successfully created a nested Azure Stack HCI cluster using Windows Admin Center. With this complete, you can now [Integrate Azure Stack HCI with Azure](/modules/module_2/3_Integrate_Azure "Integrate Azure Stack HCI with Azure")
+
+Raising issues
+-----------
+If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!

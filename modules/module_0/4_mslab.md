@@ -1,4 +1,4 @@
-Hybrid Cloud Workshop | Lab Deployment
+Hybrid Cloud Workshop | Lab Configuration
 ==============
 
 Overview <!-- omit in toc -->
@@ -16,9 +16,7 @@ Contents <!-- omit in toc -->
   - [Run the MSLab Prereq Script](#run-the-mslab-prereq-script)
   - [Download the latest Cumulative Updates](#download-the-latest-cumulative-updates)
   - [Create your parent virtual hard disks](#create-your-parent-virtual-hard-disks)
-- [Step 4 - Lab infrastructure deployment](#step-4---lab-infrastructure-deployment)
-- [Step 5 - Installing Windows Admin Center](#step-5---installing-windows-admin-center)
-- [Next Steps](#next-steps)
+- [Next steps](#next-steps)
 - [Raising issues](#raising-issues)
 
 Step 1 - Download files
@@ -208,124 +206,9 @@ __________________________
 
  ![Azure Stack HCI virtual hard disk created](/modules/module_0/media/mslab_azshci_parent_disk.png "Azure Stack HCI virtual hard disk created")
 
-Step 4 - Lab infrastructure deployment
---------
-With the parent virtual hard disks created, you're now ready to begin deployment of the virtual machines that will host the workshop environment. As we saw earlier when looking at the [Lab Config](#exploring-the-labconfig-file), as part of this deployment, MSLab will deploy the following:
-
-* 1 Windows Server 2022 Active Directory Domain Controller
-* 4 Azure Stack HCI nodes each with 4GB Memory, and 12 x 4TB HDDs (these are dynamic, so won't consume 48TB :) )
-* 1 Windows Server 2022 Management Server that will host Windows Admin Center 
-
-All servers above will be automatically domain-joined, and the credentials specified in the LabConfig file will be used.
-
-1. In your **HybridWorkshop folder**, right-click **Deploy** and click **Run with PowerShell** to start the creation of your Azure Stack HCI nodes, and management server, along with the deployment of the pre-created domain controller. In the case of the domain controller, it will be imported, and a snapshot taken to preserve it's original state if you wish to clean up the environment later.
-2. Upon running the **Deploy** script, you may be prompted to **change the execution policy** - enter **A** for **Yes to All** and **press enter**.
-3. Choose your telemetry level for the lab and **press enter**. Deployment will begin.
-
-![Workshop machines deployed](/modules/module_0/media/mslab_deploy_complete.png "Workshop machines deployed")
-
-4. Once completed, you'll be promted to **start the lab virtual machines** - press **A** and **press enter**.
-5. Once started, **press enter** to continue.
-6. With the virtual machines deployed, on your Hyper-V host, open **Hyper-V Manager**.
-7. Once open, you'll see your virtual machines up and running, ready to proceed on to the next step.
-
-![Workshop machines running](/modules/module_0/media/mslab_vms_running.png "Workshop machines running")
-
-8. Still in **Hyper-V Manager**, right-click on **HybridWorkshop-DC** and click **Connect**
-
-![Connect to HybridWorkshop-DC](/modules/module_0/media/mslab_connect_dc.png "Connect to HybridWorkshop-DC")
-
-9. In the **Connect to HybridWorkshop-DC** popup, use the **slider** to select your resolution and click **Connect**
-10. When prompted, enter your **credentials** you provided in the **LabConfig** file. If you kept the default credentials, they will be:
-
-    * **Username**: LabAdmin
-    * **Password**: LS1setup!
-
-11. Once logged into the Domain Controller VM, open **Server Manager**.
-12. Once opened, right-click on **All Servers** and select **Add Servers**
-
-![Add Servers in Server Manager](/modules/module_0/media/server_manager_add_servers.png "Add Servers in Server Manager")
-
-13. In the **Add Servers** window, click **Find Now**, and you'll see all the domain-joined machines in the current workshop deployment. Select all the servers in the list, then click the **right arrow** to add them to the management view on this Domain Controller machine, then click **OK**.
-14. In **Server Manager**, under **All Servers**, you should now see all the servers in the domain listed, and available for management from this interface.
-
-Step 5 - Installing Windows Admin Center
---------
-With the infrastructure deployed, the final step of this section is to install **Windows Admin Center**. If you're not familiar, Windows Admin Center is a locally-deployed, browser-based management toolset that lets you manage your Windows Servers with no Azure or cloud dependency. Windows Admin Center gives you full control over all aspects of your server infrastructure and is particularly useful for managing servers on private networks that are not connected to the Internet. It's also extremely useful in deploying and configuring Azure Stack HCI, and a number of other hybrid technologies, which you'll explore in this workshop.
-
-In this section, you'll be installing Windows Admin Center onto the **HybridWorkshop-WACGW** virtual machine. If you recall, this virtual machine was deployed with the headless **Server Core** deployment of Windows Server 2022, and as a result, you'll install Windows Admin Center remotely onto the machine, from the Domain Controller.
-
-1. If you're not already logged in, log into the **HybridWorkshop-DC** virtual machine, in the same way you did [earlier](#step-4---lab-infrastructure-deployment).
-2. Once logged in, from the **Start Menu**, right-click **PowerShell**, select **More**, and then **Run as Administrator**
-
-![Run PowerShell as Admin](/modules/module_0/media/powershell_as_admin.png "Run PowerShell as Admin")
-
-3. To simplify deployment of Windows Admin Center remotely onto the **HybridWorkshop-WACGW** machine, copy and paste the following PowerShell code, into your elevated PowerShell console. This process should only take a few moments.
-
-```powershell
-# Define the target machine name to install Windows Admin Center
-$GatewayServerName = "WACGW"
-
-# Download Windows Admin Center if not present
-if (-not (Test-Path -Path "$env:USERPROFILE\Downloads\WindowsAdminCenter.msi")) {
-    Start-BitsTransfer -Source https://aka.ms/WACDownload -Destination "$env:USERPROFILE\Downloads\WindowsAdminCenter.msi"
-}
-
-# Create PS Session to WACGW and copy install files to remote server
-Invoke-Command -ComputerName $GatewayServerName -ScriptBlock { Set-Item -Path WSMan:\localhost\MaxEnvelopeSizekb -Value 4096 }
-$Session = New-PSSession -ComputerName $GatewayServerName
-Copy-Item -Path "$env:USERPROFILE\Downloads\WindowsAdminCenter.msi" -Destination `
-    "$env:USERPROFILE\Downloads\WindowsAdminCenter.msi" -ToSession $Session
-
-#Install Windows Admin Center
-Invoke-Command -Session $session -ScriptBlock {
-    Start-Process msiexec.exe -Wait -ArgumentList `
-        "/i $env:USERPROFILE\Downloads\WindowsAdminCenter.msi /qn /L*v log.txt REGISTRY_REDIRECT_PORT_80=1 SME_PORT=443 SSL_CERTIFICATE_OPTION=generate"
-} -ErrorAction Ignore
-
-$Session | Remove-PSSession
-
-# Add Windows Admin Center Certificate to trusted root certs on Domain Controller
-Start-Sleep 10
-$cert = Invoke-Command -ComputerName $GatewayServerName `
-    -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=Windows Admin Center" }
-$cert | Export-Certificate -FilePath $env:TEMP\WACCert.cer
-Import-Certificate -FilePath $env:TEMP\WACCert.cer -CertStoreLocation Cert:\LocalMachine\Root\
-```
-
-4. Once complete, you can **close** the PowerShell window.
-
-![Windows Admin Center installation complete](/modules/module_0/media/wac_install_complete.png "Windows Admin Center installation complete")
-
-5. You can validate the deployment by opening the **Edge browser** and navigating to https://wacgw. When asked for credentials, log in with your usual credentials, which by default, are:
-
-    * **Username**: LabAdmin
-    * **Password**: LS1setup!
-
-![Logged into Windows Admin Center](/modules/module_0/media/wac_deployed.png "Logged into Windows Admin Center")
-
-6. Finally, when Windows Admin Center is deployed in Gateway mode as we have done, it is very useful to configure Kerberos Constrained Delegation to reduce the need to supply credentials when connecting to remote servers - in this case, the Azure Stack HCI nodes. From the **Start Menu**, right-click **PowerShell**, select **More**, and then **Run as Administrator**
-7. Copy and paste the following PowerShell code, into your elevated PowerShell console
-
-```powershell
-# Define the target machine name where Windows Admin Center is installed
-$GatewayServerName = "WACGW"
-
-# Configure Resource-based constrained delegation
-$gatewayObject = Get-ADComputer -Identity $GatewayServerName
-$computers = (Get-ADComputer -Filter { OperatingSystem -eq "Azure Stack HCI" }).Name
-
-foreach ($computer in $computers) {
-    $computerObject = Get-ADComputer -Identity $computer
-    Set-ADComputer -Identity $computerObject -PrincipalsAllowedToDelegateToAccount $gatewayObject
-}
-```
-
-8. Once complete, you can close the PowerShell window - you have completed the prerequisites for the workshop.
-
-Next Steps
+Next steps
 -----------
-Now that you've completed the necessary prerequisites, you're ready to deploy your first Azure Stack HCI cluster. However, before doing so, it's recommended that you spend some time familiarizing yourself with the [**hybrid landscape in module 1**](/modules/module_1/1_hybrid_landscape.md).
+Now that you've completed the necessary prerequisites, you're ready to create and deploy your first Azure Stack HCI cluster. However, before doing so, it's recommended that you spend some time familiarizing yourself with the [**hybrid landscape in module 1**](/modules/module_1/1_hybrid_landscape.md).
 
 Raising issues
 -----------
