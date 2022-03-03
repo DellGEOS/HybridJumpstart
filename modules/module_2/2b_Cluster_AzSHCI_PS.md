@@ -10,9 +10,12 @@ Contents <!-- omit in toc -->
 - [Step 3 - Install required features](#step-3---install-required-features)
 - [Step 4 - Configuring networking](#step-4---configuring-networking)
 - [Step 5 - Creating the Azure Stack HCI cluster](#step-5---creating-the-azure-stack-hci-cluster)
-- [Step 6 - Configuring the cluster witness](#step-6---configuring-the-cluster-witness)
-  - [Option 1 - File Share Witness](#option-1---file-share-witness)
-  - [Option 2 - Cloud Witness](#option-2---cloud-witness)
+- [Step 6 - Storage](#step-6---storage)
+- [Step 7 - Configuring the cluster witness](#step-7---configuring-the-cluster-witness)
+  - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
+  - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
+- [Next steps](#next-steps)
+- [Raising issues](#raising-issues)
 
 Before you begin
 -----------
@@ -414,7 +417,55 @@ ________________________
 **NOTE** - Cluster validation is intended to catch hardware or configuration problems before a cluster goes into production. Cluster validation helps to ensure that the Azure Stack HCI solution that you're about to deploy is truly dependable. You can also use cluster validation on configured failover clusters as a diagnostic tool. If you're interested in learning more about Cluster Validation, [check out the official docs](https://docs.microsoft.com/en-us/azure-stack/hci/deploy/validate "Cluster validation official documentation").
 ________________________
 
-Step 6 - Configuring the cluster witness
+Step 6 - Storage
+-----------
+With the cluster successfully created, you're now good to proceed on to configuring your storage. Whilst less important in a fresh nested environment, it's always good to start from a clean slate, so first, you'll clean the drives before configuring storage.
+
+1. First, from an **administrative PowerShell console**, run the following command to clean up any existing storage configuration:
+
+```powershell
+$Servers = "AzSHCI1", "AzSHCI2", "AzSHCI3", "AzSHCI4"
+
+Invoke-Command ($Servers) {
+    # Retrieve any existing virtual disks and storage pools and remove
+    Update-StorageProviderCache
+    Get-StoragePool | Where-Object IsPrimordial -eq $false | `
+        Set-StoragePool -IsReadOnly:$false -ErrorAction SilentlyContinue
+    Get-StoragePool | Where-Object IsPrimordial -eq $false | `
+        Get-VirtualDisk | Remove-VirtualDisk -Confirm:$false -ErrorAction SilentlyContinue
+    Get-StoragePool | Where-Object IsPrimordial -eq $false | `
+        Remove-StoragePool -Confirm:$false -ErrorAction SilentlyContinue
+    
+    # Reset the disks
+    Get-PhysicalDisk | Reset-PhysicalDisk -ErrorAction SilentlyContinue
+    
+    # Prepare the disks
+    Get-Disk | Where-Object Number -ne $null | Where-Object IsBoot -ne $true | `
+        Where-Object IsSystem -ne $true | Where-Object PartitionStyle -ne RAW | `
+        ForEach-Object {
+        $_ | Set-Disk -isoffline:$false
+        $_ | Set-Disk -isreadonly:$false
+        $_ | Clear-Disk -RemoveData -RemoveOEM -Confirm:$false
+        $_ | Set-Disk -isreadonly:$true
+        $_ | Set-Disk -isoffline:$true
+    }
+    Get-Disk | Where-Object Number -ne $Null | Where-Object IsBoot -ne $True | `
+        Where-Object IsSystem -ne $True | Where-Object PartitionStyle -eq RAW | `
+        Group-Object -NoElement -Property FriendlyName
+} | Sort-Object -Property PsComputerName, Count
+```
+
+2. With no trace of an existing disk configuration, you can now enable **Storage Spaces Direct** by running the following PowerShell commands:
+
+```powershell
+$ClusterName = "AzSHCI-Cluster"
+Enable-ClusterStorageSpacesDirect -PoolFriendlyName "S2D on $ClusterName" -CimSession $ClusterName
+```
+![Enable Storage Spaces Direct with PowerShell](/modules/module_2/media/ps_enable_s2d.png "Enable Storage Spaces Direct with PowerShell")
+
+With the storage configured, the final step is to configure the cluster witness to ensure your cluster has the highest levels of availability.
+
+Step 7 - Configuring the cluster witness
 -----------
 By deploying an Azure Stack HCI cluster, you're providing high availability for workloads. These resources are considered highly available if the nodes that host resources are up; however, the cluster generally requires more than half the nodes to be running, which is known as having **quorum**.
 
@@ -431,7 +482,114 @@ With Azure Stack HCI, there are 2 options for the witness:
 
 We'll document both options below - feel free to choose the one that's most appropriate for you.
 
-### Option 1 - File Share Witness
+### Witness Option 1 - File Share Witness
+The first option is to use a standard SMB file share, *somewhere* in your environment to act as the witness, store the witness.log file and provide quorum for the cluster. This file share should be a redundant file share, but for the purpose of this scenario, you'll be creating a file share on the domain controller.
 
+1. In your **Administrative PowerShell console**, run the following PowerShell commands to create a suitable file share on the domain controller:
 
-### Option 2 - Cloud Witness
+```powershell
+$ClusterName = "AzSHCI-Cluster"
+
+# Configure Witness
+$WitnessServer = "DC"
+
+# Create new directory
+$WitnessName = $ClusterName + "Witness"
+Invoke-Command -ComputerName $WitnessServer -ScriptBlock `
+{ New-Item -Path C:\Shares -Name $using:WitnessName -ItemType Directory }
+$accounts = @()
+$accounts += "Dell\$ClusterName$"
+$accounts += "Dell\Domain Admins"
+New-SmbShare -Name $WitnessName -Path "C:\Shares\$WitnessName" `
+    -FullAccess $accounts -CimSession $WitnessServer
+
+# Set NTFS permissions 
+Invoke-Command -ComputerName $WitnessServer -ScriptBlock `
+{ (Get-SmbShare $using:WitnessName).PresetPathAcl | Set-Acl }
+```
+
+> The code above first defines the location where the Witness folder and file share will be created. It then creates a new directory, sets the directory as an SMB share on the network, and assigns the appropriate permissions to a core set of accounts.
+
+2. With the file share created, you can now configure the cluster to use this file share as the witness with the following PowerShell commands:
+
+```powershell
+Set-ClusterQuorum -Cluster $ClusterName -FileShareWitness "\\$WitnessServer\$WitnessName"
+```
+
+![File Share Witness applied in PowerShell](/modules/module_2/media/ps_fsw.png "File Share Witness applied in PowerShell")
+
+With that complete, you've successfully configured the quorum settings for your Azure Stack HCI cluster.
+
+### Witness Option 2 - Cloud Witness
+If you prefer, you can choose to use a cloud witness instead of a file share. Cloud Witness is a type of Failover Cluster quorum witness that uses Microsoft Azure to provide a vote on cluster quorum. It uses Azure Blob Storage to read/write a blob file which is then used as an arbitration point in case of split-brain resolution.
+
+1. In your **Administrative PowerShell console**, run the following PowerShell commands to download the necessary PowerShell modules to create the storage resources in Azure:
+
+```powershell
+# Install PowerShell modules
+Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+$ModuleNames = "Az.Accounts", "Az.Resources", "Az.Storage"
+foreach ($ModuleName in $ModuleNames) {
+    Install-Module -Name $ModuleName -Force
+}
+```
+
+2. With the PowerShell modules installed, you can login to Azure. If you have more than one subscription, the latter part of the command below will prompt you to select your preferred subscription:
+
+```powershell
+# Login to Azure
+if (-not (Get-AzContext)) {
+    Connect-AzAccount -UseDeviceAuthentication
+}
+# Select context if more available
+$context = Get-AzContext -ListAvailable
+if (($context).count -gt 1) {
+    $context | Out-GridView -OutputMode Single | Set-AzContext
+}
+```
+
+3. With your subscription selected, you can now go ahead and create the resources in Azure:
+
+```powershell
+$ResourceGroupName = "AzSHCICloudWitness"
+$StorageAccountName = "azshcicloudwitness$(Get-Random -Minimum 100000 -Maximum 999999)"
+
+# Select preferred Azure region
+$Location = Get-AzLocation | Where-Object Providers -Contains "Microsoft.Storage" | Out-GridView -OutputMode Single
+
+# Create resource group
+if (-not(Get-AzResourceGroup -Name $ResourceGroupName -ErrorAction Ignore)) {
+    New-AzResourceGroup -Name $ResourceGroupName -Location $location.Location
+}
+# Create Storage Account
+if (-not(Get-AzStorageAccountKey -Name $StorageAccountName -ResourceGroupName $ResourceGroupName -ErrorAction Ignore)) {
+    New-AzStorageAccount -ResourceGroupName $ResourceGroupName -Name $StorageAccountName `
+        -SkuName Standard_LRS -Location $location.location -Kind StorageV2 -AccessTier Cool 
+}
+
+# Retrieve storage account key
+$StorageAccountAccessKey = (Get-AzStorageAccountKey -Name $StorageAccountName `
+        -ResourceGroupName $ResourceGroupName | Select-Object -First 1).Value
+```
+
+4. Finally, you can configure the Azure Stack HCI cluster to use this cloud witness:
+
+```powershell
+Set-ClusterQuorum -Cluster $ClusterName -CloudWitness -AccountName $StorageAccountName `
+    -AccessKey $StorageAccountAccessKey -Endpoint "core.windows.net"
+```
+
+![Cloud Witness applied in PowerShell](/modules/module_2/media/ps_cw.png "Cloud Witness applied in PowerShell")
+
+Within a few moments, your witness settings should be successfully applied and you have now completed configuring the quorum settings for the **AzSHCI-Cluster** cluster.
+
+### Congratulations! ### <!-- omit in toc -->
+You've now successfully deployed and configured your Azure Stack HCI cluster!
+
+Next steps
+-----------
+In this step, you've successfully created a nested Azure Stack HCI cluster using PowerShell. With this complete, you can now move on to [Integrate Azure Stack HCI with Azure](/modules/module_2/3_Integrate_Azure "Integrate Azure Stack HCI with Azure")
+
+Raising issues
+-----------
+If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
