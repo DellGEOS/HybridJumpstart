@@ -5,13 +5,14 @@ In this section, you'll walk through deployment of an Azure Stack HCI cluster us
 Contents <!-- omit in toc -->
 -----------
 - [Before you begin](#before-you-begin)
-- [Step 1 - Management Tools](#step-1---management-tools)
-- [Step 2 - Initial OS Configuration](#step-2---initial-os-configuration)
-- [Step 3 - Install required features](#step-3---install-required-features)
-- [Step 4 - Configuring networking](#step-4---configuring-networking)
-- [Step 5 - Creating the Azure Stack HCI cluster](#step-5---creating-the-azure-stack-hci-cluster)
-- [Step 6 - Storage](#step-6---storage)
-- [Step 7 - Configuring the cluster witness](#step-7---configuring-the-cluster-witness)
+- [Creating a (local) cluster](#creating-a-local-cluster)
+  - [Management Tools](#management-tools)
+  - [Initial OS Configuration](#initial-os-configuration)
+  - [Install required features](#install-required-features)
+  - [Networking](#networking)
+  - [Clustering](#clustering)
+  - [Storage](#storage)
+- [Configuring the cluster witness](#configuring-the-cluster-witness)
   - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
   - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
 - [Next steps](#next-steps)
@@ -27,8 +28,10 @@ If you don't have those VMs running, go over and do that now - it should take ab
 
 Azure Stack HCI cluster creation can be fully automated using PowerShell. In this scenario, 2a, we'll walk you through the steps required to configure an Azure Stack HCI cluster.
 
-Step 1 - Management Tools
+Creating a (local) cluster
 -----------
+
+### Management Tools
 In this step, you'll install some additional management tools on your **HybridWorkshop-DC** virtual machine, that will assist in the remote configuration of the Azure Stack HCI environment.
 
 1. On your Hyper-V host, open **Hyper-V Manager**.
@@ -53,8 +56,7 @@ Install-WindowsFeature -Name RSAT-Clustering, RSAT-Clustering-Mgmt, `
 
 This code essentially installs a number of **Remote Server Administration Tools (RSAT)** that allows more control of those specific roles and features, from this particular server. It should take a few minutes to install and configure.
 
-Step 2 - Initial OS Configuration
----------
+### Initial OS Configuration
 When running in production, there are certain tweaks and optimizations that can be made that enhance performance and reliability of the operating system. 2 examples of those optimizations include adjusting the **Memory Dump** settings, along with configuring the OS to operate in **High Performance** mode.
 
 > If you're not familiar with an **Active Memory Dump**, it is particularly useful when your system is hosting virtual machines (VMs). When taking a regular complete memory dump, the contents of each VM is included. When there are multiple VMs running, this can account for a large amount of memory in use on the host system. Many times, the memory/issues of interest are in the parent host OS, not the child VMs. An active memory dump filters out the memory associated with all of the child VMs, ensuring the dump file sizes are more space efficient, and specific to the Hyper-V host.
@@ -85,8 +87,7 @@ _________________
 **NOTE** - Configuring a high-performance power plan for a virtual machine will have no effect. It is just shown above for reference.
 _________________
 
-Step 3 - Install required features
--------
+### Install required features
 With the Azure Stack HCI OS ready, you can now install the additional features on each node, prior to configuring the Azure Stack HCI cluster. The required roles and features that need to be installed on your Azure Stack HCI nodes include:
 
 * Hyper-V and Hyper-V PowerShell
@@ -121,8 +122,7 @@ Foreach ($Server in $Servers) {
 ```
 ![Required features being installed on Azure Stack HCI](/modules/module_2/media/ps_install_features.png "Required features being installed on Azure Stack HCI")
 
-Step 4 - Configuring networking
--------
+### Networking
 With the roles and features successfully installed, and the nodes back online after a short reboot, it's time to configure the networking. Now, by default, your Azure Stack HCI nodes have 4 network adapters (NICs), however many new production systems are shipping with just 2 NICs, albeit with significantly higher performance and bandwidth available - in some cases, each NIC is 100GbE!
 
 With as few as 2 physical NICs in a host, how can you ensure that you have multiple "separate networks" for traffic types like **Management**, **Virtual Machines** and **Storage**?
@@ -384,9 +384,7 @@ ________________________
 **NOTE** - There are a number of settings which have not been included in this section, as they do not function in a nested virtualization environment. Features such as **RDMA**, **Network QoS**, **Datacenter Bridging (DCBX)** etc. only really function correctly with the appropriate physical hardware, including compatible switches. These elements will be covered in a different module, at a later date.
 ________________________
 
-Step 5 - Creating the Azure Stack HCI cluster
--------
-
+### Clustering
 With the networking configured, you can now proceed on to creating the Azure Stack HCI cluster with PowerShell. Run the following PowerShell commands to start the creation of your cluster.
 
 ```powershell
@@ -417,8 +415,7 @@ ________________________
 **NOTE** - Cluster validation is intended to catch hardware or configuration problems before a cluster goes into production. Cluster validation helps to ensure that the Azure Stack HCI solution that you're about to deploy is truly dependable. You can also use cluster validation on configured failover clusters as a diagnostic tool. If you're interested in learning more about Cluster Validation, [check out the official docs](https://docs.microsoft.com/en-us/azure-stack/hci/deploy/validate "Cluster validation official documentation").
 ________________________
 
-Step 6 - Storage
------------
+### Storage
 With the cluster successfully created, you're now good to proceed on to configuring your storage. Whilst less important in a fresh nested environment, it's always good to start from a clean slate, so first, you'll clean the drives before configuring storage.
 
 1. First, from an **administrative PowerShell console**, run the following command to clean up any existing storage configuration:
@@ -465,7 +462,7 @@ Enable-ClusterStorageSpacesDirect -PoolFriendlyName "S2D on $ClusterName" -CimSe
 
 With the storage configured, the final step is to configure the cluster witness to ensure your cluster has the highest levels of availability.
 
-Step 7 - Configuring the cluster witness
+Configuring the cluster witness
 -----------
 By deploying an Azure Stack HCI cluster, you're providing high availability for workloads. These resources are considered highly available if the nodes that host resources are up; however, the cluster generally requires more than half the nodes to be running, which is known as having **quorum**.
 

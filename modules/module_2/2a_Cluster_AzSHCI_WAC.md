@@ -5,7 +5,13 @@ In this section, you'll walk through deployment of an Azure Stack HCI cluster us
 Contents <!-- omit in toc -->
 -----------
 - [Before you begin](#before-you-begin)
+  - [Decide on cluster type](#decide-on-cluster-type)
 - [Creating a (local) cluster](#creating-a-local-cluster)
+  - [Get started](#get-started)
+  - [Networking](#networking)
+  - [Clustering](#clustering)
+  - [Storage](#storage)
+  - [SDN](#sdn)
 - [Configuring the cluster witness](#configuring-the-cluster-witness)
 - [Next steps](#next-steps)
 - [Raising issues](#raising-issues)
@@ -58,7 +64,7 @@ You're now ready to begin deployment of your Azure Stack HCI cluster with Window
 * **Storage** - Configures Storage Spaces Direct
 * **SDN** - Configures Software Defined Networking (Optional)
 
-### Decide on cluster type ### <!-- omit in toc -->
+### Decide on cluster type ###
 Not only does Azure Stack HCI support a cluster in a single site (or a **local cluster** as we'll refer to it going forward) consisting of between 2 and 16 nodes, but, also supports a **Stretch Cluster**, where a single cluster can have nodes distrubuted across two sites.
 
 * If you have 2 Azure Stack HCI nodes, you will be able to create a **local cluster**
@@ -74,7 +80,7 @@ This section will walk through the key steps for you to set up the Azure Stack H
 2. Once logged into Windows Admin Center, under **All connections**, click **Add**
 3. On the **Add or create resources popup**, under **Server clusters**, click **Create new** to open the **Cluster Creation wizard**
 
-### Get started ### <!-- omit in toc -->
+### Get started ###
 ![Choose cluster type in the Create Cluster wizard](/modules/module_2/media/wac_cluster_type_ga.png "Choose cluster type in the Create Cluster wizard")
 
 1. Ensure you select **Azure Stack HCI**, select **All servers in one site** and cick **Create**
@@ -111,7 +117,7 @@ _____________
 
 ![Restart nodes in the Create Cluster wizard](/modules/module_2/media/wac_restart_ga.png "Restart nodes in the Create Cluster wizard")
 
-### Networking <!-- omit in toc -->
+### Networking
 With the servers configured with the appropriate features, updated and rebooted, you're ready to configure the network for your Azure Stack HCI nodes.
 
 By default, your nested Azure Stack HCI nodes have 4 host network adapters (pNICs), however many new production systems are shipping with just 2 NICs, albeit with significantly higher performance and bandwidth available - in some cases, each NIC is 100GbE!
@@ -169,7 +175,7 @@ The first key step with setting up the networking with Windows Admin Center, is 
 
 As it stands, this is the way that Windows Admin Center approaches the network configuration, however, if you were not using Windows Admin Center, through PowerShell, there are a number of different ways to configure the network to meet your needs. We will work through the Windows Admin Center approach in this guide.
 
-#### Network Setup Overview #### 
+#### Network Setup Overview
 Each of your Azure Stack HCI nodes should have 4 NICs. For this simple evaluation, you'll dedicate the NICs in the following way:
 
 * 2 NICs will be dedicated to management. These NICs will be renamed, teamed and a new virtual network adapter will be created and used for management traffic
@@ -236,7 +242,7 @@ You should delete any **default gateway** information from the form. When you cl
 
 10.  Once changes have been successfully applied, click **Next: Clustering**
 
-### Clustering ### <!-- omit in toc -->
+### Clustering ###
 With the network configured for the workshop environment, it's time to construct the local cluster.
 
 1. At the start of the **Cluster** wizard, on the **Validate the cluster** page, click **Validate**.
@@ -259,7 +265,7 @@ With the network configured for the workshop environment, it's time to construct
 
 ![Cluster creation successful in the Create Cluster wizard](/modules/module_2/media/wac_cluster_success.png "Cluster creation successful in the Create Cluster wizard")
 
-### Storage ### <!-- omit in toc -->
+### Storage ###
 With the cluster successfully created, you're now good to proceed on to configuring your storage.  Whilst less important in a fresh nested environment, it's always good to start from a clean slate, so first, you'll clean the drives before configuring storage.
 
 1. On the storage landing page within the Create Cluster wizard, click **Erase Drives**, and when prompted, with **You're about to erase all existing data**, click **Erase drives**.  Once complete, you should have a successful confirmation message, then click **Next**
@@ -284,7 +290,7 @@ With the cluster successfully created, you're now good to proceed on to configur
 
 6. With Storage Spaces Direct enabled, click **Next:SDN**
 
-### SDN ### <!-- omit in toc -->
+### SDN ###
 With Storage configured, for the purpose of this section, we will skip the SDN configuration, but will revisit SDN in a different part of this module.
 
 1. On the **Define the Network Controller cluster** page, click **Skip**
