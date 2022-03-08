@@ -351,7 +351,7 @@ As part of this guide, we're going to set up cluster quorum, using **Windows Adm
 
 18. Within a few moments, your witness settings should be successfully applied and you have now completed configuring the quorum settings for the **AzSHCI-Cluster** cluster.
 
-### Congratulations! ### <!-- omit in toc -->
+### Congratulations! <!-- omit in toc -->
 You've now successfully deployed and configured your Azure Stack HCI cluster!
 
 Next steps
