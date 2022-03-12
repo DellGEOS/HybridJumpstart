@@ -374,7 +374,9 @@ You've now successfully registered your Azure Stack HCI cluster!
 
 Next Steps
 -----------
-In this step, you've successfully registered your Azure Stack HCI cluster. With this complete, you can now move on to [Explore some of the core management operations of your Azure Stack HCI environment](/modules/module_2/4_ManageAzSHCI.md "Explore the management of your Azure Stack HCI environment")
+In this step, you've successfully registered your Azure Stack HCI cluster. With this complete, you can now move on to:
+
+* [**Module 2 | Scenario 4** - Explore some of the core management operations of your Azure Stack HCI environment](/modules/module_2/4_ManageAzSHCI.md "Explore the management of your Azure Stack HCI environment")
 
 Raising issues
 -----------

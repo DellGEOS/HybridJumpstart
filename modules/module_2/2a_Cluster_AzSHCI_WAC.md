@@ -407,7 +407,9 @@ You've now successfully deployed and configured your Azure Stack HCI cluster!
 
 Next steps
 -----------
-In this step, you've successfully created a nested Azure Stack HCI cluster using Windows Admin Center. With this complete, you can now [Integrate Azure Stack HCI with Azure](/modules/module_2/3_Integrate_Azure "Integrate Azure Stack HCI with Azure")
+In this step, you've successfully created a nested Azure Stack HCI cluster using Windows Admin Center. With this complete, you can now move on to:
+
+* [**Module 2 | Scenario 3** - Integrate Azure Stack HCI with Azure](/modules/module_2/3_Integrate_Azure "Integrate Azure Stack HCI with Azure")
 
 Raising issues
 -----------

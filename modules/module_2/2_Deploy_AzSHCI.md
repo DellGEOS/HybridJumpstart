@@ -158,8 +158,8 @@ Next steps
 -----------
 With your Azure Stack HCI nodes created and running, you can choose your preferred deployment approach for creating the Azure Stack HCI cluster, either with **Windows Admin Center** or **PowerShell**
 
-* **Scenario 2a** - [Deploying Azure Stack HCI with Windows Admin Center](/modules/module_2/2a_Cluster_AzSHCI_WAC.md)
-* **Scenario 2b** - [Deploying Azure Stack HCI with PowerShell](/modules/module_2/2b_Cluster_AzSHCI_PS.md)
+* **Module 2 | Scenario 2a** - [Deploying Azure Stack HCI with Windows Admin Center](/modules/module_2/2a_Cluster_AzSHCI_WAC.md)
+* **Module 2 | Scenario 2b** - [Deploying Azure Stack HCI with PowerShell](/modules/module_2/2b_Cluster_AzSHCI_PS.md)
 
 Raising issues
 -----------

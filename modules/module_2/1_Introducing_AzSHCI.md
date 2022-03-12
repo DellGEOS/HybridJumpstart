@@ -8,7 +8,9 @@ Sit back, relax, and enjoy this short video discussing the hybrid landscape, and
 
 Next steps
 -----------
-With a solid understanding of Azure Stack HCI under your belt, you can now start with a deployment of your first Azure Stack HCI cluster. Head on over to [**Scenario 2 to get started**](/modules/module_2/2_Deploy_AzSHCI.md).
+With a solid understanding of Azure Stack HCI under your belt, you can now start with a deployment of your first Azure Stack HCI cluster. Head on over to:
+
+* [**Module 2 | Scenario 2** to get started](/modules/module_2/2_Deploy_AzSHCI.md).
 
 Raising issues
 -----------
