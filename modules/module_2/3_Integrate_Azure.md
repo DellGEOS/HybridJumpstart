@@ -139,7 +139,7 @@ New-AzureADMSPermissionGrantPolicy -Id "AzSHCI-registration-consent-policy" `
     -Description "Azure Stack HCI registration admin app consent policy"
 ```
 
-1. Add a condition that includes required app permissions for Azure Stack HCI service, which carries the app ID 1322e676-dee7-41ee-a874-ac923822781c.
+3. Add a condition that includes required app permissions for Azure Stack HCI service, which carries the app ID 1322e676-dee7-41ee-a874-ac923822781c.
 
 ```powershell
 New-AzureADMSPermissionGrantConditionSet -PolicyId "AzSHCI-registration-consent-policy" `
@@ -188,7 +188,7 @@ Complete Registration
 To complete registration, you have 2 options - you can use **Windows Admin Center**, or you can use **PowerShell**.
 
 ### Option 1 - Register using PowerShell
-We're going to perform the registration from the **HybridWorkshop-DC** machine, which we've been using with Windows Admin Center.
+We're going to perform the registration from the **HybridWorkshop-DC** machine.
 
 1. On **HybridWorkshop-DC**, open **PowerShell as administrator**
 2. Run the following PowerShell command to download the required Azure Stack HCI PowerShell module and dependencies:
@@ -215,7 +215,7 @@ Login-AzAccount -UseDeviceAuthentication
 ```
 ![Logging into Azure with PowerShell](/modules/module_2/media/azure_login.png "Logging into Azure with PowerShell")
 
-1. To select your preferred subscription below, run the following PowerShell:
+4. To select your preferred subscription below, run the following PowerShell:
 
 ```powershell
 # Select context if more available
@@ -270,7 +270,7 @@ if (-not (Get-AzResourceGroup -Name $ResourceGroupName -ErrorAction Ignore)) {
 7. To register the cluster, with your **Subscription ID** in hand from the earlier PowerShell command, you can **register using the following Powershell commands**, from your open PowerShell window. The initial set of commands below collect tokens from your existing Azure login, to avoid re-prompting you to log into Azure when registering:
 
 ```powershell
-# Grab the tokens from the existing session
+# Grab the tokens from the existing login session
 $armTokenItemResource = "https://management.core.windows.net/"
 $graphTokenItemResource = "https://graph.windows.net/"
 $azContext = Get-AzContext
@@ -298,7 +298,7 @@ Of these commands, many are optional:
 
 * **-ResourceName** - If not declared, the Azure Stack HCI cluster name is used
 * **-ResourceGroupName** - If not declared, the Azure Stack HCI cluster plus the suffix "-rg" is used
-* **-Region** - If not declared, "EastUS" will be used.  Additional regions are supported, with the longer term goal to integrate with Azure Arc in all Azure regions.
+* **-Region** - If not declared, "EastUS" will be used. Additional regions are supported, with the longer term goal to integrate with Azure Arc in all Azure regions.
 * **-EnvironmentName** - If not declared, "AzureCloud" will be used, but allowed values will include additional environments in the future
 * **-ComputerName** - This is used when running the commands remotely against a cluster.  Just make sure you're using a domain account that has admin privilege on the nodes and cluster
 * **-Credential** - This is also used for running the commands remotely against a cluster.
@@ -322,56 +322,59 @@ Invoke-Command -ComputerName azshci1 -ScriptBlock {
 
 You can see the **ConnectionStatus** and **LastConnected** time, which is usually within the last day unless the cluster is temporarily disconnected from the Internet. An Azure Stack HCI cluster can operate fully offline for up to 30 consecutive days.
 
-### Option 2 - Register using Windows Admin Center ###
+**NOTE** - If when you ran **Register-AzureStackHCI**, you don't have appropriate permissions in Azure Active Directory, to grant admin consent, you will need to work with your Azure Active Directory administrator to complete registration later. You can exit and leave the registration in status "**pending admin consent**," i.e. partially completed. Once consent has been granted, **simply re-run Register-AzureStackHCI** to complete registration.
 
-1. On **HybridWorkshop-DC**, logged in as **dell\labadmin**, open Windows Admin Center, and on the **All connections** page, select your azshci-cluster
+### Option 2 - Register using Windows Admin Center
+If your preference is to use Windows Admin Center for registration, follow the steps below:
+
+1. On **HybridWorkshop-DC**, logged in as **dell\labadmin**, open Windows Admin Center, and on the **All connections** page, select your azshci-cluster.
 2. When the cluster dashboard has loaded, in the top-right corner, you'll see the **status of the Azure registration/connection**
 
-![Azure registration status in Windows Admin Center](/deployment/media/wac_azure_reg_dashboard_2.png "Azure registration status in Windows Admin Center")
+![Azure registration status in Windows Admin Center](/modules/module_2/media/wac_azure_reg_dashboard_2.png "Azure registration status in Windows Admin Center")
 
 3. You can begin the registration process by clicking **Register this cluster**
 4. If you haven't already, you'll be prompted to register Windows Admin Center with an Azure tenant. Follow the instructions to **Copy the code** and then click on the link to configure device login.
 5. When prompted for credentials, **enter your Azure credentials** for a tenant you'd like to register Windows Admin Center
-6. Back in Windows Admin Center, you'll notice your tenant information has been added. You can now click **Connect** to connect Windows Admin Center to Azure
+6. Back in Windows Admin Center, you'll notice your tenant information has been added. You can now click **Connect** to connect Windows Admin Center to Azure.
 
-![Connecting Windows Admin Center to Azure](/deployment/media/wac_azure_connect.png "Connecting Windows Admin Center to Azure")
+![Connecting Windows Admin Center to Azure](/modules/module_2/media/wac_azure_connect.png "Connecting Windows Admin Center to Azure")
 
 7. Click on **Sign in** and when prompted for credentials, **enter your Azure credentials** and you should see a popup that asks for you to accept the permissions, so click **Accept**
 
-![Permissions for Windows Admin Center](/deployment/media/wac_azure_permissions.png "Permissions for Windows Admin Center")
+![Permissions for Windows Admin Center](/modules/module_2/media/wac_azure_permissions.png "Permissions for Windows Admin Center")
 
 8. Back in Windows Admin Center, you may need to refresh the page if your 'Register this cluster' link is not active. Once active, click **Register this cluster** and you should be presented with a window requesting more information.
-9.  Choose your **Azure subscription** that you'd like to use to register, along with an **Azure resource group** and **region**. You can also expand **advanced** to see that **Enable Azure **Arc**** enabled by default. Click **Register**.  This will take a few moments.
+9.  Choose your **Azure subscription** that you'd like to use to register, along with a new or existing **Azure resource group** and **region**. You can also expand **advanced** to see that **Enable Azure Arc** enabled by default. Click **Register**.  This will take a few moments.
 
-![Final step for registering Azure Stack HCI with Windows Admin Center](/deployment/media/wac_azure_register_21H2.png "Final step for registering Azure Stack HCI with Windows Admin Center")
+![Final step for registering Azure Stack HCI with Windows Admin Center](/modules/module_2/media/wac_azure_register_21H2.png "Final step for registering Azure Stack HCI with Windows Admin Center")
+
+> **NOTE** - you may be prompted for CredSSP credentials - enter your LabAdmin credentials and proceed.
 
 10. Once completed, you should see updated status on Windows Admin Center dashboard, showing that the cluster has been correctly registered.
 
-![Azure registration status in Windows Admin Center](/deployment/media/wac_azure_reg_dashboard_3.png "Azure registration status in Windows Admin Center")
+![Azure registration status in Windows Admin Center](/modules/module_2/media/wac_azure_reg_dashboard.png "Azure registration status in Windows Admin Center")
 
-You can now proceed on to [Viewing registration details in the Azure portal](#View-registration-details-in-the-Azure-portal)
+**NOTE** - If when you ran the registration command, you don't have appropriate permissions in Azure Active Directory, to grant admin consent, you will need to work with your Azure Active Directory administrator to complete registration later. You can exit and leave the registration in status "**pending admin consent**," i.e. partially completed. Once consent has been granted, **simply rerun the process** to complete registration.
 
-### View registration details in the Azure portal ###
+### View registration details in the Azure portal
 With registration complete, either through Windows Admin Center, or through PowerShell, you should take some time to explore the artifacts that are created in Azure, once registration successfully completes.
 
 1. On **HybridWorkshop-DC**, open the Edge browser and **log into https://portal.azure.com** to check the resources created there. In the **search box** at the top of the screen, search for **Resource groups** and then click on **Resource groups**
-2. You should see a new **Resource group** listed, with the name you specified earlier, which in our case, is **AZSHCI-Cluster_RG**
+2. You should see a new **Resource group** listed, with the name you specified earlier, which in our case, is **AzSHCI-Cluster_Rg**
 
-![Registration resource group in Azure](/deployment/media/registration_rg_ga.png "Registration resource group in Azure")
+![Registration resource group in Azure](/modules/module_2/media/registration_rg_ga.png "Registration resource group in Azure")
 
-12. Click on the **AZSHCICLUS_RG** resource group, and in the central pane, you'll see that a record with the name **azshciclus** has been created inside the resource group
-13. Click on the **azihciclus** record, and you'll be taken to the new Azure Stack HCI Resource Provider, which shows information about all of your clusters, including details on the currently selected cluster
+12. Click on the **AzSHCI-Cluster_Rg** resource group, and in the central pane, you'll see that a record with the name **AzSHCI-Cluster** has been created inside the resource group
+13. Click on the **AzSHCI-Cluster** record, and you'll be taken to the new Azure Stack HCI Resource Provider, which shows information about all of your clusters, including details on the currently selected cluster
 
-![Overview of the recently registered cluster in the Azure portal](/deployment/media/azure_portal_hcicluster_21H2.png "Overview of the recently registered cluster in the Azure portal")
-
-**NOTE** - If when you ran **Register-AzureStackHCI**, you don't have appropriate permissions in Azure Active Directory, to grant admin consent, you will need to work with your Azure Active Directory administrator to complete registration later. You can exit and leave the registration in status "**pending admin consent**," i.e. partially completed. Once consent has been granted, **simply re-run Register-AzureStackHCI** to complete registration.
+![Overview of the recently registered cluster in the Azure portal](/modules/module_2/media/azure_portal_hcicluster_21H2.png "Overview of the recently registered cluster in the Azure portal")
 
 ### Congratulations! <!-- omit in toc -->
 You've now successfully registered your Azure Stack HCI cluster!
 
 Next Steps
 -----------
-In this step, you've successfully registered your Azure Stack HCI cluster. With this complete, you can now move on to [Explore the management of your Azure Stack HCI environment](/deployment/steps/4_ExploreAzSHCI.md "Explore the management of your Azure Stack HCI environment")
+In this step, you've successfully registered your Azure Stack HCI cluster. With this complete, you can now move on to [Explore some of the core management operations of your Azure Stack HCI environment](/modules/module_2/4_ManageAzSHCI.md "Explore the management of your Azure Stack HCI environment")
 
 Raising issues
 -----------

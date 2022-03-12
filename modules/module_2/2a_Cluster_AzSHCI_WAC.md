@@ -13,6 +13,8 @@ Contents <!-- omit in toc -->
   - [Storage](#storage)
   - [SDN](#sdn)
 - [Configuring the cluster witness](#configuring-the-cluster-witness)
+  - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
+  - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
 - [Next steps](#next-steps)
 - [Raising issues](#raising-issues)
 
@@ -298,24 +300,65 @@ With Storage configured, for the purpose of this section, we will skip the SDN c
 
 Configuring the cluster witness
 -----------
-By deploying an Azure Stack HCI cluster, you're providing high availability for workloads. These resources are considered highly available if the nodes that host resources are up; however, the cluster generally requires more than half the nodes to be running, which is known as having quorum.
+By deploying an Azure Stack HCI cluster, you're providing high availability for workloads. These resources are considered highly available if the nodes that host resources are up; however, the cluster generally requires more than half the nodes to be running, which is known as having **quorum**.
 
 Quorum is designed to prevent split-brain scenarios which can happen when there is a partition in the network and subsets of nodes cannot communicate with each other. This can cause both subsets of nodes to try to own the workload and write to the same disk which can lead to numerous problems. However, this is prevented with Failover Clustering's concept of quorum which forces only one of these groups of nodes to continue running, so only one of these groups will stay online.
 
-In this step, we're going to utilize a **Cloud witness** to help provide quorum.  If you want to learn more about quorum, [check out the official documentation.](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/quorum "Official documentation about Cluster quorum")
+In addition to the nodes themselves, a **witness** can be used to add an additional vote and help to ensure the split-brain scenario doesn't occur.
 
-As part of this guide, we're going to set up cluster quorum, using **Windows Admin Center**.
+If you want to learn more about quorum, and the witness concept [check out the official documentation.](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/quorum "Official documentation about Cluster quorum")
 
-1. If you're not already, ensure you're logged into your **Windows Admin Center** instance, and click on the **azshci-cluster** that you created earlier
+With Azure Stack HCI, there are 2 options for the witness:
+
+* File Share Witness
+* Cloud Witness
+
+We'll document both options below - feel free to choose the one that's most appropriate for you.
+
+### Witness Option 1 - File Share Witness
+The first option is to use a standard SMB file share, *somewhere* in your environment to act as the witness, store the witness.log file and provide quorum for the cluster. This file share should be a redundant file share, but for the purpose of this scenario, you'll be creating a file share on the domain controller, and for speed and simplicity, we'll use PowerShell to create the file share.
+
+1. Open an **Administrative PowerShell console**, and run the following PowerShell commands to create a suitable file share on the domain controller:
+
+```powershell
+# Configure Witness
+$WitnessServer = "DC"
+
+# Create new directory
+$ClusterName = "AzSHCI-Cluster"
+$WitnessName = $ClusterName + "Witness"
+Invoke-Command -ComputerName $WitnessServer -ScriptBlock `
+{ New-Item -Path C:\Shares -Name $using:WitnessName -ItemType Directory }
+$accounts = @()
+$accounts += "Dell\$ClusterName$"
+$accounts += "Dell\Domain Admins"
+New-SmbShare -Name $WitnessName -Path "C:\Shares\$WitnessName" `
+    -FullAccess $accounts -CimSession $WitnessServer
+
+# Set NTFS permissions 
+Invoke-Command -ComputerName $WitnessServer -ScriptBlock `
+{ (Get-SmbShare $using:WitnessName).PresetPathAcl | Set-Acl }
+```
+
+> The code above first defines the location where the Witness folder and file share will be created. It then creates a new directory, sets the directory as an SMB share on the network, and assigns the appropriate permissions to a core set of accounts.
+
+2. With the file share created, you can now configure the cluster to use this file share as the witness. If you're not already, ensure you're logged into your **Windows Admin Center** instance, and click on the **azshci-cluster** that you created earlier
 
 ![Connect to your cluster with Windows Admin Center](/modules/module_2/media/wac_azshcicluster.png "Connect to your cluster with Windows Admin Center")
 
-2. You may be prompted for credentials, so log in with your **azshci\azureuser** credentials and tick the **Use these credentials for all connections** box. You should then be connected to your **azshciclus cluster**
-3. After a few moments of verification, the **cluster dashboard** will open. 
-4. On the **cluster dashboard**, at the very bottom-left of the window, click on **Settings**
-5. In the **Settings** window, click on **Witness** and under **Witness type**, use the drop-down to select **Cloud witness**
+3. You may be prompted for credentials, so log in with your **azshci\azureuser** credentials and tick the **Use these credentials for all connections** box. You should then be connected to your **azshciclus cluster**
+4. After a few moments of verification, the **cluster dashboard** will open. 
+5. On the **cluster dashboard**, at the very bottom-left of the window, click on **Settings**
+6. In the **Settings** window, click on **Witness** and under **Witness type**, use the drop-down to select **File share witness**
 
-![Set up cloud witness in Windows Admin Center](/modules/module_2/media/wac_cloud_witness.png "Set up cloud witness in Windows Admin Center")
+![Set up a file share witness in Windows Admin Center](/modules/module_2/media/wac_fs_witness.png "Set up file share witness in Windows Admin Center")
+
+7. For the **File share path**, enter the path to the file share you created on the domain controller earlier, which by default should be **\\\DC\AzSHCI-ClusterWitness**
+8. You can leave the username and password fields blank, and click **Save**.
+9. Within a few moments, your witness settings should be successfully applied and you have now completed configuring the quorum settings for the **AzSHCI-Cluster** cluster.
+
+### Witness Option 2 - Cloud Witness
+If you prefer, you can choose to use a cloud witness instead of a file share. Cloud Witness is a type of Failover Cluster quorum witness that uses Microsoft Azure to provide a vote on cluster quorum. It uses Azure Blob Storage to read/write a blob file which is then used as an arbitration point in case of split-brain resolution.
 
 1. Open a new tab in your browser, and navigate to **https://portal.azure.com** and login with your Azure credentials
 2. You should already have a subscription from an earlier step, but if not, you should [review those steps and create one, then come back here](/modules/module_0/2_azure_prerequisites.md#get-an-azure-subscription)
@@ -330,22 +373,30 @@ As part of this guide, we're going to set up cluster quorum, using **Windows Adm
 
 ![Set up storage account in Azure](/modules/module_2/media/azure_cloud_witness.png "Set up storage account in Azure")
 
-1.  On the **Advanced** page, ensure that **Enable blob public access** is **unchecked**, and **Minimum TLS version** is set to **Version 1.2**
-2.  On the **Networking**, **Data protection** and **Tags** pages, accept the defaults and press **Next**
-3.  When complete, click **Create** and your deployment will begin.  This should take a few moments.
-4.  Once complete, in the **notification**, click on **Go to resource**
-5.  On the left-hand navigation, under Settings, click **Access Keys**. When you create a Microsoft Azure Storage Account, it is associated with two Access Keys that are automatically generated - Primary Access key and Secondary Access key. For a first-time creation of Cloud Witness, use the **Primary Access Key**. There is no restriction regarding which key to use for Cloud Witness.
-6.  Click on **Show keys** and take a copy of the **Storage account name** and **key1**
+5. On the **Advanced** page, ensure that **Enable blob public access** is **unchecked**, and **Minimum TLS version** is set to **Version 1.2**
+6. On the **Networking**, **Data protection** and **Tags** pages, accept the defaults and press **Next**
+7. When complete, click **Create** and your deployment will begin.  This should take a few moments.
+8. Once complete, in the **notification**, click on **Go to resource**
+9. On the left-hand navigation, under Settings, click **Access Keys**. When you create a Microsoft Azure Storage Account, it is associated with two Access Keys that are automatically generated - Primary Access key and Secondary Access key. For a first-time creation of Cloud Witness, use the **Primary Access Key**. There is no restriction regarding which key to use for Cloud Witness.
+10. Click on **Show keys** and take a copy of the **Storage account name** and **key1**
 
 ![Configure Primary Access key in Azure](/modules/module_2/media/azure_keys.png "Configure Primary Access key in Azure")
 
-16. On the left-hand navigation, under Settings, click **Properties** and make a note of your **blob service endpoint**.
+11. On the left-hand navigation, under Settings, click **Properties** and make a note of your **blob service endpoint**.
 
 ![Blob Service endpoint in Azure](/modules/module_2/media/azure_blob.png "Blob Service endpoint in Azure")
 
 **NOTE** - The required service endpoint is the section of the Blob service URL **after blob.**, i.e. for our configuration, **core.windows.net**
 
-17. With all the information gathered, return to the **Windows Admin Center** and complete the form with your values, then click **Save**
+12. With all the information gathered, open **Windows Admin Center**.
+13. Click on the **azshci-cluster** that you created earlier
+
+![Connect to your cluster with Windows Admin Center](/modules/module_2/media/wac_azshcicluster.png "Connect to your cluster with Windows Admin Center")
+
+14. You may be prompted for credentials, so log in with your **azshci\azureuser** credentials and tick the **Use these credentials for all connections** box. You should then be connected to your **azshciclus cluster**
+15. After a few moments of verification, the **cluster dashboard** will open. 
+16. On the **cluster dashboard**, at the very bottom-left of the window, click on **Settings**
+17. In the **Settings** window, click on **Witness** and under **Witness type**, use the drop-down to select **Cloud witness** and complete the form with your values, then click **Save**
 
 ![Providing storage account info in Windows Admin Center](/modules/module_2/media/wac_azure_key.png "Providing storage account info in Windows Admin Center")
 
