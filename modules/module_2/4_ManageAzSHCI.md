@@ -9,6 +9,11 @@ Contents <!-- omit in toc -->
   - [Explore Storage Settings](#explore-storage-settings)
   - [Create volumes for VMs](#create-volumes-for-vms)
 - [Explore Cluster-wide settings](#explore-cluster-wide-settings)
+- [Explore Hyper-V Host settings](#explore-hyper-v-host-settings)
+- [Deploy your first virtual machine](#deploy-your-first-virtual-machine)
+  - [Create the virtual machine](#create-the-virtual-machine)
+  - [Live migrate the virtual machine](#live-migrate-the-virtual-machine)
+  - [Explore the VM settings](#explore-the-vm-settings)
 
 
 Before you begin
@@ -199,4 +204,156 @@ You now have a couple of volumes created and ready to accept workloads.  Whilst 
 
 Explore Cluster-wide settings
 ---------
+With the initial storage settings defined and test volumes created, it's time to explore some of the cluster-specific settings.
 
+![Cluster settings in Windows Admin Center](/modules/module_2/media/cluster_settings.png "Cluster settings in Windows Admin Center")
+
+1. In **Windows Admin Center**, click **Settings** and under **Cluster**, you'll notice a number of menu options.
+2. Click on **Access point** - this is the name of your Azure Stack HCI cluster.
+3. Click on **Node shutdown behaviour** - when the node is shutdown gracefully, this setting determines if virtual machines will be live migrated to other available nodes, or shutdown/saved.
+4. Click on * **Cluster traffic encryption**, and then **view them on our new Security tool** - here, you can optionally change the way that traffic between cluster nodes is protected.
+
+![Cluster security settings in Windows Admin Center](/modules/module_2/media/cluster_encryption.png "Cluster security settings in Windows Admin Center")
+
+> By default, all communication between the nodes are sent **signed**, making the use of **certificates**. This may be fine when all the cluster nodes reside in the same rack. However, when nodes are separated in different racks or locations, you may wish to have a little more security and make use of encryption. For storage traffic between nodes, you have both Cluster Shared Volumes (CSV) and Storage Bus Layer (SBL) traffic. For these type of traffic, the default is to send everything in clear text. You may wish to secure this type of data traffic to prevent sniffer traces from accessing the data. Naturally, You should note that there is a notable performance operating cost with any end-to-end encryption protection when compared to non-encrypted. You can [read more about the use of encryption for cluster network traffic here](https://docs.microsoft.com/en-us/windows-server/storage/file-server/smb-direct#smb-encryption-with-smb-direct).
+
+5. Click back to **Settings** and then **Virtual machine load balancing** - this allows you to configure the Azure Stack HCI cluster to **automatically** live migrate virtial machines around the cluster based on the CPU utilization and memory pressure of the Azure Stack HCI nodes themselves, helping to balance performance and resource usage across the cluster.  You can [read more about virtual machine load balancing here](https://docs.microsoft.com/en-us/azure-stack/hci/manage/vm-load-balancing).
+6. You can skip **Witness** as this was configured in a previous scenario. Click **Affinity rules**.
+
+![Affinity rules in Windows Admin Center](/modules/module_2/media/affinity_rules.png "Affinity in Windows Admin Center")
+
+> **Affinity** is a rule that establishes a relationship between two or more resource groups or roles, such as virtual machines, to keep them together on the same server, cluster, or site. **Anti-affinity** is the opposite in that it is used to keep the specified VMs or resource groups apart from each other, such as two domain controllers placed on separate servers or in separate sites for disaster recovery.
+
+________________
+We do not yet have any virtual machines running on our cluster, but in order to create an affinity rule with **PowerShell**, you could run the following command to ensure a pair of SQL Server VMs run on different physical Azure Stack HCI nodes:
+
+```powershell
+New-ClusterAffinityRule -Name SQL -Ruletype DifferentNode -Cluster Cluster1
+Add-ClusterGroupToAffinityRule -Groups SQL1,SQL2 –Name SQL -Cluster Cluster1
+Set-ClusterAffinityRule -Name SQL -Enabled 1 -Cluster Cluster1
+```
+_______________
+
+Explore Hyper-V Host settings
+---------
+Next, we'll review the settings that apply specifically to Hyper-V hosts.
+
+![Hyper-V Host settings in Windows Admin Center](/modules/module_2/media/hyper-v_host_settings.png "Hyper-V Host settings in Windows Admin Center")
+
+1. Under **General**, you have the opportunity to change the default paths for storing Azure Stack HCI artifacts such as virtual hard disks and virtual machine configuration paths. Next to **Virtual Hard Disk Path**, click **Browse**.
+2. In the **Select the virtual hard disks path** blade, click the **Up** button until you are at the **root C:\\**, then navigate to **C:\\ClusterStorage\\Volume01**. Click **New Folder** and create a **VMs** folder.
+3. Once the new folder is created, double-click the **VMs** folder to enter the directory, then click **New Folder** to create a folder named **VHDs**.
+4. Once created, click the **VHDs** folder, then click **OK**.
+5. Next to **Virtual Machines Path**, click **Browse**.
+6. In the **Select the virtual machines path** blade, click the **Up** button until you are at the **root C:\\**, then navigate to **C:\\ClusterStorage\\Volume01**. Click **VMs** and click **OK**.
+7. Back on the **General** page, click **Save**.
+
+![Hyper-V Host folder settings in Windows Admin Center](/modules/module_2/media/vms_folder.png "Hyper-V Host folder settings in Windows Admin Center")
+
+> You can optionally choose to change the **Hypervisor Scheduler Type** but it's recommended that you leave it set to the default **Core Scheduler** - You can [read more about the hypervisor scheduler types here](https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/manage/about-hyper-v-scheduler-type-selection) and also [here](https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/manage/manage-hyper-v-scheduler-types).
+
+8. Click on **Enhanced Session Mode** - allow redirection of local devices and resources from virtual machines, **tick the box to allow enhanced session mode**, then click **Save**. Note that enhanced session mode connections require a supported guest operating system.
+9. Click on **NUMA Spanning**. By enabling Non-uniform memory architecture (NUMA) spanning, you can provide a virtual machine with more memory than what is available on a single NUMA node, which helps to increase the **scalability** of your system to accommodate more virtual machines, however, it *may* decrease performance.
+10. Click on **Live Migration** - here, you can choose to enable/disable live migrations of running virtual machines between Azure Stack HCI cluster nodes. In addition, you can choose to control the maximum number of **simultaneous** live migrations, and desired authentication and performance settings:
+
+![Hyper-V Host live migration settings in Windows Admin Center](/modules/module_2/media/live_migration.png "Hyper-V Host live migration settings in Windows Admin Center")
+
+> You have 2 options for authentication when initializing a live migration - either use **CredSSP**, which is the default, and requires the migration to be initialized *from* the source host, or **Kerberos** authentication, which is more secure, but does require some additional configuration of **Constrained Delegation** in **Active Directory** - you can read about [setting up Constrained Delegation here](https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/deploy/set-up-hosts-for-live-migration-without-failover-clustering#BKMK_Step1)
+
+> Secondly, you can choose a preferred performance option. **Compression** is the default, which involves using some host resources to compress the memory of a VM before sending over the network. You can revert back to the older, slower **TCP/IP migration**, or, with appropriate **RDMA network adapters** for your live migration networks, you can use the **SMB** live migration type, which offers the highest performance. 
+
+________________
+We do not yet have any virtual machines running on our cluster, but in order to configure the live migration settings with **PowerShell**, you could run the following example commands on **each** Azure Stack HCI node:
+
+```powershell
+Enable-VMMigration
+Set-VMMigrationNetwork 192.168.10.1
+
+# Set authentication type as CredSSP/Kerberos
+Set-VMHost -VirtualMachineMigrationAuthenticationType Kerberos
+
+# Set performance option as SMB/Compression/TCPIP
+Set-VMHost -VirtualMachineMigrationPerformanceOption SMB
+```
+
+You can also optionally disable end-to-end encryption of SMB data to deliver higher migration speeds:
+```powershell
+Set-SmbServerConfiguration -EncryptData $false `
+-RejectUnencryptedAccess $false
+```
+_______________
+
+11. Finally, click **Storage Migration** - here, you can specify the number of **simultaneous live storage migrations** can be performed.
+
+Deploy your first virtual machine
+---------
+In this step, you'll deploy a VM onto your storage volume you created earlier.
+
+### Create the virtual machine
+You should still be in **Windows Admin Center** for the next steps.
+
+1. Once logged into **Windows Admin Center**, on the left hand navigation, under **Compute** select **Virtual machines**.  The central **Virtual machines** page shows you no virtual machines deployed currently
+2. On the **Virtual machines** page, select the **Inventory** tab, and then select **Add**, then select **New**.
+3. In the **New virtual machine** pane, enter **VM001** for the name, and enter the following pieces of information, then click **Create**
+
+    * Generation: **Generation 2 (Recommended)**
+    * Host: **Leave as recommended**
+    * Path: **Should default to C:\ClusterStorage\Volume01\VMs**
+    * Virtual processors: **1**
+    * Startup memory (GB): **0.5**
+    * Network: **ComputeStorage Team**
+    * Storage: **Add, then Create an empty virtual hard disk** and set size to **5GB**
+    * Operating System: **Install an operating system later**
+
+4. The creation process will take a few moments, and once complete, **VM001** should show within the **Virtual machines view**
+5. Click on the **VM** and then click **Power** and then **Start** - within moments, the VM should be running (click refresh if required)
+
+![VM001 up and running](/modules/module_2/media/wac_vm001.png "VM001 up and running")
+
+7. Click on **VM001** to view the properties and status for this running VM
+8. Click on **Connect** - you may get a **VM Connect** prompt:
+
+![Connect to VM001](/modules/module_2/media/vm_connect.png "Connect to VM001")
+
+9. Click on **Go to Settings** and in the **Remote Desktop** pane, click on **Allow remote connections to this computer**, then **Save**
+10. Click the **Back** button in your browser to return to the VM001 view, then click **Connect**, and when prompted with the certificate prompt, click **Connect** and enter appropriate credentials
+11. There's no operating system installed here, so it should show a UEFI boot summary, but the VM is running successfully
+12. Click **Disconnect**
+
+You've successfully created a VM using **Windows Admin Center**! In order to perform the same task using PowerShell, you could run the following commands:
+
+```powershell
+# Create the new virtual machine
+New-VM -ComputerName AZSHCI1 -Name VM001 -MemoryStartupBytes 512MB `
+    -BootDevice VHD -NewVHDSizeBytes 5GB `
+    -NewVHDPath "C:\ClusterStorage\Volume01\VMs\VHDs\VM001.vhdx" `
+    -Generation 2 -Switch "ComputeStorage Team"
+
+# Update the vCPU information
+Set-VM -ComputerName AZSHCI1 -Name VM001 -ProcessorCount 1
+
+# Cluster the VM for high availability
+Add-ClusterVirtualMachineRole -VirtualMachine VM001 `
+    -Cluster "AzSHCI-Cluster"
+```
+
+### Live migrate the virtual machine ###
+The final step we'll cover is using Windows Admin Center to live migrate VM001 from it's current node, to an alternate node in the cluster.
+
+1. Still within the **Windows Admin Center** , under **Compute**, click on **Virtual machines**
+2. On the **Virtual machines** page, select the **Inventory** tab
+3. You'll be able to see through the default grouping, which Azure Stack HCI node the VM is currently running on - make a note of this.
+4. Next to **VM001**, click the tick box next to VM001, then click **Manage**.  You'll notice you can Clone, Domain Join and also Move the VM. Click **Move**.
+
+![Start Live Migration using Windows Admin Center](/modules/module_2/media/wac_move.png "Start Live Migration using Windows Admin Center")
+
+5. In the **Move Virtual Machine** pane, ensure **Failover Cluster** is selected, and leave the default **Best available cluster node** to allow Windows Admin Center to pick where to migrate the VM to, then click **Move**
+
+![Live Migration using Windows Admin Center](/modules/module_2/media/wac_move2.png "Live Migration using Windows Admin Center")
+
+> If no **Member server** is shown in the drop down, change the **destination type** to **Server** and then back to **Failover Cluster** and it should refresh.
+
+6. The live migration will then begin, and within a few seconds, the VM should be running on a different node.
+7. On the left hand navigation, under **Compute** select **Virtual machines** to return to the VM dashboard view, which aggregates information across your cluster, for all of your VMs.
+
+### Explore the VM settings
