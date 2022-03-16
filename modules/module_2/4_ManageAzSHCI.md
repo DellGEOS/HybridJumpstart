@@ -1,4 +1,4 @@
-Module 2 | Scenario 4 - Exploring Azure Stack HCI Management
+Module 2 | Scenario 4 - Exploring local Azure Stack HCI management
 ============
 With your Azure Stack HCI 21H2 cluster deployed and registered successfully, you can now walk through some of the core management operations. For completeness, we'll show you the processes with both Windows Admin Center and PowerShell where appropriate.
 
@@ -357,3 +357,10 @@ The final step we'll cover is using Windows Admin Center to live migrate VM001 f
 7. On the left hand navigation, under **Compute** select **Virtual machines** to return to the VM dashboard view, which aggregates information across your cluster, for all of your VMs.
 
 ### Explore the VM settings
+With a VM deployed and migrated, you should take a few minutes to review the settings associated with a virtual machine.
+
+1. On the **Virtual machines** page, under **Inventory**, click on VM001.
+2. On the **VM001** properties page, you can now see a wealth of information about this VM across general properties, checkpoints (snapshots) and storage/networks.
+3. Click on **Power** and then **Turn off**, confirming when prompted. This will ensure that as we explore the different VM settings shortly, all options are available to us, as some settings are not available while VMs are running.
+4. Click on **Settings**.
+5. 
