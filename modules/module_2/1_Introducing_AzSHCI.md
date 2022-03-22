@@ -3,9 +3,9 @@ Module 2 - Scenario 1 - Introducing Azure Stack HCI
 
 Overview <!-- omit in toc -->
 -------------
-In the first scenario of this module, you'll learn more about Azure Stack HCI; the new, purpose-built hyperconverged infrastructure (HCI) cluster solution that hosts virtualized Windows and Linux workloads in a hybrid environment, that combines on-premises infrastructure with Azure cloud services.
+In the first scenario of this module, you'll learn more about Azure Stack HCI; the new, purpose-built hyperconverged infrastructure (HCI) cluster solution that hosts virtualized Windows and Linux workloads in a hybrid environment, and that combines on-premises infrastructure with Azure cloud services.
 
-Sit back, relax, and enjoy this short video discussing the hybrid landscape, and the key Dell and Microsoft building blocks of the hybrid solution portfolio.
+Sit back, relax, and enjoy this short video discussing **introducing Azurer Stack HCI**, along with some of the key benefits of running Azure Stack HCI on the **Dell Integrated System for Microsoft Azure Stack HCI**.
 
 Scenario duration <!-- omit in toc -->
 -------------
