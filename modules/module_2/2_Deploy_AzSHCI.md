@@ -1,6 +1,13 @@
 Module 2 - Scenario 2 - Deploying the Azure Stack HCI Infrastructure
 ============
+
+Overview <!-- omit in toc -->
+-----------
 In this scenario, you'll walk through deployment of an Azure Stack HCI cluster. Once you've deployed your lab infrastructure, you'll have a choice to create and configure the Azure Stack HCI cluster with either **Windows Admin Center** or **PowerShell**
+
+Scenario duration <!-- omit in toc -->
+-------------
+00 Minutes
 
 Contents <!-- omit in toc -->
 -----------

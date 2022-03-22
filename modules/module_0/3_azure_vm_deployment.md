@@ -4,6 +4,10 @@ Hybrid Cloud Workshop | Deployment in Azure
 Overview <!-- omit in toc -->
 -----------
 As mentioned earlier, with the introduction of [nested virtualization support in Azure](https://azure.microsoft.com/en-us/blog/nested-virtualization-in-azure/ "Nested virtualization announcement blog post") back in 2017, Microsoft has opened the door to a number of new and interesting scenarios. Nested virtualization in Azure is particularly useful for validating configurations that would require additional hardware in your environment, such as running Azure Stack HCI clusters.
+
+Section duration <!-- omit in toc -->
+-------------
+00 Minutes
 __________________________
 
 ### Important Note <!-- omit in toc -->

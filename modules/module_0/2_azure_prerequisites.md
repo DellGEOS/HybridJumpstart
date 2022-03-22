@@ -6,6 +6,10 @@ Overview <!-- omit in toc -->
 
 In addition to your infrastructure requirements, the hybrid solutions covered in this workshop also require access to an **Azure subscription**, and **Azure Active Directory Tenant**. You must also have certain permissions at both the subscription and AAD tenant levels, otherwise some of the steps in the hands-on-labs will not work. This section will cover all the prerequisites you need to successfully complete the different hands-on-labs.
 
+Section duration <!-- omit in toc -->
+-------------
+00 Minutes
+
 Contents <!-- omit in toc -->
 --------
 - [Get an Azure subscription](#get-an-azure-subscription)

@@ -5,6 +5,10 @@ Overview <!-- omit in toc -->
 -----------
 In order to deploy and work through the different hands-on-labs in the workshop, we'll be using MSLab. Developed by Dell Technologies GEOS member, Jaromir Kaspar, MSLab is an open-source project that helps to quickly and easily deploy standardized virtualized environments for the purpose of learning, feature testing and more. The use of MSLab in this workshop ensures that all participants can experience a more standardized and structured flow through the different technologies within the Hybrid Cloud Workshop.
 
+Section duration <!-- omit in toc -->
+-------------
+00 Minutes
+
 Contents <!-- omit in toc -->
 --------
 

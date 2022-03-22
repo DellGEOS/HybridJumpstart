@@ -1,6 +1,14 @@
 Module 2 | Scenario 4 - Exploring local Azure Stack HCI management
 ============
+
+Overview <!-- omit in toc -->
+------------
+
 With your Azure Stack HCI 21H2 cluster deployed and registered successfully, you can now walk through some of the core management operations. For completeness, we'll show you the processes with both Windows Admin Center and PowerShell where appropriate.
+
+Scenario duration <!-- omit in toc -->
+-------------
+00 Minutes
 
 Contents <!-- omit in toc -->
 -----------

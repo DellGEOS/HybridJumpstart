@@ -5,6 +5,10 @@ Overview <!-- omit in toc -->
 --------
 In this section, we'll review the infrastructure requirements to participate in the Hybrid Cloud Workshop. You'll have a choice of either deploying on physical hardware if you have any available, or, if you prefer, inside an Azure virtual machine. In either case, you'll be set up to explore some of the key capabilities within the hybrid portfolio.
 
+Section duration <!-- omit in toc -->
+-------------
+00 Minutes
+
 Contents <!-- omit in toc -->
 ----------
 

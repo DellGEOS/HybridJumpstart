@@ -1,6 +1,14 @@
 Module 2 - Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center
 ============
+
+Overview <!-- omit in toc -->
+------------
+
 In this section, you'll walk through deployment of an Azure Stack HCI cluster using **Windows Admin Center**. If you have a preference for deployment with PowerShell, head over to the [PowerShell cluster creation guidance](/modules/module_2/2b_Cluster_AzSHCI_PS.md).
+
+Scenario duration <!-- omit in toc -->
+-------------
+00 Minutes
 
 Contents <!-- omit in toc -->
 -----------
