@@ -22,9 +22,13 @@ Contents <!-- omit in toc -->
 -----------
 - [Before you begin](#before-you-begin)
 - [Installing the OMIMSWAC Extension](#installing-the-omimswac-extension)
-- [Infrastructure lock](#infrastructure-lock)
-- [Secure your cluster with Secured-core](#secure-your-cluster-with-secured-core)
 - [Infrastructure health](#infrastructure-health)
+- [Inventory](#inventory)
+- [iDRAC information](#idrac-information)
+- [Security](#security)
+- [Compute resources and cluster expansion](#compute-resources-and-cluster-expansion)
+- [Update management](#update-management)
+- [Other settings](#other-settings)
 - [Next Steps](#next-steps)
 - [Raising issues](#raising-issues)
 
@@ -70,8 +74,75 @@ You have now successfully installed the OpenManage integration with Windows Admi
 
 ![Dell EMC OpenManage extension for Windows Admin Center successfully configured](/modules/module_2/media/wac_extension_configured.png "Dell EMC OpenManage extension for Windows Admin Center successfully configured")
 
-Infrastructure lock
+Infrastructure health
 -----------
+With the OpenManage integration with Windows Admin Center successfully installed, the first key tab to explore is the **Health** tab. This dashboard provides you with a high level overview of key health metrics for your physical Azure Stack HCI nodes, including:
+
+* CPUs
+* Accelerators
+* Memory
+* Storage Controllers
+* Storage Enclosures
+* Physical Disks
+* iDRAC
+* Power Supplies
+* Fans
+* Voltages
+* Temperatures
+
+1. From within the the **Dell EMC OpenManage** extension, click on the **Health** tab. Scroll down and review the different charts showing the health of the different system components.
+2. Scroll back up and click on the donut chart for **Overall Health Status**
+3. Once loaded, you'll see your Azure Stack HCI nodes listed. Expand one of the nodes to list all key system components and their health status:
+
+![Infrastructure health in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_health.png "Infrastructure health in the Dell EMC OpenManage extension for Windows Admin Center")
+
+4. Back on the **Health** dashboard, if you wish to see specific components, you can click on one of the donut charts for that particular category.
+
+Inventory
+-----------
+The **system inventory** builds on what we've just observed in the health dashboard, providing you with details about the following components:
+
+* System
+* Firmware
+* CPUs
+* Memory
+* Storage controllers
+* Storage enclosures
+* Network devices
+* Physical disks
+* Power supplies
+* Fans
+
+1. From within the the **Dell EMC OpenManage** extension, click on the **Inventory** tab. 
+2. You should see the nodes of your Azure Stack HCI cluster.
+
+![Inventory information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory.png "Inventory information in the Dell EMC OpenManage extension for Windows Admin Center")
+
+3. Click on one of your nodes. You will be presented with the different components that you can review. The example below shows the firmware view across all the different components:
+
+![Inventory information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory2.png "Inventory information in the Dell EMC OpenManage extension for Windows Admin Center")
+
+4. Click on **Physical Disks**. Here you can view the properties of all physical disks in that particicular node, and you have the ability to blink/unblink the drive LEDs.
+
+![Inventory information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory3.png "Inventory information in the Dell EMC OpenManage extension for Windows Admin Center")
+
+iDRAC information
+-----------
+For those of you not familiar, iDRAC stands for the **Integrated Dell Remote Access Controller**, which provides secure local and remote server management and helps IT administrators deploy, update and monitor Dell EMC PowerEdge-based servers anywhere, anytime.
+
+Through the Dell OpenManage Integration with Microsoft Windows Admin Center, you're able to view useful information about the iDRAC configuration across your Azure Stack HCI nodes, all from within Windows Admin Center.
+
+1. From within the the **Dell EMC OpenManage** extension, click on the **iDRAC** tab. 
+2. You should see the nodes of your Azure Stack HCI cluster. Click on one of your nodes.
+3. You can now view key iDRAC information such as the iDRAC IP address, licensing status and more.
+
+![iDRAC information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_idrac.png "iDRAC information in the Dell EMC OpenManage extension for Windows Admin Center")
+
+Security
+-----------
+When it comes to security in the Dell OpenManage extension, there are 2 key components - **Infrastructure Lock** and **Secured-core**.
+
+### Infrastructure lock <!-- omit in toc -->
 Infrastructure lock (also known as iDRAC lockdown mode or system lockdown mode) helps in preventing unintended changes after a system is provisioned. Infrastructure lock is applicable to both hardware configuration and firmware updates. When the infrastructure is locked, any attempt to change the system configuration is blocked. If any attempts are made to change the critical system settings, an error message is displayed. Enabling infrastructure lock also blocks the server or cluster firmware
 update using the OpenManage Integration extension.
 
@@ -81,12 +152,15 @@ In the OpenManage extension dashboard, the icon the left to the server or cluste
 
 > When the infrastructure lock is in place, you can still **retrieve health, inventory and iDRAC details**, and **blink/unblink server LEDs**. All other functionality is **disabled**.
 
-To enable/disable the **infrastructure lock**, simply navigate to the **Security** tab, select **iDRAC Security** and click **Enable/Disable**.
+1. From within the the **Dell EMC OpenManage** extension, click on the **Security** tab, and then click on **Infrastructure Lock**. You'll be presented with the current status of the Infrastructure Lock.
 
 ![Infrastructure lock in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_lock2.png "Infrastructure lock in the Dell EMC OpenManage extension for Windows Admin Center")
 
-Secure your cluster with Secured-core
------------
+2. To enable/disable the **infrastructure lock**, simply click **Enable/Disable**.
+
+The extension will communicate with iDRAC, turns on the iDRAC Lockdown Mode, which prevents modification of the iDRAC settings to prevent misactions or malicious modifications.
+
+### Secure your cluster with Secured-core <!-- omit in toc -->
 A malicious attacker who has physical access to a system can tamper with the BIOS. Modified BIOS code poses a high security threat and makes the system vulnerable to further attacks.
 
 Secured-core server combines hardware, firmware, and driver capabilities to further protect the operating environment - from the boot process through to data in memory. It's built on three key pillars:
@@ -113,11 +187,15 @@ To configure the Secured-core server, there's a few places to go as it involves 
 
 8. You can optionally toggle the view for the **Node Level Details** to break down the information on a node-by-node basis.
 
-Infrastructure health
+Compute resources and cluster expansion
+-----------
+
+Update management
 -----------
 
 
-
+Other settings
+-----------
 
 
 
