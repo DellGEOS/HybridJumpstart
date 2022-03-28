@@ -4,7 +4,7 @@ Module 2 - Scenario 3 - Integrate Azure Stack HCI with Azure
 Overview <!-- omit in toc -->
 ------------
 
-With your Azure Stack HCI 21H2 cluster deployed successfully, you need to register this cluster to unlock full functionality. In this section, you'll walk through the steps required to register your cluster either via Windows Admin Center, or with PowerShell.
+With your Azure Stack HCI cluster deployed successfully, you need to register this cluster to unlock full functionality. In this section, you'll walk through the steps required to register your cluster either via Windows Admin Center, or with PowerShell.
 
 Scenario duration <!-- omit in toc -->
 -------------
