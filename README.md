@@ -14,7 +14,7 @@ In this workshop, you'll learn about, and gain hands-on experience with a number
 
 There's a lot to digest in this graphic, so let's break down the different layers.
 
-At the base, you have the foundation of this hybrid solution; **Azure Stack HCI**, the new purpose-built hyperconverged infrastructure operarting system from Microsoft, running on the enterprise-grade hardware platform from Dell Technologies, specifically, the **Dell EMC Integrated System for Microsoft Azure Stack HCI**. This is managed through **Windows Admin Center**, which includes integration with **Dell EMC OpenManage**, but in addition, there's growing integration with **Azure Arc** that you'll explore in this workshop. This hyperconverged solution is ideal for running traditional virtualized workloads, but in addition, virtual desktops, through integration with **Azure Virtual Desktop**.
+At the base, you have the foundation of this hybrid solution; **Azure Stack HCI**, the new purpose-built hyperconverged infrastructure operarting system from Microsoft, running on the enterprise-grade hardware platform from Dell Technologies, specifically, the **Dell Integrated System for Microsoft Azure Stack HCI**. This is managed through **Windows Admin Center**, which includes integration with **Dell OpenManage**, but in addition, there's growing integration with **Azure Arc** that you'll explore in this workshop. This hyperconverged solution is ideal for running traditional virtualized workloads, but in addition, virtual desktops, through integration with **Azure Virtual Desktop**.
 
 In addition to traditional virtualized workloads, more and more organizations are exploring ways to modernize their applications - Kubernetes is an increasingly popular way to do this, yet Kubernetes is complex....unless you're using **Azure Kubernetes Service on Azure Stack HCI**. With AKS-HCI, you really do have the "easy button" to deploy and manage Kubernetes on your infrastructure, and in this workshop, you'll see that first hand.
 
@@ -35,7 +35,7 @@ From there, you're free to focus on the modules that are most appropriate to you
 In this module, we'll cover the hybrid landscape, why hybrid is so important to so many organizations, explore some of the core use cases and outline the overall hybrid solution from Dell Technologies and Microsoft.
 
 #### Module 2 - Hybrid Infrastructure with Azure Stack HCI & Azure Arc
-In this module, we'll dive deeper into Azure Stack HCI, including how it integrates with Dell EMC OpenManage, and Azure. In addition, you'll explore a number of the core operations around Azure Stack HCI, including creating VMs, managing storage, networking, and integrating with a variety of Azure services. As part of this module, there are a number of hands-on-labs to explore the functionality of Azure Stack HCI.
+In this module, we'll dive deeper into Azure Stack HCI, including how it integrates with Dell OpenManage, and Azure. In addition, you'll explore a number of the core operations around Azure Stack HCI, including creating VMs, managing storage, networking, and integrating with a variety of Azure services. As part of this module, there are a number of hands-on-labs to explore the functionality of Azure Stack HCI.
 
 #### Module 3 - Modernizing hybrid apps with Kubernetes & Azure Arc
 We'll shift gears in this module, and start to focus more on applications, specifically, containerized applications. In this module, you'll explore AKS on Azure Stack HCI and learn first-hand how easy it is to deploy, and get up and running with your first containerized application. From there, you'll expore the Azure integration with Arc-enabled Kubernetes, GitOps, Azure Policy and more, all with hands-on-experience in the labs.
@@ -87,7 +87,7 @@ This project welcomes contributions and suggestions - if you have edits, or wish
 
 You are granted a license to the content in this repository under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0), see the [LICENSE](LICENSE) file.
 
-Dell Technologies, Dell, Dell EMC and other trademarks referenced in the workshop guidance are trademarks of Dell Inc. or its subsidiaries.
+Dell Technologies, Dell and other trademarks referenced in the workshop guidance are trademarks of Dell Inc. or its subsidiaries.
 
 Microsoft, Windows, Microsoft Azure and/or other Microsoft products and services referenced in the workshop guidance may be either trademarks or registered trademarks of Microsoft in the United States and/or other countries.
 

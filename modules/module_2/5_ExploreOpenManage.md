@@ -57,22 +57,22 @@ Before you can configure the OpenManage integration, you first need to install t
 
 ![Dell extensions for Windows Admin Center](/modules/module_2/media/WAC_extensions.png "Dell extensions for Windows Admin Center")
 
-4. In the results, select **Dell EMC OpenManage Integration** and select **Install**. This will take a few moments, and once complete, Windows Admin Center will automatically refresh.
+4. In the results, select **Dell OpenManage Integration** and select **Install**. This will take a few moments, and once complete, Windows Admin Center will automatically refresh.
 5. Navigate back to the Windows Admin Center landing page, and under **All connections**, select your Azure Stack HCI cluster, and log in if required.
-6. On the left-hand navigation, towards the bottom, under **Extensions** you should see the newly installed **Dell EMC OpenManage** extension present.
+6. On the left-hand navigation, towards the bottom, under **Extensions** you should see the newly installed **Dell OpenManage** extension present.
 
-![Dell EMC OpenManage extension for Windows Admin Center installed](/modules/module_2/media/wac_extension_installed.png "Dell EMC OpenManage extension for Windows Admin Center installed")
+![Dell OpenManage extension for Windows Admin Center installed](/modules/module_2/media/wac_extension_installed.png "Dell OpenManage extension for Windows Admin Center installed")
 
-7. Read the customer notice, then select the **I Accept the terms of the Dell EMC Software Agreement** checkbox, then click **Accept**.
+7. Read the customer notice, then select the **I Accept the terms of the Dell Software Agreement** checkbox, then click **Accept**.
 8. The extension will then attempt to communicate with your Azure Stack HCI nodes.
 
 > You may receive an error relating to **Secured-core**, with a few suggestions to fix. Most likely, it's related to credentials. Navigate to the **Security tab** and provide run-as credentials.
 
-![Credentials for the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_openmanage_creds.png "Credentials for the Dell EMC OpenManage extension for Windows Admin Center")
+![Credentials for the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_openmanage_creds.png "Credentials for the Dell OpenManage extension for Windows Admin Center")
 
 You have now successfully installed the OpenManage integration with Windows Admin Center, so you can move on to exploring some of the core extension capabilities.
 
-![Dell EMC OpenManage extension for Windows Admin Center successfully configured](/modules/module_2/media/wac_extension_configured.png "Dell EMC OpenManage extension for Windows Admin Center successfully configured")
+![Dell OpenManage extension for Windows Admin Center successfully configured](/modules/module_2/media/wac_extension_configured.png "Dell OpenManage extension for Windows Admin Center successfully configured")
 
 Infrastructure health
 -----------
@@ -90,11 +90,11 @@ With the OpenManage integration with Windows Admin Center successfully installed
 * Voltages
 * Temperatures
 
-1. From within the the **Dell EMC OpenManage** extension, click on the **Health** tab. Scroll down and review the different charts showing the health of the different system components.
+1. From within the the **Dell OpenManage** extension, click on the **Health** tab. Scroll down and review the different charts showing the health of the different system components.
 2. Scroll back up and click on the donut chart for **Overall Health Status**
 3. Once loaded, you'll see your Azure Stack HCI nodes listed. Expand one of the nodes to list all key system components and their health status:
 
-![Infrastructure health in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_health.png "Infrastructure health in the Dell EMC OpenManage extension for Windows Admin Center")
+![Infrastructure health in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_health.png "Infrastructure health in the Dell OpenManage extension for Windows Admin Center")
 
 4. Back on the **Health** dashboard, if you wish to see specific components, you can click on one of the donut charts for that particular category.
 
@@ -113,30 +113,30 @@ The **system inventory** builds on what we've just observed in the health dashbo
 * Power supplies
 * Fans
 
-1. From within the the **Dell EMC OpenManage** extension, click on the **Inventory** tab. 
+1. From within the the **Dell OpenManage** extension, click on the **Inventory** tab. 
 2. You should see the nodes of your Azure Stack HCI cluster.
 
-![Inventory information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory.png "Inventory information in the Dell EMC OpenManage extension for Windows Admin Center")
+![Inventory information in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory.png "Inventory information in the Dell OpenManage extension for Windows Admin Center")
 
 3. Click on one of your nodes. You will be presented with the different components that you can review. The example below shows the firmware view across all the different components:
 
-![Inventory information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory2.png "Inventory information in the Dell EMC OpenManage extension for Windows Admin Center")
+![Inventory information in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory2.png "Inventory information in the Dell OpenManage extension for Windows Admin Center")
 
 4. Click on **Physical Disks**. Here you can view the properties of all physical disks in that particicular node, and you have the ability to blink/unblink the drive LEDs.
 
-![Inventory information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory3.png "Inventory information in the Dell EMC OpenManage extension for Windows Admin Center")
+![Inventory information in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_dell_inventory3.png "Inventory information in the Dell OpenManage extension for Windows Admin Center")
 
 iDRAC information
 -----------
-For those of you not familiar, iDRAC stands for the **Integrated Dell Remote Access Controller**, which provides secure local and remote server management and helps IT administrators deploy, update and monitor Dell EMC PowerEdge-based servers anywhere, anytime.
+For those of you not familiar, iDRAC stands for the **Integrated Dell Remote Access Controller**, which provides secure local and remote server management and helps IT administrators deploy, update and monitor Dell PowerEdge-based servers anywhere, anytime.
 
 Through the Dell OpenManage Integration with Microsoft Windows Admin Center, you're able to view useful information about the iDRAC configuration across your Azure Stack HCI nodes, all from within Windows Admin Center.
 
-1. From within the the **Dell EMC OpenManage** extension, click on the **iDRAC** tab. 
+1. From within the the **Dell OpenManage** extension, click on the **iDRAC** tab. 
 2. You should see the nodes of your Azure Stack HCI cluster. Click on one of your nodes.
 3. You can now view key iDRAC information such as the iDRAC IP address, licensing status and more.
 
-![iDRAC information in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_idrac.png "iDRAC information in the Dell EMC OpenManage extension for Windows Admin Center")
+![iDRAC information in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_idrac.png "iDRAC information in the Dell OpenManage extension for Windows Admin Center")
 
 Security
 -----------
@@ -148,13 +148,13 @@ update using the OpenManage Integration extension.
 
 In the OpenManage extension dashboard, the icon the left to the server or cluster title name indicates the infrastructure lock status. The following are the possible status:
 
-![Infrastructure lock in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_lock.png "Infrastructure lock in the Dell EMC OpenManage extension for Windows Admin Center")
+![Infrastructure lock in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_lock.png "Infrastructure lock in the Dell OpenManage extension for Windows Admin Center")
 
 > When the infrastructure lock is in place, you can still **retrieve health, inventory and iDRAC details**, and **blink/unblink server LEDs**. All other functionality is **disabled**.
 
-1. From within the the **Dell EMC OpenManage** extension, click on the **Security** tab, and then click on **Infrastructure Lock**. You'll be presented with the current status of the Infrastructure Lock.
+1. From within the the **Dell OpenManage** extension, click on the **Security** tab, and then click on **Infrastructure Lock**. You'll be presented with the current status of the Infrastructure Lock.
 
-![Infrastructure lock in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_lock2.png "Infrastructure lock in the Dell EMC OpenManage extension for Windows Admin Center")
+![Infrastructure lock in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_infra_lock2.png "Infrastructure lock in the Dell OpenManage extension for Windows Admin Center")
 
 2. To enable/disable the **infrastructure lock**, simply click **Enable/Disable**.
 
@@ -180,10 +180,10 @@ To configure the Secured-core server, there's a few places to go as it involves 
 ![Secured-core status in the Security extension in Windows Admin Center](/modules/module_2/media/wac_security.png "Secured-core status in the Security extension in Windows Admin Center")
 
 4. Click on each of the items that have not been configured, and click **Enable**. It may take a few minutes to enable the features.
-5. Once enabled, navigate to the **Dell EMC OpenManage** extension, click on the **Security** tab, and then **Secured-core**. Enter your credentials if prompted.
+5. Once enabled, navigate to the **Dell OpenManage** extension, click on the **Security** tab, and then **Secured-core**. Enter your credentials if prompted.
 7. After meeting the pre-requisites (correct platform, processor type, OS version, BIOS version, OMIMSWAC license), you'll be presented with an overall Secured-core status for both BIOS and the OS for the entire cluster.
 
-![Secured-core status in the Dell EMC OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_secured_core.png "Secured-core status in the Dell EMC OpenManage extension for Windows Admin Center")
+![Secured-core status in the Dell OpenManage extension for Windows Admin Center](/modules/module_2/media/wac_secured_core.png "Secured-core status in the Dell OpenManage extension for Windows Admin Center")
 
 8. You can optionally toggle the view for the **Node Level Details** to break down the information on a node-by-node basis.
 

@@ -40,7 +40,7 @@ In each case, you'll be using **Nested Virtualization** which allows you to cons
 __________________________
 
 ### Important Note - Production Deployments <!-- omit in toc -->
-The use of nested virtualization in this workshop is aimed at providing flexibility for evaluating the various hybrid solutions. For **production** use, **Azure Stack HCI and corresponding workloads should be deployed on validated physical hardware**, of which you can find the Dell EMC Integrated System for Microsoft Azure Stack HCI on the [Azure Stack HCI Catalog](https://azurestackhcisolutions.azure.microsoft.com/#/catalog?Manufacturer=Dell+Technologies "Azure Stack HCI Catalog").
+The use of nested virtualization in this workshop is aimed at providing flexibility for evaluating the various hybrid solutions. For **production** use, **Azure Stack HCI and corresponding workloads should be deployed on validated physical hardware**, of which you can find the Dell Integrated System for Microsoft Azure Stack HCI on the [Azure Stack HCI Catalog](https://azurestackhcisolutions.azure.microsoft.com/#/catalog?Manufacturer=Dell+Technologies "Azure Stack HCI Catalog").
 __________________________
 
 Nested Virtualization
