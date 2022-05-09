@@ -195,7 +195,8 @@ Copy-Item -Path "C:\Program Files\Windows Admin Center\PowerShell\" `
 $Session | Remove-PSSession
 
 # Import Windows Admin Center PowerShell Modules
-$items = Get-ChildItem -Path "C:\Program Files\Windows Admin Center\PowerShell\Modules" -Recurse | Where-Object Extension -eq ".psm1"
+$items = Get-ChildItem -Path "C:\Program Files\Windows Admin Center\PowerShell\Modules" -Recurse | `
+    Where-Object Extension -eq ".psm1"
 foreach ($item in $items) {
     Import-Module $item.fullName
 }
@@ -205,7 +206,7 @@ Get-Command -Module ExtensionTools
 
 # Grab installed extensions that are not up to date.
 $InstalledExtensions = Get-Extension -GatewayEndpoint $GatewayServerName  | Where-Object status -eq Installed
-$ExtensionsToUpdate = $InstalledExtensions | Where-Object IsLatestVersion -like "False"
+$ExtensionsToUpdate = $InstalledExtensions | Where-Object IsLatestVersion -eq $False
 
 # Update out-of-date extensions
 foreach ($Extension in $ExtensionsToUpdate) {

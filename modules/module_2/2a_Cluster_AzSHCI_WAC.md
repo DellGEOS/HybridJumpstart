@@ -45,8 +45,8 @@ To give the optimal experience with Windows Admin Center, you should enable **Mi
 4. Click the slider button to **disable** pop-up blocking
 5. Close the **settings tab**.
 
-### Configure Windows Admin Center ### <!-- omit in toc -->
-During the [lab deployment earlier](/modules/module_0/4_mslab.md#step-5---installing-windows-admin-center), you installed the latest version of Windows Admin Center, however there are some additional configuration steps that must be performed before you can use it to deploy Azure Stack HCI.
+### Configure Windows Admin Center <!-- omit in toc -->
+During the [lab deployment earlier](/modules/module_2/2_Deploy_AzSHCI.md#step-2---installing-windows-admin-center), you installed the latest version of Windows Admin Center, however there are some additional configuration steps that must be performed before you can use it to deploy Azure Stack HCI.
 
 1. In your Edge browser, navigate to **https://wacgw**.
 2. If you're prompted, log in with your usual credentials, which by default, are:
@@ -114,15 +114,14 @@ ____________
 ```powershell
 $Servers = "AzSHCI1", "AzSHCI2", "AzSHCI3", "AzSHCI4"
 Invoke-Command -ComputerName $Servers -ScriptBlock `
-{ Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V `
-        -Online -NoRestart }
+{ Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online -NoRestart }
 ```
 
 Once you click on **Install features** again, the status should show green, and you should be able to proceed, so click **Next**
 _____________
 
 6. On the **Install updates** page, Windows Admin Center will query the nodes for available updates, and will request you install any that are required. For the purpose of this guide and to save time, we'll ignore this for now and revisit later. Click **Next**
-7. On the **Install hardware updates** page, in a nested environment this doesn't apply, however if this were a physical environment, you would be able to launch the Dell OMIMSWAC (Open Manage Integration for Microsoft Windows Admin Center) extension, which we will cover in a future module. For now, click **Next**
+7. On the **Install hardware updates** page, in a nested environment this doesn't apply, however if this were a physical environment, you would be able to launch the Dell OMIMSWAC (OpenManage Integration for Microsoft Windows Admin Center) extension, which we will cover in a future module. For now, click **Next**
 8. On the **Restart servers** page, if required, click **Restart servers** and wait for them to come back online, then click **Next**
 
 ![Restart nodes in the Create Cluster wizard](/modules/module_2/media/wac_restart_ga.png "Restart nodes in the Create Cluster wizard")
@@ -175,7 +174,7 @@ With the **manual** approach, you're configuring each layer of the network acros
 
 > Unfortunately, **deploying Network ATC in virtual environments is not supported**. Several of the host networking properties it configures are not available in virtual machines, which will result in errors.
 
-For the purpose of this guide therefore, we'll be configuring the networking settings manually, and the steps below are tailored for use inside nested virtual machines. We'll choose the **Shared compute and storage with separate management** example from above. Ensure that **Manually configure host networking** is selected, and click **Next:Networking**
+For the purpose of this guide therefore, we'll be configuring the networking settings **manually**, and the steps below are tailored for use inside nested virtual machines. We'll choose the **Shared compute and storage with separate management** example from above. Ensure that **Manually configure host networking** is selected, and click **Next:Networking**
 
 Firstly, Windows Admin Center will verify your networking setup - it'll tell you how many NICs are in each node, along with relevant hardware information, MAC address and status information.  Review for accuracy, and then click **Next**
 
@@ -304,7 +303,7 @@ With the cluster successfully created, you're now good to proceed on to configur
 With Storage configured, for the purpose of this section, we will skip the SDN configuration, but will revisit SDN in a different part of this module.
 
 1. On the **Define the Network Controller cluster** page, click **Skip**
-2. On the **confirmation page**, click on **Go to connections list**
+2. On the **Confirmation page**, click on **Go to connections list**
 
 Configuring the cluster witness
 -----------
@@ -350,11 +349,11 @@ Invoke-Command -ComputerName $WitnessServer -ScriptBlock `
 
 > The code above first defines the location where the Witness folder and file share will be created. It then creates a new directory, sets the directory as an SMB share on the network, and assigns the appropriate permissions to a core set of accounts.
 
-2. With the file share created, you can now configure the cluster to use this file share as the witness. If you're not already, ensure you're logged into your **Windows Admin Center** instance, and click on the **azshci-cluster** that you created earlier
+2. With the file share created, you can now configure the cluster to use this file share as the witness. If you're not already, ensure you're logged into your **Windows Admin Center** instance, and click on the **AzSHCI-Cluster** that you created earlier
 
 ![Connect to your cluster with Windows Admin Center](/modules/module_2/media/wac_azshcicluster.png "Connect to your cluster with Windows Admin Center")
 
-3. You may be prompted for credentials, so log in with your **azshci\azureuser** credentials and tick the **Use these credentials for all connections** box. You should then be connected to your **azshciclus cluster**
+3. You may be prompted for credentials, so log in with your **dell\labadmin** credentials and tick the **Use these credentials for all connections** box. You should then be connected to your **AzSHCI-Cluster cluster**
 4. After a few moments of verification, the **cluster dashboard** will open. 
 5. On the **cluster dashboard**, at the very bottom-left of the window, click on **Settings**
 6. In the **Settings** window, click on **Witness** and under **Witness type**, use the drop-down to select **File share witness**
@@ -397,11 +396,11 @@ If you prefer, you can choose to use a cloud witness instead of a file share. Cl
 **NOTE** - The required service endpoint is the section of the Blob service URL **after blob.**, i.e. for our configuration, **core.windows.net**
 
 12. With all the information gathered, open **Windows Admin Center**.
-13. Click on the **azshci-cluster** that you created earlier
+13. Click on the **AzSHCI-Cluster** that you created earlier
 
 ![Connect to your cluster with Windows Admin Center](/modules/module_2/media/wac_azshcicluster.png "Connect to your cluster with Windows Admin Center")
 
-14. You may be prompted for credentials, so log in with your **azshci\azureuser** credentials and tick the **Use these credentials for all connections** box. You should then be connected to your **azshciclus cluster**
+14. You may be prompted for credentials, so log in with your **dell\labadmin** credentials and tick the **Use these credentials for all connections** box. You should then be connected to your **AzSHCI-Cluster cluster**
 15. After a few moments of verification, the **cluster dashboard** will open. 
 16. On the **cluster dashboard**, at the very bottom-left of the window, click on **Settings**
 17. In the **Settings** window, click on **Witness** and under **Witness type**, use the drop-down to select **Cloud witness** and complete the form with your values, then click **Save**
