@@ -1,4 +1,4 @@
-Module 2 - Scenario 2a - Clustering Azure Stack HCI with PowerShell
+Module 2 | Scenario 2a - Clustering Azure Stack HCI with PowerShell
 ============
 
 Overview <!-- omit in toc -->

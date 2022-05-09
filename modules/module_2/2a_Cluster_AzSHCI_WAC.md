@@ -1,4 +1,4 @@
-Module 2 - Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center
+Module 2 | Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center
 ============
 
 Overview <!-- omit in toc -->

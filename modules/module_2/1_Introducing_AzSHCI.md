@@ -1,4 +1,4 @@
-Module 2 - Scenario 1 - Introducing Azure Stack HCI
+Module 2 | Scenario 1 - Introducing Azure Stack HCI
 ==============
 
 Overview <!-- omit in toc -->
@@ -20,7 +20,7 @@ Next steps
 -----------
 With a solid understanding of Azure Stack HCI under your belt, you can now start with a deployment of your first Azure Stack HCI cluster. Head on over to:
 
-* [**Module 2 | Scenario 2** to get started](/modules/module_2/2_Deploy_AzSHCI.md).
+* [**Module 2 | Scenario 2 - Deploying the Azure Stack HCI Infrastructure** to get started](/modules/module_2/2_Deploy_AzSHCI.md).
 
 Raising issues
 -----------

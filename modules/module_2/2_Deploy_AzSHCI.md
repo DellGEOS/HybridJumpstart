@@ -1,4 +1,4 @@
-Module 2 - Scenario 2 - Deploying the Azure Stack HCI Infrastructure
+Module 2 | Scenario 2 - Deploying the Azure Stack HCI Infrastructure
 ============
 
 Overview <!-- omit in toc -->
@@ -15,6 +15,7 @@ Contents <!-- omit in toc -->
 - [Architecture](#architecture)
 - [Step 1 - Lab infrastructure deployment](#step-1---lab-infrastructure-deployment)
 - [Step 2 - Installing Windows Admin Center](#step-2---installing-windows-admin-center)
+- [Step 3 - Update Windows Admin Center Extensions](#step-3---update-windows-admin-center-extensions)
 - [Next steps](#next-steps)
 - [Raising issues](#raising-issues)
 
@@ -23,7 +24,7 @@ Before you begin
 Before we deploy our Azure Stack HCI infrastructure, it's important to double check the **Infrastructure prerequisites** and the **Azure prerequisites** to ensure you'll be able to proceed through the deployment process.
 
 ### Infrastructure prerequisites <!-- omit in toc -->
-You should have comepleted the [**lab configuration**](/modules/module_0/4_mslab.md) - you should have all of your parent disks for Azure Stack HCI and Windows Server 2022 ready to be used for deployment below.
+You should have completed the [**lab configuration**](/modules/module_0/4_mslab.md) - you should have all of your parent disks for Azure Stack HCI and Windows Server 2022 ready to be used for deployment below.
 
 ### Azure prerequisites <!-- omit in toc -->
 For connecting and integrating the Azure Stack HCI environment with Azure, you'll need to review the list below.
@@ -159,7 +160,60 @@ foreach ($computer in $computers) {
 }
 ```
 
-8. Once complete, you can close the PowerShell window - you are ready to create your Azure Stack HCI cluster.
+8. Once complete, leave your PowerShell window open and move on to the next step.
+
+Step 3 - Update Windows Admin Center Extensions
+--------
+When you install a fresh instance of Windows Admin Center, *typically*, all of the different extensions that Windows Admin Center uses to manage different elements of the infrastructure, are already up to date, and *should* update automatically, but that said, sometimes that doesn't happen, so running the script below can quickly and easily ensure that all of your installed extensions are up to date.
+
+1. If you haven't already, open the **Edge browser** and navigate to https://wacgw. When asked for credentials, log in with your usual credentials, which by default, are:
+
+    * **Username**: LabAdmin
+    * **Password**: LS1setup!
+
+2. In the top-right corner of the screen, click on the **Settings** icon (Gear).
+3. On the left-hand side navigation, scroll down and click on **Extensions**
+4. In the central pane, click on **Installed extensions** to view a list of all of the currently installed extensions.
+
+![Windows Admin Center installed extensions](/modules/module_2/media/wac_extensions_updates.png "Windows Admin Center installed extensions")
+
+5. You can either update each of the out-of-date extensions **manually** by clicking on an extension, then clicking **Update**, or you can use the PowerShell commands below to automate the updating of all extensions.
+
+```powershell
+# Define the target machine name where Windows Admin Center is installed
+$GatewayServerName = "WACGW"
+
+# Create new PSSession
+$Session = New-PSSession -ComputerName $GatewayServerName
+
+# Copy Windows Admin Center PowerShell Modules from WACGW Machine
+Copy-Item -Path "C:\Program Files\Windows Admin Center\PowerShell\" `
+    -Destination "C:\Program Files\Windows Admin Center\PowerShell\" `
+    -Recurse -FromSession $Session
+
+# Clean up PSSession
+$Session | Remove-PSSession
+
+# Import Windows Admin Center PowerShell Modules
+$items = Get-ChildItem -Path "C:\Program Files\Windows Admin Center\PowerShell\Modules" -Recurse | Where-Object Extension -eq ".psm1"
+foreach ($item in $items) {
+    Import-Module $item.fullName
+}
+
+# List all commands in the Windows Admin Center PowerShell Modules
+Get-Command -Module ExtensionTools
+
+# Grab installed extensions that are not up to date.
+$InstalledExtensions = Get-Extension -GatewayEndpoint $GatewayServerName  | Where-Object status -eq Installed
+$ExtensionsToUpdate = $InstalledExtensions | Where-Object IsLatestVersion -like "False"
+
+# Update out-of-date extensions
+foreach ($Extension in $ExtensionsToUpdate) {
+    Update-Extension -GatewayEndpoint https://$GatewayServerName -ExtensionId $Extension.ID
+}
+```
+
+6. Once complete, you can close the PowerShell window and the Edge browser - you are ready to create your Azure Stack HCI cluster.
 
 Next steps
 -----------
