@@ -1,9 +1,9 @@
-![Hybrid Cloud Workshop Banner](/media/MainBanner.png)
+![Hybrid Jumpstart Banner](/media/MainBanner.png)
 
-Dell Technologies & Microsoft | Hybrid Cloud Workshop
+Dell Technologies & Microsoft | Hybrid Jumpstart
 ==============
 
-## Welcome to the Hybrid Cloud Workshop
+## Welcome to the Hybrid Jumpstart
 The goal of this workshop is to help you grow your knowledge, skills and experience around a number of core hybrid cloud solutions from the Dell Technologies and Microsoft hybrid portfolio. This ever-growing portfolio is infused with deep joint-engineering work, resulting in a set of integrated technologies that truly can transform and future-proof your business.
 
 About the workshop

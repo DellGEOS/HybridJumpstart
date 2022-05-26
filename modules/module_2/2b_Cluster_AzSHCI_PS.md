@@ -210,7 +210,7 @@ Get-VMSwitch -CimSession $Servers | Select-Object Name,ComputerName
 $Servers = "AzSHCI1", "AzSHCI2", "AzSHCI3", "AzSHCI4"
 
 # Define the vSwitch Name
-$vSwitchName = "ComputeStorage Team"
+$vSwitchName = "ConvergedSwitch"
 Invoke-Command -ComputerName $servers -ScriptBlock {
     # Get the first 2 pNIC adapters on the system
     $NetAdapters = Get-NetAdapter | Where-Object Status -eq Up | `
@@ -243,7 +243,7 @@ Rename-VMNetworkAdapter -ManagementOS -Name $vSwitchName `
 6. Next, you'll **create** a pair of dedicated **host storage virtual network adapters**. These will be called SMB01 and SMB02, across all the nodes in the cluster.
 
 ```powershell
-$vSwitchName = "ComputeStorage Team"
+$vSwitchName = "ConvergedSwitch"
 foreach ($Server in $Servers) {
     # Add SMB vNICs (number depends on how many pNICs are connected to vSwitch)
     $SMBvNICsCount = (Get-VMSwitch -CimSession $Server `
@@ -356,7 +356,7 @@ Get-VMNetworkAdapterVlan -CimSession $Servers -ManagementOS
 
 ![All VLANs assigned to storage virtual network adapters](/modules/module_2/media/ps_vlans.png "All VLANs assigned to storage virtual network adapters")
 
-12. In order to ensure that both SMB01 and SMB02 use **both** of the underlying pNICs in the **ComputeStorage Team**, we need to perform a mapping of the vNICs to pNICs. **Note**, this is more applicable to production environments, running with physical network adapters. However, you can perform this with the following PowerShell command in the nested environment for reference:
+12. In order to ensure that both SMB01 and SMB02 use **both** of the underlying pNICs in the **ConvergedSwitch**, we need to perform a mapping of the vNICs to pNICs. **Note**, this is more applicable to production environments, running with physical network adapters. However, you can perform this with the following PowerShell command in the nested environment for reference:
 
 ```powershell
 Invoke-Command -ComputerName $servers -ScriptBlock {

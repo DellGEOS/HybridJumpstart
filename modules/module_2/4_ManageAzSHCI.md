@@ -156,7 +156,7 @@ _______________
 
 > **NOTE** - This can only be perfomed on clusters with **4 or more nodes**. If you deployed less than 4 nodes, skip this optional step.
 
-Mirror-accelerated parity reduces the footprint of the volume on the HDD. For example, a three-way mirror volume would mean that for every 10 terabytes of size, you will need 30 terabytes as footprint. To reduce the overhead in footprint, create a volume with mirror-accelerated parity. This reduces the footprint from 30 terabytes to just 22 terabytes, even with only 4 servers, by mirroring the most active 20 percent of data, and using parity, which is more space efficient, to store the rest. You can adjust this ratio of parity and mirror to make the performance versus capacity tradeoff that's right for your workload. For example, 90 percent parity and 10 percent mirror yields less performance but streamlines the footprint even further.
+Mirror-accelerated parity reduces the footprint of the volume on the storage. For example, a three-way mirror volume would mean that for every 10 terabytes of size, you will need 30 terabytes as footprint. To reduce the overhead in footprint, create a volume with mirror-accelerated parity. This reduces the footprint from 30 terabytes to just 22 terabytes, even with only 4 servers, by mirroring the most active 20 percent of data, and using parity, which is more space efficient, to store the rest. You can adjust this ratio of parity and mirror to make the performance versus capacity tradeoff that's right for your workload. For example, 90 percent parity and 10 percent mirror yields less performance but streamlines the footprint even further.
 
 1. Still in **Windows Admin Center**, on the Volumes page, select the **Inventory** tab, and then select **Create**
 2. In the **Create volume** pane, enter **Volume02_PAR** for the volume name, and set **Resiliency** as **Mirror-accelerated parity**
@@ -198,8 +198,7 @@ In order to perform the same task with **PowerShell**, you can run the following
 
 ```powershell
 Invoke-Command -ComputerName AZSHCI1 -ScriptBlock {
-    Enable-DedupVolume -Volume "C:\ClusterStorage\Volume01" `
-        -UsageType HyperV
+    Enable-DedupVolume -Volume "C:\ClusterStorage\Volume01" -UsageType HyperV
 }
 ```
 _______________
@@ -223,9 +222,9 @@ With the initial storage settings defined and test volumes created, it's time to
 
 ![Cluster security settings in Windows Admin Center](/modules/module_2/media/cluster_encryption.png "Cluster security settings in Windows Admin Center")
 
-> By default, all communication between the nodes are sent **signed**, making the use of **certificates**. This may be fine when all the cluster nodes reside in the same rack. However, when nodes are separated in different racks or locations, you may wish to have a little more security and make use of encryption. For storage traffic between nodes, you have both Cluster Shared Volumes (CSV) and Storage Bus Layer (SBL) traffic. For these type of traffic, the default is to send everything in clear text. You may wish to secure this type of data traffic to prevent sniffer traces from accessing the data. Naturally, You should note that there is a notable performance operating cost with any end-to-end encryption protection when compared to non-encrypted. You can [read more about the use of encryption for cluster network traffic here](https://docs.microsoft.com/en-us/windows-server/storage/file-server/smb-direct#smb-encryption-with-smb-direct).
+> By default, all core cluster communication between the nodes is sent **signed**, making the use of **certificates**. This may be fine when all the cluster nodes reside in the same rack. However, when nodes are separated in different racks or locations, you may wish to have a little more security and make use of encryption. For storage traffic between nodes, you have both Cluster Shared Volumes (CSV) and Storage Bus Layer (SBL) traffic. For these type of traffic, the default is to send everything in clear text. You may wish to secure this type of data traffic to prevent sniffer traces from accessing the data. Naturally, You should note that there is a notable performance operating cost with any end-to-end encryption protection when compared to non-encrypted. You can [read more about the use of encryption for cluster network traffic here](https://docs.microsoft.com/en-us/windows-server/storage/file-server/smb-direct#smb-encryption-with-smb-direct).
 
-5. Click back to **Settings** and then **Virtual machine load balancing** - this allows you to configure the Azure Stack HCI cluster to **automatically** live migrate virtial machines around the cluster based on the CPU utilization and memory pressure of the Azure Stack HCI nodes themselves, helping to balance performance and resource usage across the cluster.  You can [read more about virtual machine load balancing here](https://docs.microsoft.com/en-us/azure-stack/hci/manage/vm-load-balancing).
+5. Click back to **Settings** and then **Virtual machine load balancing** - this allows you to configure the Azure Stack HCI cluster to **automatically** live migrate virtual machines around the cluster based on the CPU utilization and memory pressure of the Azure Stack HCI nodes themselves, helping to balance performance and resource usage across the cluster.  You can [read more about virtual machine load balancing here](https://docs.microsoft.com/en-us/azure-stack/hci/manage/vm-load-balancing).
 6. You can skip **Witness** as this was configured in a previous scenario. Click **Affinity rules**.
 
 ![Affinity rules in Windows Admin Center](/modules/module_2/media/affinity_rules.png "Affinity in Windows Admin Center")
@@ -351,11 +350,11 @@ The final step we'll cover is using Windows Admin Center to live migrate VM001 f
 1. Still within the **Windows Admin Center** , under **Compute**, click on **Virtual machines**
 2. On the **Virtual machines** page, select the **Inventory** tab
 3. You'll be able to see through the default grouping, which Azure Stack HCI node the VM is currently running on - make a note of this.
-4. Next to **VM001**, click the tick box next to VM001, then click **Manage**.  You'll notice you can Clone, Domain Join and also Move the VM. Click **Move**.
+4. Next to **VM001**, click the tick box to select the VM, then click **Manage**.  You'll notice you can Clone, Domain Join and also Move the VM. Click **Move**.
 
 ![Start Live Migration using Windows Admin Center](/modules/module_2/media/wac_move.png "Start Live Migration using Windows Admin Center")
 
-5. In the **Move Virtual Machine** pane, ensure **Failover Cluster** is selected, and leave the default **Best available cluster node** to allow Windows Admin Center to pick where to migrate the VM to, then click **Move**
+5. In the **Move Virtual Machine** pane, ensure **Failover Cluster** is selected, and leave the default **recommended cluster node** to allow Windows Admin Center to pick where to migrate the VM to, then click **Move**
 
 ![Live Migration using Windows Admin Center](/modules/module_2/media/wac_move2.png "Live Migration using Windows Admin Center")
 
@@ -368,7 +367,7 @@ The final step we'll cover is using Windows Admin Center to live migrate VM001 f
 With a VM deployed and migrated, you should take a few minutes to review the settings associated with a virtual machine.
 
 1. On the **Virtual machines** page, under **Inventory**, click on VM001.
-2. On the **VM001** properties page, you can now see a wealth of information about this VM across general properties, checkpoints (snapshots) and storage/networks.
+2. On the **VM001** properties page, you can now see a wealth of information about this VM across general properties, checkpoints (snapshots) and storage/networks. Note, some of the properties are not populated because there's no operating system running inside the VM.
 3. Click on **Power** and then **Turn off**, confirming when prompted. This will ensure that as we explore the different VM settings shortly, all options are available to us, as some settings are not available while VMs are running.
 4. Click on **Settings**.
 5. 
