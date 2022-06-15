@@ -4,7 +4,7 @@ Module 2 | Scenario 5 - Exploring Dell OpenManage Integration with Microsoft Win
 Overview <!-- omit in toc -->
 ------------
 
-So far in this workshop, you've learned how to deploy an Azure Stack HCI cluster, deployed and configured storage, deployed a VM, and explored some of the key settings and configuration options for your Azure Stack HCI environment. So far however, the configuration has focused on the Azure Stack HCI operating system itself. In this scenario, you'll explore how enable and configure the Dell OpenManage Integration with Windows Admin Center.
+So far in this jumpstart, you've learned how to deploy an Azure Stack HCI cluster, deployed and configured storage, deployed a VM, and explored some of the key settings and configuration options for your Azure Stack HCI environment. So far however, the configuration has focused on the Azure Stack HCI operating system itself. In this scenario, you'll explore how enable and configure the Dell OpenManage Integration with Windows Admin Center.
 
 If you're not already familiar, the Dell OpenManage Integration with Windows Admin Center extension enables streamlined lifecycle management at the **physical server level** for the following platforms:
 
@@ -216,4 +216,4 @@ In this step, you've successfully registered your Azure Stack HCI cluster. With 
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

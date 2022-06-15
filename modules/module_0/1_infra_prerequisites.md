@@ -1,9 +1,9 @@
-Hybrid Cloud Workshop | Infrastructure Prerequisites
+Hybrid Jumpstart | Infrastructure Prerequisites
 ==========
 
 Overview <!-- omit in toc -->
 --------
-In this section, we'll review the infrastructure requirements to participate in the Hybrid Cloud Workshop. You'll have a choice of either deploying on physical hardware if you have any available, or, if you prefer, inside an Azure virtual machine. In either case, you'll be set up to explore some of the key capabilities within the hybrid portfolio.
+In this section, we'll review the infrastructure requirements to participate in the Hybrid Jumpstart. You'll have a choice of either deploying on physical hardware if you have any available, or, if you prefer, inside an Azure virtual machine. In either case, you'll be set up to explore some of the key capabilities within the hybrid portfolio.
 
 Section duration <!-- omit in toc -->
 -------------
@@ -26,11 +26,11 @@ Contents <!-- omit in toc -->
 Introduction
 ----------
 
-As previously discussed, the workshop is broken down into a number of modules and sub-modules that delve into deeper content around specific topics, such as Azure Stack HCI, Azure Arc and more.
+As previously discussed, the jumpstart is broken down into a number of modules and sub-modules that delve into deeper content around specific topics, such as Azure Stack HCI, Azure Arc and more.
 
 Within each module, you'll find a mix of presentation to add extra context, alongside hands-on-lab guidance to help provide a guided and consistent way to experience the solutions first-hand.
 
-In order to participate in the hands-on-labs, and follow along with the guided instructions in the workshop, you'll need an environment where you can deploy the virtualized infrastucture and hybrid workloads. For this, **you have a couple of options**:
+In order to participate in the hands-on-labs, and follow along with the guided instructions in the jumpstart, you'll need an environment where you can deploy the virtualized infrastucture and hybrid workloads. For this, **you have a couple of options**:
 
 - Single physical server/desktop/laptop
 - Single Azure virtual machine
@@ -40,7 +40,7 @@ In each case, you'll be using **Nested Virtualization** which allows you to cons
 __________________________
 
 ### Important Note - Production Deployments <!-- omit in toc -->
-The use of nested virtualization in this workshop is aimed at providing flexibility for evaluating the various hybrid solutions. For **production** use, **Azure Stack HCI and corresponding workloads should be deployed on validated physical hardware**, of which you can find the Dell Integrated System for Microsoft Azure Stack HCI on the [Azure Stack HCI Catalog](https://azurestackhcisolutions.azure.microsoft.com/#/catalog?Manufacturer=Dell+Technologies "Azure Stack HCI Catalog").
+The use of nested virtualization in this jumpstart is aimed at providing flexibility for evaluating the various hybrid solutions. For **production** use, **Azure Stack HCI and corresponding workloads should be deployed on validated physical hardware**, of which you can find the Dell Integrated System for Microsoft Azure Stack HCI on the [Azure Stack HCI Catalog](https://azurestackhcisolutions.azure.microsoft.com/#/catalog?Manufacturer=Dell+Technologies "Azure Stack HCI Catalog").
 __________________________
 
 Nested Virtualization
@@ -55,7 +55,7 @@ The use of nested virtualization opens up amazing opportunities for building com
 
 Lab Deployment on Physical Hardware
 -----------
-In this section, we will cover the requirements for running the workshop on a physical system. This could be a single physical server, a workstation, desktop PC, or a laptop. Depending on the system resources available, you may not be able to deploy all components of the different hands-on-labs. We will discuss this in more detail below.
+In this section, we will cover the requirements for running the jumpstart on a physical system. This could be a single physical server, a workstation, desktop PC, or a laptop. Depending on the system resources available, you may not be able to deploy all components of the different hands-on-labs. We will discuss this in more detail below.
 
 ### Architecture
 From an architecture perspective, the following graphic showcases the different layers and interconnections between the different components:
@@ -166,10 +166,10 @@ To reiterate, in this case the whole configuration will run **inside the single 
 
 Next steps
 -----------
-Now that you understand the infrastructure requirements for the workshop, in the next step, we'll break down the different Azure requirements that need to be met in order to work through the various guides in the workshop.
+Now that you understand the infrastructure requirements for the jumpstart, in the next step, we'll break down the different Azure requirements that need to be met in order to work through the various guides in the jumpstart.
 
-Head over to review the **[Hybrid Cloud Workshop | Azure Prerequisites](/modules/module_0/2_azure_prerequisites.md)**
+Head over to review the **[Hybrid Cloud Jumpstart | Azure Prerequisites](/modules/module_0/2_azure_prerequisites.md)**
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

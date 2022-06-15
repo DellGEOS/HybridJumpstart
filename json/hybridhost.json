@@ -282,8 +282,8 @@
     },
     "variables": {
         "dataDisksCount": 8,
-        "dscUri": "https://github.com/DellGEOS/HybridWorkshop/raw/main/dsc/hybridhost.zip",
-        "artifactsLocation": "https://raw.githubusercontent.com/DellGEOS/HybridWorkshop/main/",
+        "dscUri": "https://github.com/DellGEOS/HybridJumpstart/raw/main/dsc/hybridhost.zip",
+        "artifactsLocation": "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/",
         "randomGUID": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, parameters('virtualMachineName')),0,6)]",
         "dnsNameForPublicIP": "[toLower(concat(parameters('virtualMachineName'), variables('randomGUID')))]",
         "virtualNetworkName": "HybridHostvNet",

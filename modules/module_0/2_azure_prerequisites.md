@@ -1,10 +1,10 @@
-Hybrid Cloud Workshop | Azure Prerequisites
+Hybrid Jumpstart | Azure Prerequisites
 ==========
 
 Overview <!-- omit in toc -->
 --------
 
-In addition to your infrastructure requirements, the hybrid solutions covered in this workshop also require access to an **Azure subscription**, and **Azure Active Directory Tenant**. You must also have certain permissions at both the subscription and AAD tenant levels, otherwise some of the steps in the hands-on-labs will not work. This section will cover all the prerequisites you need to successfully complete the different hands-on-labs.
+In addition to your infrastructure requirements, the hybrid solutions covered in this jumpstart also require access to an **Azure subscription**, and **Azure Active Directory Tenant**. You must also have certain permissions at both the subscription and AAD tenant levels, otherwise some of the steps in the hands-on-labs will not work. This section will cover all the prerequisites you need to successfully complete the different hands-on-labs.
 
 Section duration <!-- omit in toc -->
 -------------
@@ -28,7 +28,7 @@ The second option would be to sign up for a [free trial](https://azure.microsoft
 
 *******************************************************************************************************
 
-**NOTE** - The free trial subscription provides $200 for your usage, however the largest individual VM you can create is capped at 4 vCPUs, which is **not** enough to run this workshop environment if you choose to deploy the hands-on-labs within a single Azure VM. Once you have signed up for the free trial, you can [upgrade this to a pay as you go subscription](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/upgrade-azure-subscription "Upgrade to a PAYG subscription") and this will allow you to keep your remaining credit ($200 to start with) for the full 30 days from when you signed up. You will also be able to deploy VMs with greater than 4 vCPUs.
+**NOTE** - The free trial subscription provides $200 for your usage, however the largest individual VM you can create is capped at 4 vCPUs, which is **not** enough to run this jumpstart environment if you choose to deploy the hands-on-labs within a single Azure VM. Once you have signed up for the free trial, you can [upgrade this to a pay as you go subscription](https://docs.microsoft.com/en-us/azure/cost-management-billing/manage/upgrade-azure-subscription "Upgrade to a PAYG subscription") and this will allow you to keep your remaining credit ($200 to start with) for the full 30 days from when you signed up. You will also be able to deploy VMs with greater than 4 vCPUs.
 
 *******************************************************************************************************
 
@@ -64,4 +64,4 @@ Based on your available hardware, choose one of the following options:
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

@@ -1,4 +1,4 @@
-Hybrid Cloud Workshop | Deployment in Azure
+Hybrid Jumpstart | Deployment in Azure
 ==============
 
 Overview <!-- omit in toc -->
@@ -11,7 +11,7 @@ Section duration <!-- omit in toc -->
 __________________________
 
 ### Important Note <!-- omit in toc -->
-If you have existing suitable physical hardware to participate in the workshop, you do not need to deploy an Azure VM. You may proceed onto the next step - [**get started with MSLab**](/modules/module_0/4_mslab.md), and learn how it forms a critical part of the hands-on-lab experience.
+If you have existing suitable physical hardware to participate in the jumpstart, you do not need to deploy an Azure VM. You may proceed onto the next step - [**get started with MSLab**](/modules/module_0/4_mslab.md), and learn how it forms a critical part of the hands-on-lab experience.
 __________________________
 
 Contents <!-- omit in toc -->
@@ -32,12 +32,12 @@ From an architecture perspective, the following graphic showcases the different 
 
 ![Architecture diagram for Azure Stack HCI in Azure](/modules/module_0/media/nested_virt_arch.png "Architecture diagram for Azure Stack HCI in Azure")
 
-The outer box represents the Azure Resource Group, which will contain all of the artifacts deployed in Azure, including the virtual machine itself, and accompaying network adapter, storage and so on. You'll deploy an Azure VM running Windows Server 2022 Datacenter. On top of this, you'll run an **Azure Stack HCI cluster**, and deploy a number of different workloads on top, as you progress through the different modules in the workshop.
+The outer box represents the Azure Resource Group, which will contain all of the artifacts deployed in Azure, including the virtual machine itself, and accompaying network adapter, storage and so on. You'll deploy an Azure VM running Windows Server 2022 Datacenter. On top of this, you'll run an **Azure Stack HCI cluster**, and deploy a number of different workloads on top, as you progress through the different modules in the jumpstart.
 
 Azure VM Size Considerations
 -----------
 
-Now, before you deploy the VM in Azure, it's important to choose a **size** that's appropriate for your needs for this workshop, along with a preferred region. It's highly recommended to choose a VM size that has **at least 64GB memory**. This deployment, by default, recommends using a **Standard_E16s_v4**, which is a memory-optimized VM size, with 16 vCPUs, 128 GiB memory, and no temporary SSD storage. The OS drive will be the default 127 GiB in size and the Azure VM deployment will add an additional 8 data disks (32 GiB each by default), so you'll have around 256GiB to deploy Azure Stack HCI 21H2. You can also make this larger after deployment, if you wish.
+Now, before you deploy the VM in Azure, it's important to choose a **size** that's appropriate for your needs for this jumpstart, along with a preferred region. It's highly recommended to choose a VM size that has **at least 64GB memory**. This deployment, by default, recommends using a **Standard_E16s_v4**, which is a memory-optimized VM size, with 16 vCPUs, 128 GiB memory, and no temporary SSD storage. The OS drive will be the default 127 GiB in size and the Azure VM deployment will add an additional 8 data disks (32 GiB each by default), so you'll have around 256GiB to deploy Azure Stack HCI 21H2. You can also make this larger after deployment, if you wish.
 
 This is just one VM size that we recommend - you can adjust accordingly to suit your needs, even after deployment. The point here is, think about how large a hybrid infrastructure you'd like to deploy inside this Azure VM, and select an Azure VM size from there. Some potential examples would be:
 
@@ -53,7 +53,7 @@ This is just one VM size that we recommend - you can adjust accordingly to suit 
 
 For reference, the Standard_D16s_v4 VM size costs approximately US $0.77 per hour based on East US region, under a Visual Studio subscription.
 
-**E-series VMs (Memory optimized - Recommended for this Hybrid Workshop) with at least 64GB memory**
+**E-series VMs (Memory optimized - Recommended for this Hybrid Jumpstart) with at least 64GB memory**
 
 | Size | vCPU | Memory: GiB | Temp storage (SSD): GiB | Premium Storage |
 |:--|---|---|---|---|
@@ -77,7 +77,7 @@ For reference, the Standard_E8s_v4 VM size costs approximately US $0.50 per hour
 
 Deploying the Azure VM
 -----------
-The guidance below provides a simple template-based option for deploying the Azure VM. The template deployment will be automated to the point of which you can proceed to the next step, learning about MSLab, and progress through your workshop from there.
+The guidance below provides a simple template-based option for deploying the Azure VM. The template deployment will be automated to the point of which you can proceed to the next step, learning about MSLab, and progress through your jumpstart from there.
 
 ### Deployment detail <!-- omit in toc -->
 As part of the deployment, the following steps will be **automated for you**:
@@ -95,11 +95,11 @@ To keep things simple, and graphical, we'll show you how to deploy your VM via a
 
 Firstly, the **Visualize** button will launch the ARMVIZ designer view, where you will see a graphic representing the core components of the deployment, including the VM, NIC, disk and more. If you want to open this in a new tab, **hold CTRL** when you click the button.
 
-[![Visualize your template deployment](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FDellGEOS%2FHybridWorkshop%2Fmain%2Fjson%2Fhybridhost.json "Visualize your template deployment")
+[![Visualize your template deployment](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2FDellGEOS%2FHybridJumpstart%2Fmain%2Fjson%2Fhybridhost.json "Visualize your template deployment")
 
 Secondly, the **Deploy to Azure** button, when clicked, will take you directly to the Azure portal, and upon login, provide you with a form to complete. If you want to open this in a new tab, **hold CTRL** when you click the button.
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDellGEOS%2FHybridWorkshop%2Fmain%2Fjson%2Fhybridhost.json "Deploy to Azure")
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDellGEOS%2FHybridJumpstart%2Fmain%2Fjson%2Fhybridhost.json "Deploy to Azure")
 
 Upon clicking the **Deploy to Azure** button, enter the details, which should look something similar to those shown below, and click **Purchase**.
 
@@ -129,7 +129,7 @@ If your Azure VM fails to deploy successfully, and the error relates to the **Hy
 Access your Azure VM
 -----------
 
-With your Azure VM (HybridHost001) successfully deployed and configured, you're ready to connect to the VM and finish the final preparations for the workshop.
+With your Azure VM (HybridHost001) successfully deployed and configured, you're ready to connect to the VM and finish the final preparations for the jumpstart.
 
 ### Connect to your Azure VM <!-- omit in toc -->
 Firstly, you'll need to connect into the VM, with the easiest approach being via Remote Desktop. If you're not already logged into the Azure portal, visit https://portal.azure.com/, and login with the same credentials used earlier.  Once logged in, using the search box on the dashboard, enter "**HybridHost001**". You may see a number of results under "Resources", so click "See all":
@@ -157,7 +157,7 @@ Accept any certificate prompts, and within a few moments, you should be successf
 
 Next steps
 -----------
-In this step, you've successfully created and automatically configured your Azure VM, which will serve as the host for all of the hands-on-labs for the workshop. You're now ready to move on to the next step, where you'll learn more about MSLab, and how it forms a critical part of the overall workshop solution.
+In this step, you've successfully created and automatically configured your Azure VM, which will serve as the host for all of the hands-on-labs for the jumpstart. You're now ready to move on to the next step, where you'll learn more about MSLab, and how it forms a critical part of the overall jumpstart solution.
 
 * [Get started with MSLab](/modules/module_0/4_mslab.md "Get started with MSLab")
 
@@ -204,4 +204,4 @@ Get-DscConfigurationStatus
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

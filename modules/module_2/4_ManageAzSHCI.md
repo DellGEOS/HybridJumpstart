@@ -26,7 +26,7 @@ Contents <!-- omit in toc -->
 
 Before you begin
 -----------
-At this stage, you should have completed the previous section of the workshop, [Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center](/modules/module_2/2a_Cluster_AzSHCI_WAC.md) or [Scenario 2b - Clustering Azure Stack HCI with PowerShell](/modules/module_2/2a_Cluster_AzSHCI_PS.md) and have an Azure Stack HCI cluster successfully deployed, along with a cloud/file share witness.
+At this stage, you should have completed the previous section of the jumpstart, [Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center](/modules/module_2/2a_Cluster_AzSHCI_WAC.md) or [Scenario 2b - Clustering Azure Stack HCI with PowerShell](/modules/module_2/2a_Cluster_AzSHCI_PS.md) and have an Azure Stack HCI cluster successfully deployed, along with a cloud/file share witness.
 
 You should have also followed the steps to register your Azure Stack HCI cluster during [Scenario 3 - Integrate Azure Stack HCI with Azure](/modules/module_2/3_Integrate_Azure.md).
 
@@ -41,7 +41,7 @@ Fast forward to Windows Server 2016 and the evolution of Storage Spaces, into **
 ### Explore Storage Settings
 For this section, you'll use Windows Admin Center to explore some of the key storage settings within Azure Stack HCI.
 
-1. On **HybridWorkshop-DC**, logged in as **dell\labadmin**, in your edge broswer, navigate to **https://wacgw/** to open Windows Admin Center, and on the **All connections** page, select your azshci-cluster.
+1. On **HybridJumpstart-DC**, logged in as **dell\labadmin**, in your edge broswer, navigate to **https://wacgw/** to open Windows Admin Center, and on the **All connections** page, select your azshci-cluster.
 2. In the bottom-left corner, click **Settings**
 3. In the settings menu, you'll notice that there are 2 sub-settings for storage: **In-memory cache** and **Storage Spaces and pools**. We'll look at In-memory cache first:
 

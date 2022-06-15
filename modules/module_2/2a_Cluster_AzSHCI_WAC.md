@@ -28,9 +28,9 @@ Contents <!-- omit in toc -->
 
 Before you begin
 -----------
-At this stage, you should have completed the previous section of the workshop, [Deploying the Azure Stack HCI Infrastructure](/modules/module_2/2_Deploy_AzSHCI.md) and you should have a set of virtual machines running in your environment, visible in Hyper-V Manager:
+At this stage, you should have completed the previous section of the jumpstart, [Deploying the Azure Stack HCI Infrastructure](/modules/module_2/2_Deploy_AzSHCI.md) and you should have a set of virtual machines running in your environment, visible in Hyper-V Manager:
 
-![Workshop machines running](/modules/module_0/media/mslab_vms_running.png "Workshop machines running")
+![Jumpstart machines running](/modules/module_0/media/mslab_vms_running.png "Jumpstart machines running")
 
 If you don't have those VMs running, go over and do that now - it should take about 10 minutes.
 
@@ -39,7 +39,7 @@ Moving on to Windows Admin Center, you now have the ability to construct Azure S
 ### Allow popups in Edge browser <!-- omit in toc -->
 To give the optimal experience with Windows Admin Center, you should enable **Microsoft Edge** to allow popups for Windows Admin Center.
 
-1. If you're not already logged in, log into the **HybridWorkshop-DC** virtual machine, open the **Microsoft Edge icon** on your taskbar.
+1. If you're not already logged in, log into the **HybridJumpstart-DC** virtual machine, open the **Microsoft Edge icon** on your taskbar.
 2. If you haven't already, complete the initial Edge configuration settings.
 3. Navigate to **edge://settings/content/popups**
 4. Click the slider button to **disable** pop-up blocking
@@ -86,7 +86,7 @@ Creating a (local) cluster
 -----------
 This section will walk through the key steps for you to set up the Azure Stack HCI cluster with Windows Admin Center
 
-1. If you're not already logged in, log into the **HybridWorkshop-DC** virtual machine, open the **Microsoft Edge icon** on your taskbar, and browse to **https://wacgw**.
+1. If you're not already logged in, log into the **HybridJumpstart-DC** virtual machine, open the **Microsoft Edge icon** on your taskbar, and browse to **https://wacgw**.
 2. Once logged into Windows Admin Center, under **All connections**, click **Add**
 3. On the **Add or create resources popup**, under **Server clusters**, click **Create new** to open the **Cluster Creation wizard**
 
@@ -252,7 +252,7 @@ You should delete any **default gateway** information from the form. When you cl
 10.  Once changes have been successfully applied, click **Next: Clustering**
 
 ### Clustering ###
-With the network configured for the workshop environment, it's time to construct the local cluster.
+With the network configured for the jumpstart environment, it's time to construct the local cluster.
 
 1. At the start of the **Cluster** wizard, on the **Validate the cluster** page, click **Validate**.
 
@@ -420,4 +420,4 @@ In this step, you've successfully created a nested Azure Stack HCI cluster using
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

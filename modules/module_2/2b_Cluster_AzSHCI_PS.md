@@ -28,9 +28,9 @@ Contents <!-- omit in toc -->
 
 Before you begin
 -----------
-At this stage, you should have completed the previous section of the workshop, [Deploying the Azure Stack HCI Infrastructure](/modules/module_2/2_Deploy_AzSHCI.md) and you should have a set of virtual machines running in your environment, visible in Hyper-V Manager:
+At this stage, you should have completed the previous section of the jumpstart, [Deploying the Azure Stack HCI Infrastructure](/modules/module_2/2_Deploy_AzSHCI.md) and you should have a set of virtual machines running in your environment, visible in Hyper-V Manager:
 
-![Workshop machines running](/modules/module_0/media/mslab_vms_running.png "Workshop machines running")
+![Jumpstart machines running](/modules/module_0/media/mslab_vms_running.png "Jumpstart machines running")
 
 If you don't have those VMs running, go over and do that now - it should take about 10 minutes.
 
@@ -40,14 +40,14 @@ Creating a (local) cluster
 -----------
 
 ### Management Tools
-In this step, you'll install some additional management tools on your **HybridWorkshop-DC** virtual machine, that will assist in the remote configuration of the Azure Stack HCI environment.
+In this step, you'll install some additional management tools on your **HybridJumpstart-DC** virtual machine, that will assist in the remote configuration of the Azure Stack HCI environment.
 
 1. On your Hyper-V host, open **Hyper-V Manager**.
-2. Once open, you'll see your virtual machines up and running. Right-click on **HybridWorkshop-DC** and click **Connect**
+2. Once open, you'll see your virtual machines up and running. Right-click on **HybridJumpstart-DC** and click **Connect**
 
-![Connect to HybridWorkshop-DC](/modules/module_0/media/mslab_connect_dc.png "Connect to HybridWorkshop-DC")
+![Connect to HybridJumpstart-DC](/modules/module_0/media/mslab_connect_dc.png "Connect to HybridJumpstart-DC")
 
-3. In the **Connect to HybridWorkshop-DC** popup, use the **slider** to select your resolution and click **Connect**
+3. In the **Connect to HybridJumpstart-DC** popup, use the **slider** to select your resolution and click **Connect**
 4. When prompted, enter your **credentials** you provided in the **LabConfig** file. If you kept the default credentials, they will be:
 
     * **Username**: LabAdmin
@@ -176,7 +176,7 @@ With the **manual** approach, you're configuring each layer of the network acros
 
 For the purpose of this guide therefore, we'll be configuring the networking settings manually with PowerShell, and the steps below are tailored for use inside nested virtual machines. We'll choose the **Shared compute and storage with separate management** example from above.
 
-1. On **HybridWorkshop-DC**, still in your **administrative PowerShell console**, run the code below to create the first SET for management
+1. On **HybridJumpstart-DC**, still in your **administrative PowerShell console**, run the code below to create the first SET for management
 
 ```powershell
 # Define servers as variable
@@ -597,4 +597,4 @@ In this step, you've successfully created a nested Azure Stack HCI cluster using
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

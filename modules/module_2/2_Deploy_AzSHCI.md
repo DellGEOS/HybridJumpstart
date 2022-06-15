@@ -44,7 +44,7 @@ As shown on the architecture graphic below, in this step, you'll deploy a set of
 
 Step 1 - Lab infrastructure deployment
 --------
-With the parent virtual hard disks previously created, you're now ready to begin deployment of the virtual machines that will host the workshop environment. As we saw earlier when looking at the [Lab Config](/modules/module_0/4_mslab.md/#exploring-the-labconfig-file), as part of this deployment, MSLab will deploy the following:
+With the parent virtual hard disks previously created, you're now ready to begin deployment of the virtual machines that will host the jumpstart environment. As we saw earlier when looking at the [Lab Config](/modules/module_0/4_mslab.md/#exploring-the-labconfig-file), as part of this deployment, MSLab will deploy the following:
 
 * 1 Windows Server 2022 Active Directory Domain Controller
 * 4 Azure Stack HCI nodes each with 4GB Memory, and 12 x 4TB HDDs (these are dynamic, so won't consume 48TB :) )
@@ -54,27 +54,27 @@ All servers above will be automatically domain-joined, and the credentials speci
 
 _______________________
 
-**NOTE** - If you have a larger Hyper-V host, that has more memory available, you may wish to increase the memory allocated to each Azure Stack HCI node from 4GB. To do so, in your **HybridWorkshop** folder, open the **LabConfig** file, and adjust the **MemoryStartupBytes= 4GB;** to a larger value.
+**NOTE** - If you have a larger Hyper-V host, that has more memory available, you may wish to increase the memory allocated to each Azure Stack HCI node from 4GB. To do so, in your **HybridJumpstart** folder, open the **LabConfig** file, and adjust the **MemoryStartupBytes= 4GB;** to a larger value.
 _______________________
 
-1. In your **HybridWorkshop folder**, right-click **Deploy** and click **Run with PowerShell** to start the creation of your Azure Stack HCI nodes, and management server, along with the deployment of the pre-created domain controller. In the case of the domain controller, it will be imported, and a snapshot taken to preserve it's original state if you wish to clean up the environment later.
+1. In your **HybridJumpstart folder**, right-click **Deploy** and click **Run with PowerShell** to start the creation of your Azure Stack HCI nodes, and management server, along with the deployment of the pre-created domain controller. In the case of the domain controller, it will be imported, and a snapshot taken to preserve it's original state if you wish to clean up the environment later.
 2. Upon running the **Deploy** script, you may be prompted to **change the execution policy** - enter **A** for **Yes to All** and **press enter**.
 3. Choose your telemetry level for the lab and **press enter**. Deployment will begin.
 
-![Workshop machines deployed](/modules/module_0/media/mslab_deploy_complete.png "Workshop machines deployed")
+![Jumpstart machines deployed](/modules/module_0/media/mslab_deploy_complete.png "Jumpstart machines deployed")
 
 4. Once completed, you'll be promted to **start the lab virtual machines** - press **A** and **press enter**.
 5. Once started, **press enter** to continue.
 6. With the virtual machines deployed, on your Hyper-V host, open **Hyper-V Manager**.
 7. Once open, you'll see your virtual machines up and running, ready to proceed on to the next step.
 
-![Workshop machines running](/modules/module_0/media/mslab_vms_running.png "Workshop machines running")
+![Jumpstart machines running](/modules/module_0/media/mslab_vms_running.png "Jumpstart machines running")
 
-8. Still in **Hyper-V Manager**, right-click on **HybridWorkshop-DC** and click **Connect**
+8. Still in **Hyper-V Manager**, right-click on **HybridJumpstart-DC** and click **Connect**
 
-![Connect to HybridWorkshop-DC](/modules/module_0/media/mslab_connect_dc.png "Connect to HybridWorkshop-DC")
+![Connect to HybridJumpstart-DC](/modules/module_0/media/mslab_connect_dc.png "Connect to HybridJumpstart-DC")
 
-9. In the **Connect to HybridWorkshop-DC** popup, use the **slider** to select your resolution and click **Connect**
+9. In the **Connect to HybridJumpstart-DC** popup, use the **slider** to select your resolution and click **Connect**
 10. When prompted, enter your **credentials** you provided in the **LabConfig** file. If you kept the default credentials, they will be:
 
     * **Username**: LabAdmin
@@ -85,21 +85,21 @@ _______________________
 
 ![Add Servers in Server Manager](/modules/module_0/media/server_manager_add_servers.png "Add Servers in Server Manager")
 
-13. In the **Add Servers** window, click **Find Now**, and you'll see all the domain-joined machines in the current workshop deployment. Select all the servers in the list, then click the **right arrow** to add them to the management view on this Domain Controller machine, then click **OK**.
+13. In the **Add Servers** window, click **Find Now**, and you'll see all the domain-joined machines in the current jumpstart deployment. Select all the servers in the list, then click the **right arrow** to add them to the management view on this Domain Controller machine, then click **OK**.
 14. In **Server Manager**, under **All Servers**, you should now see all the servers in the domain listed, and available for management from this interface.
 
 Step 2 - Installing Windows Admin Center
 --------
-With the infrastructure deployed, the final step of this section is to install **Windows Admin Center**. If you're not familiar, Windows Admin Center is a locally-deployed, browser-based management toolset that lets you manage your Windows Servers with no Azure or cloud dependency. Windows Admin Center gives you full control over all aspects of your server infrastructure and is particularly useful for managing servers on private networks that are not connected to the Internet. It's also extremely useful in deploying and configuring Azure Stack HCI, and a number of other hybrid technologies, which you'll explore in this workshop.
+With the infrastructure deployed, the final step of this section is to install **Windows Admin Center**. If you're not familiar, Windows Admin Center is a locally-deployed, browser-based management toolset that lets you manage your Windows Servers with no Azure or cloud dependency. Windows Admin Center gives you full control over all aspects of your server infrastructure and is particularly useful for managing servers on private networks that are not connected to the Internet. It's also extremely useful in deploying and configuring Azure Stack HCI, and a number of other hybrid technologies, which you'll explore in this jumpstart.
 
-In this section, you'll be installing Windows Admin Center onto the **HybridWorkshop-WACGW** virtual machine. If you recall, this virtual machine was deployed with the headless **Server Core** deployment of Windows Server 2022, and as a result, you'll install Windows Admin Center remotely onto the machine, from the Domain Controller.
+In this section, you'll be installing Windows Admin Center onto the **HybridJumpstart-WACGW** virtual machine. If you recall, this virtual machine was deployed with the headless **Server Core** deployment of Windows Server 2022, and as a result, you'll install Windows Admin Center remotely onto the machine, from the Domain Controller.
 
-1. If you're not already logged in, log into the **HybridWorkshop-DC** virtual machine, in the same way you did [earlier](#step-1---lab-infrastructure-deployment).
+1. If you're not already logged in, log into the **HybridJumpstart-DC** virtual machine, in the same way you did [earlier](#step-1---lab-infrastructure-deployment).
 2. Once logged in, from the **Start Menu**, right-click **PowerShell**, select **More**, and then **Run as Administrator**
 
 ![Run PowerShell as Admin](/modules/module_0/media/powershell_as_admin.png "Run PowerShell as Admin")
 
-3. To simplify deployment of Windows Admin Center remotely onto the **HybridWorkshop-WACGW** machine, copy and paste the following PowerShell code, into your elevated PowerShell console. This process should only take a few moments.
+3. To simplify deployment of Windows Admin Center remotely onto the **HybridJumpstart-WACGW** machine, copy and paste the following PowerShell code, into your elevated PowerShell console. This process should only take a few moments.
 
 ```powershell
 # Define the target machine name to install Windows Admin Center
@@ -225,4 +225,4 @@ With your Azure Stack HCI nodes created and running, you can choose your preferr
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

@@ -26,7 +26,7 @@ Contents <!-- omit in toc -->
 
 Before you begin
 -----------
-At this stage, you should have completed the previous section of the workshop, [Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center](/modules/module_2/2a_Cluster_AzSHCI_WAC.md) or [Scenario 2b - Clustering Azure Stack HCI with PowerShell](/modules/module_2/2a_Cluster_AzSHCI_PS.md) and have an Azure Stack HCI cluster successfully deployed, along with a cloud/file share witness. Here you can see our previously deployed cluster in Windows Admin Center:
+At this stage, you should have completed the previous section of the jumpstart, [Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center](/modules/module_2/2a_Cluster_AzSHCI_WAC.md) or [Scenario 2b - Clustering Azure Stack HCI with PowerShell](/modules/module_2/2a_Cluster_AzSHCI_PS.md) and have an Azure Stack HCI cluster successfully deployed, along with a cloud/file share witness. Here you can see our previously deployed cluster in Windows Admin Center:
 
 ![Azure Stack HCI cluster in Windows Admin Center](/modules/module_2/media/wac_azshcicluster.png "Azure Stack HCI cluster in Windows Admin Center")
 
@@ -129,7 +129,7 @@ The most restrictive option is to create a custom AD role with a custom consent 
 
 **NOTE** - This option requires an **Azure AD Premium license** and uses custom AD roles and custom consent policy features.
 
-If you choose to perform Option 3, you'll need to follow these steps on **HybridWorkshop-DC**, which we'll demonstrate mainly through PowerShell.
+If you choose to perform Option 3, you'll need to follow these steps on **HybridJumpstart-DC**, which we'll demonstrate mainly through PowerShell.
 
 1. Firstly, configure the appropriate AzureAD modules, then **Connect to Azure AD**, and when prompted, **log in with your appropriate credentials**.
 
@@ -196,9 +196,9 @@ Complete Registration
 To complete registration, you have 2 options - you can use **Windows Admin Center**, or you can use **PowerShell**.
 
 ### Option 1 - Register using PowerShell
-We're going to perform the registration from the **HybridWorkshop-DC** machine.
+We're going to perform the registration from the **HybridJumpstart-DC** machine.
 
-1. On **HybridWorkshop-DC**, open **PowerShell as administrator**
+1. On **HybridJumpstart-DC**, open **PowerShell as administrator**
 2. Run the following PowerShell command to download the required Azure Stack HCI PowerShell module and dependencies:
 
 ```powershell
@@ -319,7 +319,7 @@ Once complete, you should see a message indicating success, as per below:
 
 > If you encounter an issue when registering your Azure Stack HCI cluster, refer to the [Troubleshooting](#troubleshooting) section below.
 
-8. Once the cluster is registered, run the following command on **HybridWorkshop-DC** to check the updated status:
+8. Once the cluster is registered, run the following command on **HybridJumpstart-DC** to check the updated status:
 
 ```powershell
 Invoke-Command -ComputerName azshci1 -ScriptBlock {
@@ -335,7 +335,7 @@ You can see the **ConnectionStatus** and **LastConnected** time, which is usuall
 ### Option 2 - Register using Windows Admin Center
 If your preference is to use Windows Admin Center for registration, follow the steps below:
 
-1. On **HybridWorkshop-DC**, logged in as **dell\labadmin**, open Windows Admin Center, and on the **All connections** page, select your azshci-cluster.
+1. On **HybridJumpstart-DC**, logged in as **dell\labadmin**, open Windows Admin Center, and on the **All connections** page, select your azshci-cluster.
 2. When the cluster dashboard has loaded, in the top-right corner, you'll see the **status of the Azure registration/connection**
 
 ![Azure registration status in Windows Admin Center](/modules/module_2/media/wac_azure_reg_dashboard_2.png "Azure registration status in Windows Admin Center")
@@ -367,7 +367,7 @@ If your preference is to use Windows Admin Center for registration, follow the s
 ### View registration details in the Azure portal
 With registration complete, either through Windows Admin Center, or through PowerShell, you should take some time to explore the artifacts that are created in Azure, once registration successfully completes.
 
-1. On **HybridWorkshop-DC**, open the Edge browser and **log into https://portal.azure.com** to check the resources created there. In the **search box** at the top of the screen, search for **Resource groups** and then click on **Resource groups**
+1. On **HybridJumpstart-DC**, open the Edge browser and **log into https://portal.azure.com** to check the resources created there. In the **search box** at the top of the screen, search for **Resource groups** and then click on **Resource groups**
 2. You should see a new **Resource group** listed, with the name you specified earlier, which in our case, is **AzSHCI-Cluster_Rg**
 
 ![Registration resource group in Azure](/modules/module_2/media/registration_rg_ga.png "Registration resource group in Azure")
@@ -388,7 +388,7 @@ In this step, you've successfully registered your Azure Stack HCI cluster. With 
 
 Raising issues
 -----------
-If you notice something is wrong with the workshop, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridWorkshop/issues), and we'll be sure to fix this as quickly as possible!
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!
 
 Troubleshooting
 -----------
@@ -396,7 +396,7 @@ When registering your Azure Stack HCI cluster with Azure, should the registratio
 
 ![Azure Stack HCI Arc integration error](/modules/module_2/media/ps_arc_error.png "Azure Stack HCI Arc integration error")
 
-1. Firstly, you can explore the logs by running the following PowerShell command on **HybridWorkshop-DC**:
+1. Firstly, you can explore the logs by running the following PowerShell command on **HybridJumpstart-DC**:
 
 ```powershell
 # Validate task and start task
