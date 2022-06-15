@@ -1,4 +1,4 @@
-![Hybrid Jumpstart Banner](/media/MainBanner.png)
+![Hybrid Jumpstart Banner](/media/MainBannerNew.png)
 
 Dell Technologies & Microsoft | Hybrid Jumpstart
 ==============
