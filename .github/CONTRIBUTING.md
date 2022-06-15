@@ -1,7 +1,7 @@
-Contribute to the Hybrid Cloud Workshop
+Contribute to the Hybrid Jumpstart
 ==============
 
-Become one of the contributors to this workshop! We thrive to build a welcoming and open community for anyone who wants to use the workshop or contribute to it. There are just a few small guidelines you need to follow. To help us create a safe and positive community experience for all, we require all participants to adhere to the [Code of Conduct](CODE_OF_CONDUCT.md).
+Become one of the contributors to this jumpstart! We thrive to build a welcoming and open community for anyone who wants to use the jumpstart or contribute to it. There are just a few small guidelines you need to follow. To help us create a safe and positive community experience for all, we require all participants to adhere to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 Contents <!-- omit in toc -->
 ----------- 
@@ -16,21 +16,21 @@ Become a contributor
 
 You can contribute to this project in several ways. Here are some examples:
 
-* Contribute to the workshop guide and examples.
-* Report and triage errors in the workshop guides.
+* Contribute to the jumpstart guide and examples.
+* Report and triage errors in the jumpstart guides.
 * Scenario requests or submissions
 * Help by solving issues raised by others.
 
 Contributing
 -----------
 
-All errors/requests/suggestions related to the workshop should be submitted [here](https://github.com/DellGEOS/HybridWorkshop/issues). Issues will be triaged and labels will be used to indicate the type of issue.
+All errors/requests/suggestions related to the jumpstart should be submitted [here](https://github.com/DellGEOS/HybridJumpstart/issues). Issues will be triaged and labels will be used to indicate the type of issue.
 
-We aim to track and document everything related to the workshop via the Issues page. The workshop is released with no warranties or SLAs and is intended to be supported on a best-effort basis by the Dell GEOS team.
+We aim to track and document everything related to the jumpstart via the Issues page. The jumpstart is released with no warranties or SLAs and is intended to be supported on a best-effort basis by the Dell GEOS team.
 
-Before submitting a new error/request/suggestion, make sure someone hasn't already gone through the process! Look through the [existing issues](https://github.com/DellGEOS/HybridWorkshop/issues) for similar submissions.
+Before submitting a new error/request/suggestion, make sure someone hasn't already gone through the process! Look through the [existing issues](https://github.com/DellGEOS/HybridJumpstart/issues) for similar submissions.
 
-Report a error/request/suggestion by submitting [a new issue](https://github.com/DellGEOS/HybridWorkshop/issues/new). Make sure that you provide as much information as possible about the issue, or suggestion.
+Report a error/request/suggestion by submitting [a new issue](https://github.com/DellGEOS/HybridJumpstart/issues/new). Make sure that you provide as much information as possible about the issue, or suggestion.
 
 Pull Requests
 -----------
