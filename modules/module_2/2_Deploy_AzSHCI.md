@@ -7,7 +7,7 @@ In this scenario, you'll walk through deployment of an Azure Stack HCI cluster. 
 
 Scenario duration <!-- omit in toc -->
 -------------
-00 Minutes
+45 Minutes
 
 Contents <!-- omit in toc -->
 -----------
