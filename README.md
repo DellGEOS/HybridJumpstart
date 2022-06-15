@@ -10,7 +10,7 @@ About the jumpstart
 -----------
 In this jumpstart, you'll learn about, and gain hands-on experience with a number of hybrid technologies within the Dell Technologies and Microsoft hybrid cloud portfolios. The following graphic depicts the different building blocks that make up the hybrid solution, and which you'll explore throughout the modules in this jumpstart:
 
-![Hybrid Solution Architecture](media/HybridSolutionArchitecture.png)
+![Hybrid Solution Architecture](media/HybridSolutionArchitectureUpdated.png)
 
 There's a lot to digest in this graphic, so let's break down the different layers.
 
