@@ -30,8 +30,7 @@ You should have completed the [**lab configuration**](/modules/module_0/4_mslab.
 For connecting and integrating the Azure Stack HCI environment with Azure, you'll need to review the list below.
 
 * **Get an Azure subscription** - if you don't have one, read [more information here](/modules/module_0/2_azure_prerequisites.md#get-an-azure-subscription)
-* **Azure subscription permissions** - Owner **or** User Access Administrator + Contributer **or** Custom ([Instructions here](https://docs.microsoft.com/en-us/azure-stack/hci/deploy/register-with-azure#azure-subscription-and-permissions))
-* **Azure Active Directory permissions** - Global Admin **or** Cloud Application Administration **or** Custom ([Instructions here](https://docs.microsoft.com/en-us/azure-stack/hci/manage/manage-azure-registration#option-3-create-a-custom-active-directory-role-and-consent-policy))
+* **Azure subscription permissions** - Owner **or** User Access Administrator + Contributer **or** Custom ([Instructions here](https://docs.microsoft.com/en-us/azure-stack/hci/deploy/register-with-azure#assign-permissions-from-azure-portal))
 * **Firewall / Proxy** - If you are running the environment inside your own lab, ensure that your lab deployment has access to all external resources listed below:
   * [Host requirements](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/firewall-requirements)
   * [Arc-enabled Servers requirements](https://docs.microsoft.com/en-us/azure/azure-arc/servers/agent-overview#networking-configuration)

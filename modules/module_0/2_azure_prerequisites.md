@@ -8,7 +8,7 @@ In addition to your infrastructure requirements, the hybrid solutions covered in
 
 Section duration <!-- omit in toc -->
 -------------
-00 Minutes
+10 Minutes
 
 Contents <!-- omit in toc -->
 --------
@@ -38,7 +38,7 @@ Depending on the particular module and hands-on-lab, the permissions required fo
 
 | Module | Topic | Subscription Permissions | AAD Permissions |
 |:--|---|---|---|
-| 2 | Azure Stack HCI | Owner / User Access Administrator + Contributer / Custom | Global Admin / Cloud Application Administration / Custom
+| 2 | Azure Stack HCI | Owner / User Access Administrator + Contributer / Custom | Not required
 | 3 | AKS on Azure Stack HCI | Owner / Custom Service Principal | Global Admin / Cloud Application Administration / Custom
 
 

@@ -7,7 +7,7 @@ In this section, we'll review the infrastructure requirements to participate in 
 
 Section duration <!-- omit in toc -->
 -------------
-00 Minutes
+20 Minutes
 
 Contents <!-- omit in toc -->
 ----------
