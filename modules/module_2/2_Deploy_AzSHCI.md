@@ -39,7 +39,7 @@ Architecture
 -----------
 As shown on the architecture graphic below, in this step, you'll deploy a set of Azure Stack HCI nodes, a Domain Controller and management server, and from there, you'll be **clustering the nodes into an Azure Stack HCI cluster**. You'll be focused on **creating a cluster in a single site**.
 
-![Architecture diagram for Azure Stack HCI nested](/modules/module_0/media/nested_virt_arch.png "Architecture diagram for Azure Stack HCI nested")
+![Architecture diagram for Azure Stack HCI nested](/modules/module_0/media/nested_virt_physical.png "Architecture diagram for Azure Stack HCI nested")
 
 Step 1 - Lab infrastructure deployment
 --------
