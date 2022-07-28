@@ -12,16 +12,22 @@ Scenario duration <!-- omit in toc -->
 
 Contents <!-- omit in toc -->
 -----------
-- [Before you begin](#before-you-begin)
-- [Storage](#storage)
-  - [Explore Storage Settings](#explore-storage-settings)
-  - [Create volumes for VMs](#create-volumes-for-vms)
-- [Explore Cluster-wide settings](#explore-cluster-wide-settings)
-- [Explore Hyper-V Host settings](#explore-hyper-v-host-settings)
-- [Deploy your first virtual machine](#deploy-your-first-virtual-machine)
-  - [Create the virtual machine](#create-the-virtual-machine)
-  - [Live migrate the virtual machine](#live-migrate-the-virtual-machine)
-  - [Explore the VM settings](#explore-the-vm-settings)
+- [Module 2 | Scenario 4 - Exploring local Azure Stack HCI management](#module-2--scenario-4---exploring-local-azure-stack-hci-management)
+  - [Before you begin](#before-you-begin)
+  - [Storage](#storage)
+    - [Explore Storage Settings](#explore-storage-settings)
+    - [Create volumes for VMs](#create-volumes-for-vms)
+      - [Explore your drives](#explore-your-drives)
+      - [Create a Three-way mirror volume](#create-a-three-way-mirror-volume)
+      - [Optional - Create a mirror-accelerated parity volume](#optional---create-a-mirror-accelerated-parity-volume)
+      - [Deduplication and compression](#deduplication-and-compression)
+  - [Explore Cluster-wide settings](#explore-cluster-wide-settings)
+  - [Explore Hyper-V Host settings](#explore-hyper-v-host-settings)
+  - [Deploy your first virtual machine](#deploy-your-first-virtual-machine)
+    - [Create the virtual machine](#create-the-virtual-machine)
+    - [Live migrate the virtual machine](#live-migrate-the-virtual-machine)
+    - [Explore the VM settings](#explore-the-vm-settings)
+    - [Explore Azure Stack HCI OS settings](#explore-azure-stack-hci-os-settings)
 
 
 Before you begin
@@ -36,7 +42,7 @@ Storage
 ----------
 A core element of Azure Stack HCI is **Storage Spaces Direct**. However, prior to Storage Spaces Direct, **Storage Spaces** was first introduced in Windows 7 and Windows Server 2012. It is conceptually similar to RAID, implemented in software, allowing you to group three or more internal/external drives together into a storage pool and then use capacity from that pool to create Storage Spaces, onto which you can run your workloads. Storage Spaces was simple and efficient to manage, offered more advanced functionality like thin provisioning, and provided redundancy against disk failure, or in the event of a Windows Server Failover Cluster, redundancy against node failure.
 
-Fast forward to Windows Server 2016 and the evolution of Storage Spaces, into **Storage Spaces Direct**, which in turn, transformed Windows Server into a true hyperconverged infrastructure solution. With Storage Spaces Direct, administrators could continue to benefit from the ease of administration, but now, with a high performance, scalable storage solution incorperating some of the latest storage enhanecments such as **caching**, **tiering**, **resiliency** and **erasure coding** to name but a few.
+Fast forward to Windows Server 2016 and the evolution of Storage Spaces, into **Storage Spaces Direct**, which in turn, transformed Windows Server into a true hyperconverged infrastructure solution. With Storage Spaces Direct, administrators could continue to benefit from the ease of administration, but now, with a high performance, scalable storage solution incorperating some of the latest storage enhancements such as **caching**, **tiering**, **resiliency** and **erasure coding** to name but a few.
 
 ### Explore Storage Settings
 For this section, you'll use Windows Admin Center to explore some of the key storage settings within Azure Stack HCI.
@@ -55,7 +61,7 @@ The downside of the in-memory cache, is that it can introduce a performance over
 
 To configure this feature, you simply use the check box to enable, and set the desired maximum memory **per cluster node** - this figure can be up to 80% of the host's memory!
 
-To configure with PowerShell, you can use the following command:
+To configure with PowerShell, you can use the following command on one of your Azure Stack HCI nodes:
 
 ```powershell
 # Get existing cache size in MiB
@@ -218,13 +224,20 @@ With the initial storage settings defined and test volumes created, it's time to
 1. In **Windows Admin Center**, click **Settings** and under **Cluster**, you'll notice a number of menu options.
 2. Click on **Access point** - this is the name of your Azure Stack HCI cluster.
 3. Click on **Node shutdown behaviour** - when the node is shutdown gracefully, this setting determines if virtual machines will be live migrated to other available nodes, or shutdown/saved.
-4. Click on * **Cluster traffic encryption**, and then **view them on our new Security tool** - here, you can optionally change the way that traffic between cluster nodes is protected.
+4. Click on **Cluster traffic encryption**, and then **view them on our new Security tool** - here, you can optionally change the way that traffic between cluster nodes is protected.
 
 ![Cluster security settings in Windows Admin Center](/modules/module_2/media/cluster_encryption.png "Cluster security settings in Windows Admin Center")
 
 > By default, all core cluster communication between the nodes is sent **signed**, making the use of **certificates**. This may be fine when all the cluster nodes reside in the same rack. However, when nodes are separated in different racks or locations, you may wish to have a little more security and make use of encryption. For storage traffic between nodes, you have both Cluster Shared Volumes (CSV) and Storage Bus Layer (SBL) traffic. For these type of traffic, the default is to send everything in clear text. You may wish to secure this type of data traffic to prevent sniffer traces from accessing the data. Naturally, You should note that there is a notable performance operating cost with any end-to-end encryption protection when compared to non-encrypted. You can [read more about the use of encryption for cluster network traffic here](https://docs.microsoft.com/en-us/windows-server/storage/file-server/smb-direct#smb-encryption-with-smb-direct).
 
-5. Click back to **Settings** and then **Virtual machine load balancing** - this allows you to configure the Azure Stack HCI cluster to **automatically** live migrate virtual machines around the cluster based on the CPU utilization and memory pressure of the Azure Stack HCI nodes themselves, helping to balance performance and resource usage across the cluster.  You can [read more about virtual machine load balancing here](https://docs.microsoft.com/en-us/azure-stack/hci/manage/vm-load-balancing).
+5. Click back to **Settings** and then **Virtual machine load balancing** - this allows you to configure the Azure Stack HCI cluster to **automatically** live migrate virtual machines around the cluster based on the CPU utilization and memory pressure of the Azure Stack HCI nodes themselves, helping to balance performance and resource usage across the cluster.  You can [read more about virtual machine load balancing here](https://docs.microsoft.com/en-us/azure-stack/hci/manage/vm-load-balancing). You can configure the virtual machine load balancing using these PowerShell commands on one of your Azure Stack HCI nodes:
+
+```powershell
+(Get-Cluster).AutoBalancerMode = 2 # default, or 1, 0
+(Get-Cluster).AutoBalancerLevel = 3 # High, or 2 (Medium), 1 (Low, default)
+Get-Cluster | fl AutoBalancer*
+```
+
 6. You can skip **Witness** as this was configured in a previous scenario. Click **Affinity rules**.
 
 ![Affinity rules in Windows Admin Center](/modules/module_2/media/affinity_rules.png "Affinity in Windows Admin Center")
@@ -331,16 +344,16 @@ You've successfully created a VM using **Windows Admin Center**! In order to per
 
 ```powershell
 # Create the new virtual machine
-New-VM -ComputerName AZSHCI1 -Name VM001 -MemoryStartupBytes 512MB `
+New-VM -ComputerName AZSHCI1 -Name VM002 -MemoryStartupBytes 512MB `
     -BootDevice VHD -NewVHDSizeBytes 5GB `
-    -NewVHDPath "C:\ClusterStorage\Volume01\VMs\VHDs\VM001.vhdx" `
-    -Generation 2 -Switch "ComputeStorage Team"
+    -NewVHDPath "C:\ClusterStorage\Volume01\VMs\VHDs\VM002.vhdx" `
+    -Generation 2 -Switch "ConvergedSwitch"
 
 # Update the vCPU information
 Set-VM -ComputerName AZSHCI1 -Name VM001 -ProcessorCount 1
 
 # Cluster the VM for high availability
-Add-ClusterVirtualMachineRole -VirtualMachine VM001 `
+Add-ClusterVirtualMachineRole -VirtualMachine VM002 `
     -Cluster "AzSHCI-Cluster"
 ```
 
@@ -370,4 +383,160 @@ With a VM deployed and migrated, you should take a few minutes to review the set
 2. On the **VM001** properties page, you can now see a wealth of information about this VM across general properties, checkpoints (snapshots) and storage/networks. Note, some of the properties are not populated because there's no operating system running inside the VM.
 3. Click on **Power** and then **Turn off**, confirming when prompted. This will ensure that as we explore the different VM settings shortly, all options are available to us, as some settings are not available while VMs are running.
 4. Click on **Settings**.
-5. 
+5. Under **General** you will find the basic information about the VM. You will also have the ability to set the automatic start and stop actions, which come into effect when the Azure Stack HCI node is cleanly shut down, abruptly turned off, or suffers an unexpected outage.
+
+![General VM settings in Windows Admin Center](/modules/module_2/media/vm_settings_general.png "General VM settings in Windows Admin Center")
+
+Typically, because this VM is running on an Azure Stack HCI cluster, it would be automatically moved to another available node in the event of an issue, however, if the whole Azure Stack HCI cluster was shutdown/lost power, you may wish for certain VMs to automatically start when the cluster comes back online. You have the following options:
+
+* **Automatic start action**: Nothing, start if it was previously running, or always start the VM automatically
+* **Automatic start delay**: time in seconds
+* **Automatic stop action**: Save, turn off VM, or shut down the guest operating system
+
+To configure this using PowerShell:
+
+```powershell
+Get-VM –VMname VM001 | Set-VM –AutomaticStartAction Start # or Nothing, StartIfRunning
+Get-VM –VMname VM001 | Set-VM –AutomaticStartDelay 120 # delay in seconds
+Get-VM –VMname VM001 | Set-VM -AutomaticStopAction Save # Or ShutDown, TurnOff
+```
+
+In addition, you can specify what happens if a VM encounters a critical error by selecting the **Automatic critical error action**. By default, the VM will be **paused**, but you may also select **none**. The action of pausing the VM will only happen after the **Minutes to wait before pausing the virtual machine** timeout has been reached, which by default is 30 minutes.
+
+To configure this using PowerShell:
+
+```powershell
+Get-VM –VMname VM001 | Set-VM -AutomaticCriticalErrorAction Pause # or None
+Get-VM –VMname VM001 | Set-VM -AutomaticCriticalErrorActionTimeout 30 # time in minutes
+```
+
+6. Click on **Memory**. Here you'll find the ability to adjust the memory values for the VM, in addition to enabling/disabling **Dynamic Memory**. Dynamic Memory is an enhanced memory management technology where Hyper-V will allocate and remove memory to and from virtual machines to ensure all VMs on a particular host have optimal access to resources. 
+
+![VM memory settings in Windows Admin Center](/modules/module_2/media/vm_settings_memory.png "VM memory settings in Windows Admin Center")
+
+You can specify the following settings for Dynamic Memory:
+
+* **Startup memory**: The amount of memory allocated to a VM when it's first turned on and booting.
+* **Minimum memory**: The amount of memory that a VM can reduce down to, after it has started.
+* **Maximum memory**: The amount of memory that a VM can consume from a host after it has started.
+* **Memory buffer**: How much memory Hyper-V will attempt to assign to the VM compared to the amount of memory actually needed by the applications and services running inside the VM.
+* **Memory weight**: Determines how to distribute memory among VMs if there is not enough physical memory available in the host to give every VM its requested amount of memory.
+
+7. Click on **Processors**. Here you can change the number of vCPUs allocated to a VM, and optionally turn on **nested virtualization**, which is useful if you wish to virtualize other Hyper-V hosts for evaluation purposes. In addition, you can also optionally enable **Processor compatibility**, which when ticked, exposes some additional options.
+
+![VM processor settings in Windows Admin Center](/modules/module_2/media/vm_settings_vcpu.png "VM processor settings in Windows Admin Center")
+
+> Processor compatibility works by determining the supported processor features for each individual node in the cluster and calculating the common denominator across all processors. VMs are configured to use the maximum number of features available across all servers in the cluster, and can therefore migrate freely across the cluster nodes without any impact.
+> 
+> It's most likely your Azure Stack HCI cluster nodes are identical, however, as time passes and potentially newer nodes are added to the existing cluster, processor versions and generations may be introduced, hence why this feature is so important. You can read more about the new [dynamic processor compatibility in the official docs](https://docs.microsoft.com/en-us/azure-stack/hci/manage/processor-compatibility-mode).
+
+8. Finally, you can **enable Simultaneous Multithreading (SMT)** in guest VMs.
+
+> Exposing the fact that VPs are hyperthreaded to a guest virtual machine allows the scheduler in the guest operating system and workloads running in the VM to detect and utilize the SMT topology in their own work scheduling. It's strongly recommended to leave this on by default. New VMs created on the host inherit the host's SMT topology by default. That is, a VM created on a host with 2 SMT threads per core would also see 2 SMT threads per core. You can read more about [enabling SMT in guest VMs in the official docs.](https://docs.microsoft.com/en-us/azure-stack/hci/manage/processor-compatibility-mode).
+
+To configure Guest SMT using PowerShell, you can run the following command:
+
+```powershell
+Set-VMProcessor -VMName VM001 -HwThreadCountPerCore 0
+# 0 = match host's thread count per core value.
+```
+
+9. Click on **Disks**. herem, you can edit an existing disk, or add a new one. Click on **Add disk**, then click on **New Virtual Hard Disk**.
+10. In the **New Virtual Hard Disk** blade, accept the default **name**, **path** and **disk type** but change the size to **5GB** then click **Create**.
+
+![VM disk settings in Windows Admin Center](/modules/module_2/media/vm_settings_disks.png "VM disk settings in Windows Admin Center")
+
+11. Click **Save disks settings** to create the new VHD and map it to VM001.
+
+To perform the same task using PowerShell, you can run the following command on one of the Azure Stack HCI nodes:
+
+```powershell
+$path = 'C:\ClusterStorage\Volume01\VMs\VHDs\VM001\Virtual Hard Disks\VM001-1.vhdx'
+New-VHD -Path $path -SizeBytes 5GB
+Add-VMHardDiskDrive -VMName VM001 -Path $path
+```
+
+12. Click on **Networks**. Here, you can add/remove network adapters, attach the network adapter to a specific virtual switch, and apply VLAN settings.
+13. Click **Advanced**. In the **Advanced network adapter settings** blade, you can adjust the MAC address type, enable **MAC address spoofing** and optiinally configure **bandwidth management**.
+
+![VM bandwidth settings in Windows Admin Center](/modules/module_2/media/vm_settings_bandwidth.png "VM bandwidth settings in Windows Admin Center")
+
+To configure the bandwidth management with PowerShell, you can use the following commands:
+
+```powershell
+# Value is in bits per second, rounded to the nearest multiple of 8
+Set-VMNetworkAdapter -VMName VM001 -MinimumBandwidthAbsolute 100000000
+Set-VMNetworkAdapter -VMName VM001 -MaximumBandwidth 200000000
+```
+
+14. Click on **Boot order**. Here, you can adjust the preferred boot order of the virtual machine, including options to use the network adapter or any of the hard drives attached to the VM.
+15. Click on **Checkpoints**. Checkpoints are more commonly known as Snapshots. Here, you can choose between **Production** and **Standard** checkpoints, and define their location, which by default, will be co-located with your VM config files.
+
+![VM checkpoint settings in Windows Admin Center](/modules/module_2/media/vm_settings_checkpoints.png "VM checkpoint settings in Windows Admin Center")
+
+> Production checkpoints are "point in time" images of a virtual machine, which can be restored later on in a way that is completely supported for all production workloads. This is achieved by using backup technology inside the guest to create the checkpoint, instead of using saved state technology.
+> 
+> Standard checkpoints capture the state, data, and hardware configuration of a running virtual machine and are intended for use in development and test scenarios. Standard checkpoints can be useful if you need to recreate a specific state or condition of a running virtual machine so that you can troubleshoot a problem.
+
+To learn more about checkpoints, [check out the official Microsoft docs](https://docs.microsoft.com/en-us/windows-server/virtualization/hyper-v/manage/choose-between-standard-or-production-checkpoints-in-hyper-v).
+
+To configure checkpoints with PowerShell, run the following on your Azure Stack HCI node:
+
+```powershell
+Set-VM -Name VM001 -CheckpointType Production # Or Standard, ProductionOnly
+```
+
+16.  Click on **Integration Services**. Here, you can enable/disable the different in-guest services that the VM can utilize. 
+
+![VM integration services settings in Windows Admin Center](/modules/module_2/media/vm_settings_integration.png "VM integration services settings in Windows Admin Center")
+
+Here's a breakdown of the key integration services:
+
+* **Heartbeat** - Reports that the VM is running correctly.
+* **Guest Shutdown Service** - Allows the host to trigger graceful VM shutdown.
+* **Time Synchronization Service** - Synchronizes the VM's clock with the host computer's clock.
+* **Data Exchange Service (KVP)** - Provides a way to exchange basic metadata between the VM and the host.
+* **Volume Shadow Copy Requestor** - Allows Volume Shadow Copy Service to back up the VM with out shutting it down.
+* **Guest Service Interface** - Provides an interface for the Hyper-V host to copy files to or from the VM.
+
+To manage the Integration Services using PowerShell, you can use the following commands on your Azure Stack HCI nodes:
+
+```powershell
+Get-VMIntegrationService -VMName VM001
+
+# Services: Guest Service Interface, Heartbeat, Key-Value Pair Exchange, Shutdown, Time Synchronization, VSS
+
+Enable-VMIntegrationService -VMName VM001 -Name "Guest Service Interface"
+Disable-VMIntegrationService -VMName VM001 -Name "Guest Service Interface"
+```
+
+17. Click on **Affinity rules** - here, you can set an affinity rule for this **specific VM**, however it's preferable to set your affinity rules more broadly at the cluster level, for complete visibility of all rules across the cluster.
+18. Click on **Security**. Here, you can apply some Generation 2 VM specific settings, but it's best to leave the defaults as-is.
+
+![VM security settings in Windows Admin Center](/modules/module_2/media/vm_settings_security.png "VM security settings in Windows Admin Center")
+
+* **Secure Boot** - Helps prevent unauthorized firmware, operating systems, or Unified Extensible Firmware Interface (UEFI) drivers (also known as option ROMs) from running at boot time. Secure Boot is enabled by default and supports both Windows and Linux guests.
+* **Enable Trusted Platform Module** - This setting makes a virtualized Trusted Platform Module (TPM) chip available to your VM. This allows the guest to encrypt the VM disk by using BitLocker.
+* **Encrypt State and VM migration traffic** - Encrypts the virtual machine saved state and live migration traffic.
+* **Enable Shielding** - This is not yet supported on Azure Stack HCI, so should be left **disabled**.
+
+To configure these settings with PowerShell, you can use the following commands:
+
+```powershell
+# Template = MicrosoftWindows, MicrosoftUEFICertificateAuthority or OpenSourceShieldedVM
+Set-VMFirmware -VMName VM001 -EnableSecureBoot On -SecureBootTemplate MicrosoftWindows
+
+# Disable Secure Boot
+Set-VMFirmware -VMName VM001 -EnableSecureBoot Off
+
+# Create a key protector (KP) configuration for the virtual machine
+Set-VMKeyProtector -VMName VM001 -NewLocalKeyProtector
+
+# Enable vmTPM (Use Disable-VMTPM to turn off)
+Enable-VMTPM -VMName VM001
+
+# Encrypt state and VM migration traffic
+Set-VMSecurity -VMName VM001 -EncryptStateAndVmMigrationTraffic $true
+```
+
+### Explore Azure Stack HCI OS settings
