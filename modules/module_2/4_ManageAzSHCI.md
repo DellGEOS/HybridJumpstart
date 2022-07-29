@@ -17,16 +17,9 @@ Contents <!-- omit in toc -->
   - [Storage](#storage)
     - [Explore Storage Settings](#explore-storage-settings)
     - [Create volumes for VMs](#create-volumes-for-vms)
-      - [Explore your drives](#explore-your-drives)
-      - [Create a Three-way mirror volume](#create-a-three-way-mirror-volume)
-      - [Optional - Create a mirror-accelerated parity volume](#optional---create-a-mirror-accelerated-parity-volume)
-      - [Deduplication and compression](#deduplication-and-compression)
   - [Explore Cluster-wide settings](#explore-cluster-wide-settings)
   - [Explore Hyper-V Host settings](#explore-hyper-v-host-settings)
   - [Deploy your first virtual machine](#deploy-your-first-virtual-machine)
-    - [Create the virtual machine](#create-the-virtual-machine)
-    - [Live migrate the virtual machine](#live-migrate-the-virtual-machine)
-    - [Explore the VM settings](#explore-the-vm-settings)
   - [Next steps](#next-steps)
   - [Raising issues](#raising-issues)
 
@@ -120,7 +113,7 @@ __________________
 ### Create volumes for VMs
 In this step, you'll create some volumes on your Azure Stack HCI cluster, and explore some of the additional storage settings.
 
-#### Explore your drives
+#### Explore your drives <!-- omit in toc -->
 Before we create a volume, let's take a quick look at the drives available to our Azure Stack HCI cluster:
 
 1. On the left hand navigation, under **Storage** select **Drives**.  The central **Drives** page shows you should show a summary of the drives in your cluster:
@@ -133,7 +126,7 @@ Before we create a volume, let's take a quick look at the drives available to ou
 
 If these were real physical drives, you'd see information about specific serial numbers, the **type** would likely show a mix of HDD, SSD and/or NVMe, you'd also see **cache** and **capacity** drives. You'd also be able to select specific disk and trigger an LED light on the drive for identification, or retire/unretire drives. In a nested virtualization environment, many of these elements aren't functional.
 
-#### Create a Three-way mirror volume
+#### Create a Three-way mirror volume <!-- omit in toc -->
 
 1. On the left hand navigation, under **Storage** select **Volumes**.  The central **Volumes** page shows you should have a single volume currently
 2. On the Volumes page, select the **Inventory** tab, and then select **Create**
@@ -159,7 +152,7 @@ New-Volume -CimSession $ClusterName -FileSystem CSVFS_ReFS `
 ```
 _______________
 
-#### Optional - Create a mirror-accelerated parity volume
+#### Optional - Create a mirror-accelerated parity volume <!-- omit in toc -->
 
 > **NOTE** - This can only be perfomed on clusters with **4 or more nodes**. If you deployed less than 4 nodes, skip this optional step.
 
@@ -188,7 +181,7 @@ _________________
 
 For more information on planning volumes with Azure Stack HCI, you should [refer to the official docs](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/plan-volumes "Planning volumes for Azure Stack HCI 21H2").
 
-#### Deduplication and compression
+#### Deduplication and compression <!-- omit in toc -->
 In addition to the options during creation time, you also have the ability to enable deduplication and compression for your new volumes.
 
 1. Still in **Windows Admin Center**, on the Volumes page, select the **Inventory** tab, and then select your **Volume01** volume
@@ -310,7 +303,7 @@ Deploy your first virtual machine
 ---------
 In this step, you'll deploy a VM onto your storage volume you created earlier.
 
-### Create the virtual machine
+### Create the virtual machine <!-- omit in toc -->
 You should still be in **Windows Admin Center** for the next steps.
 
 1. Once logged into **Windows Admin Center**, on the left hand navigation, under **Compute** select **Virtual machines**.  The central **Virtual machines** page shows you no virtual machines deployed currently
@@ -358,7 +351,7 @@ Add-ClusterVirtualMachineRole -VirtualMachine VM002 `
     -Cluster "AzSHCI-Cluster"
 ```
 
-### Live migrate the virtual machine ###
+### Live migrate the virtual machine <!-- omit in toc -->
 The final step we'll cover is using Windows Admin Center to live migrate VM001 from it's current node, to an alternate node in the cluster.
 
 1. Still within the **Windows Admin Center** , under **Compute**, click on **Virtual machines**
@@ -377,7 +370,7 @@ The final step we'll cover is using Windows Admin Center to live migrate VM001 f
 6. The live migration will then begin, and within a few seconds, the VM should be running on a different node.
 7. On the left hand navigation, under **Compute** select **Virtual machines** to return to the VM dashboard view, which aggregates information across your cluster, for all of your VMs.
 
-### Explore the VM settings
+### Explore the VM settings <!-- omit in toc -->
 With a VM deployed and migrated, you should take a few minutes to review the settings associated with a virtual machine.
 
 1. On the **Virtual machines** page, under **Inventory**, click on VM001.
