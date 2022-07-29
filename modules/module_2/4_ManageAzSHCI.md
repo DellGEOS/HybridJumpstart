@@ -373,7 +373,7 @@ The final step we'll cover is using Windows Admin Center to live migrate VM001 f
 ### Explore the VM settings <!-- omit in toc -->
 With a VM deployed and migrated, you should take a few minutes to review the settings associated with a virtual machine.
 
-1. On the **Virtual machines** page, under **Inventory**, click on VM001.
+1. On the **Virtual machines** page, under **Inventory**, click on **VM001**.
 2. On the **VM001** properties page, you can now see a wealth of information about this VM across general properties, checkpoints (snapshots) and storage/networks. Note, some of the properties are not populated because there's no operating system running inside the VM.
 3. Click on **Power** and then **Turn off**, confirming when prompted. This will ensure that as we explore the different VM settings shortly, all options are available to us, as some settings are not available while VMs are running.
 4. Click on **Settings**.
@@ -416,6 +416,13 @@ You can specify the following settings for Dynamic Memory:
 * **Memory buffer**: How much memory Hyper-V will attempt to assign to the VM compared to the amount of memory actually needed by the applications and services running inside the VM.
 * **Memory weight**: Determines how to distribute memory among VMs if there is not enough physical memory available in the host to give every VM its requested amount of memory.
 
+To configure this with PowerShell, you can use the following commands:
+
+```powershell
+Set-VMMemory VM001 -DynamicMemoryEnabled $true -MinimumBytes 64MB -StartupBytes 256MB `
+    -MaximumBytes 2GB -Priority 80 -Buffer 25
+```
+
 7. Click on **Processors**. Here you can change the number of vCPUs allocated to a VM, and optionally turn on **nested virtualization**, which is useful if you wish to virtualize other Hyper-V hosts for evaluation purposes. In addition, you can also optionally enable **Processor compatibility**, which when ticked, exposes some additional options.
 
 ![VM processor settings in Windows Admin Center](/modules/module_2/media/vm_settings_vcpu.png "VM processor settings in Windows Admin Center")
@@ -423,6 +430,22 @@ You can specify the following settings for Dynamic Memory:
 > Processor compatibility works by determining the supported processor features for each individual node in the cluster and calculating the common denominator across all processors. VMs are configured to use the maximum number of features available across all servers in the cluster, and can therefore migrate freely across the cluster nodes without any impact.
 > 
 > It's most likely your Azure Stack HCI cluster nodes are identical, however, as time passes and potentially newer nodes are added to the existing cluster, processor versions and generations may be introduced, hence why this feature is so important. You can read more about the new [dynamic processor compatibility in the official docs](https://docs.microsoft.com/en-us/azure-stack/hci/manage/processor-compatibility-mode).
+
+To configure this using PowerShell, you can use the following commands:
+
+```powershell
+# Configures VM with two virtual processors
+Set-VMProcessor VM001 -Count 2
+
+# Configures VM to support virtualization extensions including Nested Virtualization
+Set-VMProcessor VM001 -ExposeVirtualizationExtensions $true
+
+# Enable processor compatibility for live migration
+Set-VMProcessor VM001 -CompatibilityForMigrationEnabled $true
+
+# Enable compatibility for running older operating systems
+Set-VMProcessor VM001 -CompatibilityForOlderOperatingSystemsEnabled $true
+```
 
 8. Finally, you can **enable Simultaneous Multithreading (SMT)** in guest VMs.
 
@@ -455,15 +478,35 @@ Add-VMHardDiskDrive -VMName VM001 -Path $path
 
 ![VM bandwidth settings in Windows Admin Center](/modules/module_2/media/vm_settings_bandwidth.png "VM bandwidth settings in Windows Admin Center")
 
-To configure the bandwidth management with PowerShell, you can use the following commands:
+To configure these network settings with PowerShell, you can use the following commands:
 
 ```powershell
+# Create and add the virtual network adapter
+Add-VMNetworkAdapter -VMName VM001 -SwitchName ConvergedSwitch -Name "SecondaryNic"
+
+# Set the VLAN for this network adapter to access mode on VLAN ID 3
+Set-VMNetworkAdapterVlan -VMName VM001 -VMNetworkAdapterName "SecondaryNic" -Access -VlanId 3
+
 # Value is in bits per second, rounded to the nearest multiple of 8
 Set-VMNetworkAdapter -VMName VM001 -MinimumBandwidthAbsolute 100000000
 Set-VMNetworkAdapter -VMName VM001 -MaximumBandwidth 200000000
 ```
 
 14. Click on **Boot order**. Here, you can adjust the preferred boot order of the virtual machine, including options to use the network adapter or any of the hard drives attached to the VM.
+
+To set this with PowerShell, you can use these commands:
+```powershell
+# This will return all network adapters - if you have multiple, you will need to use -Name to select specific NIC
+$vmNetworkAdapter = Get-VMNetworkAdapter -VMName VM001 
+
+# This will select the hard disk that is currently attached to SCSI controller 0, location 0
+$vmHardDiskDrive = Get-VMHardDiskDrive -VMName HybridJumpstart-DC | `
+    Where-Object {($_.ControllerNumber -eq 0) -and ($_.ControllerLocation -eq 0)}
+
+Set-VMFirmware VM001 -FirstBootDevice $vmNetworkAdapter
+Set-VMFirmware VM001 -BootOrder $vmNetworkAdapter, $vmHardDiskDrive
+```
+
 15. Click on **Checkpoints**. Checkpoints are more commonly known as Snapshots. Here, you can choose between **Production** and **Standard** checkpoints, and define their location, which by default, will be co-located with your VM config files.
 
 ![VM checkpoint settings in Windows Admin Center](/modules/module_2/media/vm_settings_checkpoints.png "VM checkpoint settings in Windows Admin Center")
@@ -499,7 +542,6 @@ To manage the Integration Services using PowerShell, you can use the following c
 Get-VMIntegrationService -VMName VM001
 
 # Services: Guest Service Interface, Heartbeat, Key-Value Pair Exchange, Shutdown, Time Synchronization, VSS
-
 Enable-VMIntegrationService -VMName VM001 -Name "Guest Service Interface"
 Disable-VMIntegrationService -VMName VM001 -Name "Guest Service Interface"
 ```
