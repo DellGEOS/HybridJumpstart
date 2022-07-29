@@ -27,7 +27,8 @@ Contents <!-- omit in toc -->
     - [Create the virtual machine](#create-the-virtual-machine)
     - [Live migrate the virtual machine](#live-migrate-the-virtual-machine)
     - [Explore the VM settings](#explore-the-vm-settings)
-    - [Explore Azure Stack HCI OS settings](#explore-azure-stack-hci-os-settings)
+  - [Next steps](#next-steps)
+  - [Raising issues](#raising-issues)
 
 
 Before you begin
@@ -539,4 +540,13 @@ Enable-VMTPM -VMName VM001
 Set-VMSecurity -VMName VM001 -EncryptStateAndVmMigrationTraffic $true
 ```
 
-### Explore Azure Stack HCI OS settings
+### Congratulations! <!-- omit in toc -->
+You've now successfully explored the local management of your Azure Stack HCI cluster!
+
+Next steps
+-----------
+In this step, you've explored many of the options for configuring the local Azure Stack HCI environment, using both Windows Admin Center and PowerShell. With this complete, you can now move on to [Explore the OpenManage integration with Windows Admin Center](/modules/module_2/5_ExploreOpenManage.md "Explore the OpenManage integration with Windows Admin Center")
+
+Raising issues
+-----------
+If you notice something is wrong with the jumpstart, such as a step isn't working, or something just doesn't make sense - help us to make this guide better!  [Raise an issue in GitHub](https://github.com/DellGEOS/HybridJumpstart/issues), and we'll be sure to fix this as quickly as possible!

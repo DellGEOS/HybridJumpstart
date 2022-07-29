@@ -12,19 +12,24 @@ Scenario duration <!-- omit in toc -->
 
 Contents <!-- omit in toc -->
 -----------
-- [Before you begin](#before-you-begin)
-  - [Decide on cluster type](#decide-on-cluster-type)
-- [Creating a (local) cluster](#creating-a-local-cluster)
-  - [Get started](#get-started)
-  - [Networking](#networking)
-  - [Clustering](#clustering)
-  - [Storage](#storage)
-  - [SDN](#sdn)
-- [Configuring the cluster witness](#configuring-the-cluster-witness)
-  - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
-  - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
-- [Next steps](#next-steps)
-- [Raising issues](#raising-issues)
+- [Module 2 | Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center](#module-2--scenario-2a---clustering-azure-stack-hci-with-windows-admin-center)
+  - [Before you begin](#before-you-begin)
+    - [Decide on cluster type](#decide-on-cluster-type)
+  - [Creating a (local) cluster](#creating-a-local-cluster)
+    - [Get started](#get-started)
+    - [Networking](#networking)
+      - [Shared compute and management with separate storage](#shared-compute-and-management-with-separate-storage)
+      - [Shared compute and storage with separate management](#shared-compute-and-storage-with-separate-management)
+      - [Shared compute and storage with separate management](#shared-compute-and-storage-with-separate-management-1)
+      - [Network Setup Overview](#network-setup-overview)
+    - [Clustering](#clustering)
+    - [Storage](#storage)
+    - [SDN](#sdn)
+  - [Configuring the cluster witness](#configuring-the-cluster-witness)
+    - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
+    - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
+  - [Next steps](#next-steps)
+  - [Raising issues](#raising-issues)
 
 Before you begin
 -----------
@@ -414,9 +419,7 @@ You've now successfully deployed and configured your Azure Stack HCI cluster!
 
 Next steps
 -----------
-In this step, you've successfully created a nested Azure Stack HCI cluster using Windows Admin Center. With this complete, you can now move on to:
-
-* [**Module 2 | Scenario 3** - Integrate Azure Stack HCI with Azure](/modules/module_2/3_Integrate_Azure.md "Integrate Azure Stack HCI with Azure")
+In this step, you've successfully created a nested Azure Stack HCI cluster using Windows Admin Center. With this complete, you can now move on to [Register Azure Stack HCI with Azure](/modules/module_2/3_Register_Azure.md "Register Azure Stack HCI with Azure")
 
 Raising issues
 -----------

@@ -12,19 +12,20 @@ Scenario duration <!-- omit in toc -->
 
 Contents <!-- omit in toc -->
 -----------
-- [Before you begin](#before-you-begin)
-- [Creating a (local) cluster](#creating-a-local-cluster)
-  - [Management Tools](#management-tools)
-  - [Initial OS Configuration](#initial-os-configuration)
-  - [Install required features](#install-required-features)
-  - [Networking](#networking)
-  - [Clustering](#clustering)
-  - [Storage](#storage)
-- [Configuring the cluster witness](#configuring-the-cluster-witness)
-  - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
-  - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
-- [Next steps](#next-steps)
-- [Raising issues](#raising-issues)
+- [Module 2 | Scenario 2a - Clustering Azure Stack HCI with PowerShell](#module-2--scenario-2a---clustering-azure-stack-hci-with-powershell)
+  - [Before you begin](#before-you-begin)
+  - [Creating a (local) cluster](#creating-a-local-cluster)
+    - [Management Tools](#management-tools)
+    - [Initial OS Configuration](#initial-os-configuration)
+    - [Install required features](#install-required-features)
+    - [Networking](#networking)
+    - [Clustering](#clustering)
+    - [Storage](#storage)
+  - [Configuring the cluster witness](#configuring-the-cluster-witness)
+    - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
+    - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
+  - [Next steps](#next-steps)
+  - [Raising issues](#raising-issues)
 
 Before you begin
 -----------
@@ -593,7 +594,7 @@ You've now successfully deployed and configured your Azure Stack HCI cluster!
 
 Next steps
 -----------
-In this step, you've successfully created a nested Azure Stack HCI cluster using PowerShell. With this complete, you can now move on to [Integrate Azure Stack HCI with Azure](/modules/module_2/3_Integrate_Azure "Integrate Azure Stack HCI with Azure")
+In this step, you've successfully created a nested Azure Stack HCI cluster using PowerShell. With this complete, you can now move on to [Register Azure Stack HCI with Azure](/modules/module_2/3_Register_Azure.md "Register Azure Stack HCI with Azure")
 
 Raising issues
 -----------

@@ -1,4 +1,4 @@
-Module 2 - Scenario 3 - Integrate Azure Stack HCI with Azure
+Module 2 - Scenario 3 - Register Azure Stack HCI with Azure
 ============
 
 Overview <!-- omit in toc -->
@@ -12,17 +12,18 @@ Scenario duration <!-- omit in toc -->
 
 Contents <!-- omit in toc -->
 -----------
-- [Before you begin](#before-you-begin)
-  - [Azure prerequisites](#azure-prerequisites)
-  - [Understanding Azure subscription permissions](#understanding-azure-subscription-permissions)
-  - [Understanding required Azure Active Directory permissions](#understanding-required-azure-active-directory-permissions)
-- [Complete Registration](#complete-registration)
-  - [Option 1 - Register using PowerShell](#option-1---register-using-powershell)
-  - [Option 2 - Register using Windows Admin Center](#option-2---register-using-windows-admin-center)
-  - [View registration details in the Azure portal](#view-registration-details-in-the-azure-portal)
-- [Next Steps](#next-steps)
-- [Raising issues](#raising-issues)
-- [Troubleshooting](#troubleshooting)
+- [Module 2 - Scenario 3 - Register Azure Stack HCI with Azure](#module-2---scenario-3---register-azure-stack-hci-with-azure)
+  - [Before you begin](#before-you-begin)
+    - [Azure prerequisites](#azure-prerequisites)
+    - [Understanding Azure subscription permissions](#understanding-azure-subscription-permissions)
+      - [Optional - Create a Custom Azure Role](#optional---create-a-custom-azure-role)
+  - [Complete Registration](#complete-registration)
+    - [Option 1 - Register using PowerShell](#option-1---register-using-powershell)
+    - [Option 2 - Register using Windows Admin Center](#option-2---register-using-windows-admin-center)
+    - [View registration details in the Azure portal](#view-registration-details-in-the-azure-portal)
+  - [Next Steps](#next-steps)
+  - [Raising issues](#raising-issues)
+  - [Troubleshooting](#troubleshooting)
 
 Before you begin
 -----------
