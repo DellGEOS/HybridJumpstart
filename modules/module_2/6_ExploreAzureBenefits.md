@@ -137,7 +137,7 @@ With Azure benefits enabled, either with PowerShell, or with Windows Admin Cente
 
 > The expiration date will automatically extend as the nodes/cluster sync with Azure. This has to happen at least once every 30 days to continue using Azure benefits. To extend this date manually, you can either click **Sync with Azure**, or run **Sync-AzureStackHCI** with PowerShell.
 
-6. Click on **VMs** to view indiviaul details about the VMs that have been enabled with Azure benefits on this specific cluster.
+6. Click on **VMs** to view individual details about the VMs that have been enabled with Azure benefits on this specific cluster.
 
 ![VMs under Azure Benefits in Windows Admin Center](/modules/module_2/media/azure_benefits_enabled_VMs.png "VMs under Azure Benefits in Windows Admin Center")
 
@@ -167,14 +167,14 @@ Invoke-Command -ComputerName $ClusterName -ScriptBlock {
     }
 ```
 
-9. You can also view a new Host virtual network adapter that'd used by the Azure benefits infrastructure. In the left-hand navigation, click on **Servers**, then **Inventory**.
+9. You can also view a new Host virtual network adapter that's used by the Azure benefits infrastructure. In the left-hand navigation, click on **Servers**, then **Inventory**.
 10. Tick the box next to **AzSHCI1**, then click **Manage**
 
 ![Server inventory in Windows Admin Center](/modules/module_2/media/azure_benefits_manage_server.png "Server inventory in Windows Admin Center")
 
-11. In the left hand navigation, click on **Networks**, and you'll see a list of network adapters in this Azure Stack HCI host.
+11. In the left hand navigation, click on **Networks**, and you'll see a list of network adapters in this Azure Stack HCI host, including the Azure-benefits-specific AZSHCI_HOST-IMDS_DO_NOT_MODIFY network adapter.
 
-![Networks for AzSHCI1 in Windows Admin Center](/modules/module_2/media/azure_benefits_manage_server.png "Networks for AzSHCI1 in Windows Admin Center")
+![Networks for AzSHCI1 in Windows Admin Center](/modules/module_2/media/azure_benefits_networks_wac.png "Networks for AzSHCI1 in Windows Admin Center")
 
 To perform this with PowerShell, you can run the following command:
 
@@ -182,3 +182,11 @@ To perform this with PowerShell, you can run the following command:
 Get-NetAdapter -CimSession AzSHCI1 | Sort-Object Name | `
     FT Name, InterfaceDescription, Status
 ```
+
+12. Still on On **HybridJumpstart-DC**, open a new tab in Edge, and navigate to **https://portal.azure.com**, logging in when prompted.
+13. Under Azure Services, click on **Azure Stack HCI** (if you don't see this, use the search at the top to find Azure Stack HCI), then click on your **AzSHCI-Cluster** cluster.
+14. On the left-hand navigation, click on **Configuration**.
+15. Here, you should see that the Azure benefits show as enabled in the Azure portal.
+
+![Azure benefits in the Azure portal](/modules/module_2/media/azure_benefits_enabled_portal.png "Azure benefits in the Azure portal")
+
