@@ -543,6 +543,12 @@ configuration HybridJumpstart
             }
         }
         else {
+            WindowsOptionalFeature "Hyper-V" {
+                Name   = "Microsoft-Hyper-V-All"
+                Ensure = "Present"
+            }
+
+            <#
             Script "EnableHyperVWinClient" {
                 GetScript  = {
                     $result = ((Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All).state -eq "Enabled")
@@ -558,7 +564,7 @@ configuration HybridJumpstart
                     $state = [scriptblock]::Create($GetScript).Invoke()
                     return $state.Result
                 }
-            }
+            } #>
         }
 
         #### Start AzSHCI VHDx Creation ####
