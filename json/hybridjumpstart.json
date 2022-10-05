@@ -203,14 +203,14 @@
                 "description": "The size of the individual data disks in GiB. 8 of these will be provisioned therefore 32GiB is the recommended default."
             }
         },
-        "adminUsername": {
+        "azureVMUsername": {
             "type": "string",
             "defaultValue": "AzureUser",
             "metadata": {
                 "description": "The administrator username for the VM"
             }
         },
-        "adminPassword": {
+        "azureVMPassword": {
             "type": "securestring"
         },
         "customRdpPort": {
@@ -514,8 +514,8 @@
             "properties": {
                 "osProfile": {
                     "computerName": "[parameters('virtualMachineName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
+                    "adminUsername": "[parameters('azureVMUsername')]",
+                    "adminPassword": "[parameters('azureVMPassword')]",
                     "windowsConfiguration": {
                         "provisionVmAgent": true
                     }
@@ -598,10 +598,6 @@
                         },
                         "protectedSettings": {
                             "configurationArguments": {
-                                "adminCreds": {
-                                    "UserName": "[parameters('adminUsername')]",
-                                    "Password": "[parameters('adminPassword')]"
-                                }
                             }
                         }
                     }
@@ -630,7 +626,7 @@
     "outputs": {
         "adminUsername": {
             "type": "string",
-            "value": "[parameters('adminUsername')]"
+            "value": "[parameters('azureVMUsername')]"
         },
         "rdpPort": {
             "type": "string",
