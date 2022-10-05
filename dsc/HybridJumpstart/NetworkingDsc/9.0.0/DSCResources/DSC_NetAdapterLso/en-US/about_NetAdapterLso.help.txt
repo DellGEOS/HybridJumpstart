@@ -1,0 +1,66 @@
+.NAME
+    NetAdapterLso
+
+.DESCRIPTION
+    This resource is used to enable or disable LSO for specific protocols on a
+    network adapter.
+
+    The following table shows configuration overlap with https://github.com/dsccommunity/NetworkingDsc/wiki/NetAdapterAdvancedProperty.
+
+    | NetAdapterLso | | NetAdapterAdvancedProperty |
+    | -------------------- | ---- | ------------------------------------ |
+    | V1IPv4 | = | Not Available |
+    | IPv4 | = | *LsoV2IPv4 |
+    | IPv6 | = | *LsoV2IPv6 |
+
+.PARAMETER Name
+    Key - String
+    Specifies the name of network adapter.
+
+.PARAMETER Protocol
+    Key - String
+    Allowed values: V1IPv4, IPv4, IPv6
+    Specifies which protocol to make changes to.
+
+.PARAMETER State
+    Required - Boolean
+    Specifies whether LSO should be enabled or disabled.
+
+.EXAMPLE 1
+
+This configuration disables LSO for IPv6 on the network adapter.
+
+Configuration NetAdapterLso_DisableLsoIPv6_Config
+{
+    Import-DSCResource -ModuleName NetworkingDsc
+
+    Node localhost
+    {
+        NetAdapterLso DisableLsoIPv6
+        {
+            Name     = 'Ethernet'
+            Protocol = 'IPv6'
+            State    = $false
+        }
+    }
+}
+
+.EXAMPLE 2
+
+This configuration disables LSO for IPv4 on the network adapter.
+
+Configuration NetAdapterLso_DisableLsoIPv4_Config
+{
+    Import-DSCResource -ModuleName NetworkingDsc
+
+    Node localhost
+    {
+        NetAdapterLso DisableLsoIPv4
+        {
+            Name     = 'Ethernet'
+            Protocol = 'IPv4'
+            State    = $false
+        }
+    }
+}
+

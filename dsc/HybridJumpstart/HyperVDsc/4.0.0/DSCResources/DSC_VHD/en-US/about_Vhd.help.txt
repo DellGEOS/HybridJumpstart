@@ -1,0 +1,343 @@
+.NAME
+    Vhd
+
+.DESCRIPTION
+    Manages VHDs in a Hyper-V host.
+
+    ## Requirements
+
+    * The Hyper-V Role has to be installed on the machine.
+    * The Hyper-V PowerShell module has to be installed on the machine.
+
+.PARAMETER Name
+    Key - String
+    The desired VHD file name.
+
+.PARAMETER Path
+    Key - String
+    The desired Path where the VHD will be created.
+
+.PARAMETER ParentPath
+    Write - String
+    Parent VHD file path, for differencing disk.
+
+.PARAMETER MaximumSizeBytes
+    Write - UInt64
+    Maximum size of VHD to be created.
+
+.PARAMETER Generation
+    Write - String
+    Allowed values: Vhd, Vhdx
+    Virtual disk format. The default value is Vhd.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Specifies if the virtual disk should be present (if not it will be created) or absent (if present it will be removed). Default value is Present.
+
+.PARAMETER ID
+    Read - String
+    Returns the virtual disk identifier.
+
+.PARAMETER Type
+    Write - String
+    Allowed values: Dynamic, Fixed, Differencing
+    The type of virtual disk. The default value is Dynamic.
+
+.PARAMETER FileSizeBytes
+    Read - UInt64
+    Returns the current size of the virtual disk.
+
+.PARAMETER IsAttached
+    Read - Boolean
+    Returns if the virtual disk is attached to a VM.
+
+.EXAMPLE 1
+
+Description not yet written.
+
+configuration Example
+{
+    param
+    (
+        [Parameter()]
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Name,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $MaximumSizeBytes,
+
+        [Parameter()]
+        [ValidateSet('Vhd', 'Vhdx')]
+        [System.String]$Generation = 'Vhd',
+
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
+        [System.String]
+        $Ensure = 'Present'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV feature, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        WindowsFeature HyperVPowerShell
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V-PowerShell'
+        }
+
+        Vhd NewVhd
+        {
+            Ensure           = $Ensure
+            Name             = $Name
+            Path             = $Path
+            Generation       = $Generation
+            MaximumSizeBytes = $MaximumSizeBytes
+            DependsOn        = '[WindowsFeature]HyperV', '[WindowsFeature]HyperVPowerShell'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Description not yet written.
+
+configuration Example
+{
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Name,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $ParentPath,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $MaximumSizeBytes,
+
+        [Parameter()]
+        [ValidateSet('Vhd', 'Vhdx')]
+        [System.String]
+        $Generation = 'Vhd',
+
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
+        [System.String]
+        $Ensure = 'Present'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node localhost
+    {
+        Vhd WrongVHD
+        {
+            Ensure           = $Ensure
+            Name             = $Name
+            Path             = $Path
+            ParentPath       = $ParentPath
+            MaximumSizeBytes = $MaximumSizeBytes
+            Generation       = $Generation
+        }
+    }
+}
+
+.EXAMPLE 3
+
+Description not yet written.
+
+configuration Example
+{
+    param
+    (
+        [Parameter()]
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Name,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $ParentPath,
+
+        [Parameter()]
+        [ValidateSet('Vhd', 'Vhdx')]
+        [System.String]
+        $Generation = 'Vhd',
+
+        [Parameter()]
+        [ValidateSet('Dynamic', 'Fixed', 'Differencing')]
+        [System.String]$Type = 'Differencing',
+
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
+        [System.String]
+        $Ensure = 'Present'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV feature, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        WindowsFeature HyperVPowerShell
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V-PowerShell'
+        }
+
+        Vhd DiffVhd
+        {
+            Ensure     = $Ensure
+            Name       = $Name
+            Path       = $Path
+            ParentPath = $ParentPath
+            Generation = $Generation
+            Type       = $Type
+            DependsOn  = '[WindowsFeature]HyperV', '[WindowsFeature]HyperVPowerShell'
+        }
+    }
+}
+
+.EXAMPLE 4
+
+Description not yet written.
+
+configuration Example
+{
+    param
+    (
+        [Parameter()]
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Name,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path,
+
+        [Parameter()]
+        [ValidateSet('Vhd', 'Vhdx')]
+        [System.String]
+        $Generation = 'Vhd',
+
+        [Parameter()]
+        [ValidateSet('Dynamic', 'Fixed', 'Differencing')]
+        [System.String]
+        $Type = 'Fixed',
+
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
+        [System.String]
+        $Ensure = 'Present'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV feature, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        WindowsFeature HyperVPowerShell
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V-PowerShell'
+        }
+
+        Vhd DiffVhd
+        {
+            Ensure     = $Ensure
+            Name       = $Name
+            Path       = $Path
+            Generation = $Generation
+            Type       = $Type
+            DependsOn  = '[WindowsFeature]HyperV', '[WindowsFeature]HyperVPowerShell'
+        }
+    }
+}
+
+.EXAMPLE 5
+
+Description not yet written.
+
+configuration Example
+{
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Name,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path,
+
+        [Parameter()]
+        [ValidateSet('Vhd', 'Vhdx')]
+        [System.String]
+        $Generation = 'Vhd',
+
+        [Parameter()]
+        [ValidateSet('Present', 'Absent')]
+        [System.String]
+        $Ensure = 'Present'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node localhost
+    {
+        Vhd WrongVHD
+        {
+            Ensure     = $Ensure
+            Name       = $Name
+            Path       = $Path
+            Generation = $Generation
+        }
+    }
+}
+
