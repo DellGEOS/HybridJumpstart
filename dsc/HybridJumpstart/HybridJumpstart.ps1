@@ -19,13 +19,13 @@ configuration HybridJumpstart
         [String]$AzureStackHCIIsoPath
     )
     
-    Import-DscResource -ModuleName 'ComputerManagementDsc'
+    Import-DscResource -ModuleName 'ComputerManagementDsc' -ModuleVersion 8.5.0
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
-    Import-DscResource -ModuleName 'hyperVDsc'
-    Import-DscResource -ModuleName 'StorageDSC'
+    Import-DscResource -ModuleName 'hyperVDsc' -ModuleVersion 4.0.0
+    Import-DscResource -ModuleName 'StorageDSC' -ModuleVersion 5.0.1
     Import-DscResource -ModuleName 'NetworkingDSC' -ModuleVersion 9.0.0
-    Import-DscResource -ModuleName 'MSCatalog'
-    Import-DscResource -ModuleName 'Hyper-ConvertImage'
+    Import-DscResource -ModuleName 'MSCatalog' -ModuleVersion 0.28.0
+    Import-DscResource -ModuleName 'Hyper-ConvertImage' -ModuleVersion 10.2
 
     Node localhost
     {
@@ -71,7 +71,7 @@ configuration HybridJumpstart
             $jumpstartPath = "$targetDrive" + ":\HybridJumpstart"
         }
         else {
-            $jumpstartPath = "$jumpstartPath" + ":\HybridJumpstart"
+            $jumpstartPath = "$jumpstartPath" + "\HybridJumpstart"
         }
 
         $mslabLocalPath = "$jumpstartPath\mslab.zip"
@@ -89,13 +89,13 @@ configuration HybridJumpstart
         if (!(Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
             # If this is on-prem, user should have supplied a folder/path they wish to install into
             # Users can also supply a pre-downloaded ISO for both WS and AzSHCI
-            if ($null -eq $AzureStackHCIIsoPath) {
+            if (!$AzureStackHCIIsoPath) {
                 $azsHCIISOLocalPath = "$azsHciIsoPath\AzSHCI.iso"
             }
             else {
                 $azsHCIISOLocalPath = $AzureStackHCIIsoPath
             }
-            if ($null -eq $WindowsServerIsoPath) {
+            if (!$WindowsServerIsoPath) {
                 $wsISOLocalPath = "$wsIsoPath\WS2022.iso"
             }
             else {
@@ -545,7 +545,7 @@ configuration HybridJumpstart
         else {
             WindowsOptionalFeature "Hyper-V" {
                 Name   = "Microsoft-Hyper-V-All"
-                Ensure = "Present"
+                Ensure = "Enable"
             }
 
             <#
