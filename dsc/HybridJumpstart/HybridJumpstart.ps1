@@ -94,12 +94,14 @@ configuration HybridJumpstart
             }
             else {
                 $azsHCIISOLocalPath = $AzureStackHCIIsoPath
+                $azsHciIsoPath = (Get-Item $azsHCIISOLocalPath).DirectoryName
             }
             if (!$WindowsServerIsoPath) {
                 $wsISOLocalPath = "$wsIsoPath\WS2022.iso"
             }
             else {
                 $wsISOLocalPath = $WindowsServerIsoPath
+                $wsIsoPath = (Get-Item $wsISOLocalPath).DirectoryName
             }
         }
         else {
