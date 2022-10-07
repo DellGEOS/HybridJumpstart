@@ -62,8 +62,9 @@ if ($hypervState) {
 
 # Download the Hybrid Jumpstart DSC files, and unzip them to C:\HybridJumpstartHost, then copy the PS modules to the main PS modules folder
 Write-Host "Downloading the HybridJumpstart Lab Files to C:\hybridjumpstart.zip..."
-Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/hybridhumpstart.zip' `
--OutFile 'C:\hybridjumpstart.zip' `-UseBasicParsing
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/hybridjumpstart.zip' `
+-OutFile 'C:\hybridjumpstart.zip' -UseBasicParsing -ErrorAction Stop
 
 # Expand the archive and copy modules to Program Files
 Write-Host "Unzipping HybridJumpstart Lab Files to C:\HybridJumpstartSource..."
