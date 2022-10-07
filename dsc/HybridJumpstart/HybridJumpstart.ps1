@@ -83,8 +83,6 @@ configuration HybridJumpstart
         $isoPath = "$jumpstartPath\ISO"
         $flagsPath = "$jumpstartPath\Flags"
         $azsHciVhdPath = "$parentDiskPath\AzSHCI21H2_G2.vhdx"
-        $wsIsoPath = "$isoPath\WS"
-        $azsHciIsoPath = "$isoPath\AzSHCI"
 
         if (!((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77")) {
             # If this is on-prem, user should have supplied a folder/path they wish to install into
@@ -105,8 +103,10 @@ configuration HybridJumpstart
             }
         }
         else {
-            $azsHCIISOLocalPath = "$azsHciIsoPath\AzSHCI.iso"
+            $wsIsoPath = "$isoPath\WS"
+            $azsHciIsoPath = "$isoPath\AzSHCI"
             $wsISOLocalPath = "$wsIsoPath\WS2022.iso"
+            $azsHCIISOLocalPath = "$azsHciIsoPath\AzSHCI.iso"
         }
 
         if ((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
