@@ -593,12 +593,7 @@ configuration HybridJumpstart
                         -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -TempDirectory $using:scratchPath -Verbose
                 }
 
-                # Need to wait for disk to fully unmount
-                While ((Get-Disk).Count -gt 2) {
-                    Start-Sleep -Seconds 5
-                }
-
-                Start-Sleep -Seconds 5
+                Start-Sleep -Seconds 10
 
                 Mount-VHD -Path $using:azsHciVhdPath -Passthru -ErrorAction Stop -Verbose
                 Start-Sleep -Seconds 2
@@ -624,12 +619,21 @@ configuration HybridJumpstart
                 $command = "dism /image:" + $updatepath + " /Cleanup-Image /spsuperseded"
                 Invoke-Expression $command
 
+                $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
+                if ($osInfo.ProductType -eq 1) {
+                    $command = "dism /image:" + $updatepath + " /enable-Feature:Microsoft-Hyper-V"
+                    Invoke-Expression $command
+                }
+
                 Dismount-VHD -path $using:azsHciVhdPath -confirm:$false
 
                 Start-Sleep -Seconds 5
 
                 # Enable Hyper-V role on the Azure Stack HCI Host Image
-                Install-WindowsFeature -Vhd $using:azsHciVhdPath -Name Hyper-V
+                $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
+                if ($osInfo.ProductType -eq 3) {
+                    Install-WindowsFeature -Vhd $using:azsHciVhdPath -Name Hyper-V
+                }
 
                 # Remove the scratch folder
                 Remove-Item -Path "$scratchPath" -Recurse -Force | Out-Null
