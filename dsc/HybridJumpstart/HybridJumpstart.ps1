@@ -86,7 +86,7 @@ configuration HybridJumpstart
         $wsIsoPath = "$isoPath\WS"
         $azsHciIsoPath = "$isoPath\AzSHCI"
 
-        if (!(Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
+        if (!((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77")) {
             # If this is on-prem, user should have supplied a folder/path they wish to install into
             # Users can also supply a pre-downloaded ISO for both WS and AzSHCI
             if (!$AzureStackHCIIsoPath) {
