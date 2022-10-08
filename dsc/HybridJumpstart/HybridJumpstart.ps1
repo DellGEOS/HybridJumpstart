@@ -88,6 +88,7 @@ configuration HybridJumpstart
             # If this is on-prem, user should have supplied a folder/path they wish to install into
             # Users can also supply a pre-downloaded ISO for both WS and AzSHCI
             if (!$AzureStackHCIIsoPath) {
+                $azsHciIsoPath = "$isoPath\AzSHCI"
                 $azsHCIISOLocalPath = "$azsHciIsoPath\AzSHCI.iso"
             }
             else {
@@ -95,6 +96,7 @@ configuration HybridJumpstart
                 $azsHciIsoPath = (Get-Item $azsHCIISOLocalPath).DirectoryName
             }
             if (!$WindowsServerIsoPath) {
+                $wsIsoPath = "$isoPath\WS"
                 $wsISOLocalPath = "$wsIsoPath\WS2022.iso"
             }
             else {
@@ -103,8 +105,6 @@ configuration HybridJumpstart
             }
         }
         else {
-            $wsIsoPath = "$isoPath\WS"
-            $azsHciIsoPath = "$isoPath\AzSHCI"
             $wsISOLocalPath = "$wsIsoPath\WS2022.iso"
             $azsHCIISOLocalPath = "$azsHciIsoPath\AzSHCI.iso"
         }
