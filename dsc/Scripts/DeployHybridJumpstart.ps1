@@ -64,8 +64,6 @@ try {
         }
     }
 
-    <#
-
     # Download the Hybrid Jumpstart DSC files, and unzip them to C:\HybridJumpstartHost, then copy the PS modules to the main PS modules folder
     Write-Host "Downloading the HybridJumpstart Lab Files to C:\hybridjumpstart.zip..."
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -77,8 +75,6 @@ try {
     Expand-Archive -Path C:\hybridjumpstart.zip -DestinationPath C:\HybridJumpstartSource -Force -ErrorAction Stop
     Write-Host "Moving PowerShell DSC modules to default Program Files location..."
     Get-ChildItem -Path C:\HybridJumpstartSource -Directory | Copy-Item -Destination "$env:ProgramFiles\WindowsPowerShell\Modules" -Recurse -Force -ErrorAction Stop
-
-    #>
 
     # Change your location
     Set-Location 'C:\HybridJumpstartSource'
