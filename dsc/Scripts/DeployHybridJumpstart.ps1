@@ -83,26 +83,9 @@ try {
     # Load the PowerShell file into memory
     . .\HybridJumpstart.ps1
 
-    if ([System.IO.File]::Exists($WindowsServerIsoPath)) {
-        $insertWsString = ' -WindowsServerIsoPath $WindowsServerIsoPath'
-    }
-    else {
-        $insertWsString = ''
-    }
-
-    if ([System.IO.File]::Exists($AzureStackHCIIsoPath)) {
-        $insertAzSString = ' -AzureStackHCIIsoPath $AzureStackHCIIsoPath'
-    }
-    else {
-        $insertAzSString = ''
-    }
-
-    # Lock in the DSC and generate the MOF files
-    $command = 'HybridJumpstart -jumpstartPath $jumpstartPath -azureStackHCINodes $azureStackHCINodes `
-    -azureStackHCINodeMemory $azureStackHCINodeMemory -telemetryLevel $telemetryLevel -updateImages $updateImages' `
-        + $insertWsString + $insertAzSString
-
-    Invoke-Expression $command
+    HybridJumpstart -jumpstartPath $jumpstartPath -azureStackHCINodes $azureStackHCINodes `
+        -azureStackHCINodeMemory $azureStackHCINodeMemory -telemetryLevel $telemetryLevel -updateImages $updateImages `
+        -WindowsServerIsoPath $WindowsServerIsoPath -AzureStackHCIIsoPath $AzureStackHCIIsoPath
 
     # Change location to where the MOFs are located, then execute the DSC configuration
     Set-Location .\HybridJumpstart\
