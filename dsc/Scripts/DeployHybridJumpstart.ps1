@@ -85,20 +85,16 @@ try {
 
     if ([System.IO.File]::Exists($WindowsServerIsoPath)) {
         $insertWsString = ' -WindowsServerIsoPath $WindowsServerIsoPath'
-        Write-Host "1"
     }
     else {
         $insertWsString = ''
-        Write-Host "2"
     }
 
     if ([System.IO.File]::Exists($AzureStackHCIIsoPath)) {
         $insertAzSString = ' -AzureStackHCIIsoPath $AzureStackHCIIsoPath'
-        Write-Host "3"
     }
     else {
         $insertAzSString = ''
-        Write-Host "4"
     }
 
     # Lock in the DSC and generate the MOF files
