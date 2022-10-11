@@ -2,6 +2,7 @@ configuration HybridJumpstart
 {
     param 
     (
+        [System.Management.Automation.PSCredential]$Admincreds,
         [Parameter(Mandatory)]
         [ValidateSet("1", "2", "3", "4")]
         [Int]$azureStackHCINodes,
@@ -17,6 +18,7 @@ configuration HybridJumpstart
         [String]$jumpstartPath,
         [String]$WindowsServerIsoPath,
         [String]$AzureStackHCIIsoPath
+
     )
     
     Import-DscResource -ModuleName 'ComputerManagementDsc' -ModuleVersion 8.5.0
@@ -711,6 +713,40 @@ configuration HybridJumpstart
                 return $state.Result
             }
             DependsOn  = "[Script]MSLab CreateParentDisks"
+        }
+
+        if ((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
+            $azureUsername = $($Using:Admincreds.UserName)
+            $desktopPath = "C:\Users\$azureUsername\Desktop"
+        }
+        else {
+            $desktopPath = [Environment]::GetFolderPath("Desktop")
+        }
+
+        Script "Create DC Shortcut" {
+            GetScript  = {
+                $result = (Test-Path -Path "$Using:desktopPath\$Using:vmPrefix-DC.lnk")
+                return @{ 'Result' = $result }
+            }
+            SetScript  = {
+                $VMname = "$Using:vmPrefix-DC"
+                $WshShell2 = New-Object -comObject WScript.Shell
+                $Shortcut = $WshShell2.CreateShortcut("$Using:desktopPath\$VMname.lnk")
+                $Shortcut.TargetPath = "C:\Windows\System32\vmconnect.exe"
+                $Shortcut.Arguments = "localhost $VMname"
+                $Shortcut.WorkingDirectory = "C:\WINDOWS\system32"
+                $Shortcut.IconLocation = "vmconnect.exe, 0";
+                $Shortcut.Save()
+                $bytes = [System.IO.File]::ReadAllBytes("$Using:desktopPath\$VMname.lnk")
+                $bytes[0x15] = $bytes[0x15] -bor 0x20 #set byte 21 (0x15) bit 6 (0x20) ON
+                [System.IO.File]::WriteAllBytes("$Using:desktopPath\$VMname.lnk", $bytes)
+            }
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]MSLab DeployEnvironment"
         }
     }
 }

@@ -598,6 +598,10 @@
                         },
                         "protectedSettings": {
                             "configurationArguments": {
+                                "adminCreds": {
+                                    "UserName": "[parameters('azureVMUsername')]",
+                                    "Password": "[parameters('azureVMPassword')]"
+                                }
                             }
                         }
                     }
