@@ -14,7 +14,7 @@ param
     [Switch]$skipAzSHCIisoDownload
 )
 
-$Global:VerbosePreference = "Continue"
+$Global:VerbosePreference = "SilentlyContinue"
 $Global:ErrorActionPreference = 'Stop'
 $Global:ProgressPreference = 'SilentlyContinue'
 
@@ -41,10 +41,10 @@ try {
 
            
     # Ensure WinRM is configured to allow DSC to run
-    Write-Host "Enabling PSRemoting to allow PowerShell DSC to run..."
+    Write-Host "Checking PSRemoting to allow PowerShell DSC to run..."
     Enable-PSRemoting -Force -SkipNetworkProfileCheck
     Write-Host "PSRemoting enabled..."
-
+2
     # Firstly, validate if Hyper-V is installed and prompt to enable and reboot if not
     Write-Host "Checking if required Hyper-V role/features are installed..."
     $hypervState = ((Get-WindowsOptionalFeature -Online -FeatureName *Hyper-V*) | Where-Object { $_.State -eq "Disabled" })
@@ -55,19 +55,19 @@ try {
         }
         Write-Host "Do you wish to enable them now?" -ForegroundColor Green
         if ((Read-Host "(Type Y or N)") -eq "Y") {
-            Write-Host "You chose to install the required Hyper-V role/features. Your machine will reboot once completed. Rerun this script when back online..."
+            Write-Host "You chose to install the required Hyper-V role/features.`nYour machine will reboot once completed.`nRerun this script when back online..."
             Start-Sleep -Seconds 10
             $reboot = $false
             foreach ($feature in $hypervState) {
-                $rebootCheck = Enable-WindowsOptionalFeature -Online -FeatureName $($feature.FeatureName) -ErrorAction Stop -NoRestart
+                $rebootCheck = Enable-WindowsOptionalFeature -Online -FeatureName $($feature.FeatureName) -ErrorAction Stop -NoRestart -WarningAction SilentlyContinue
                 if ($($rebootCheck.RestartNeeded) -eq $true) {
                     $reboot = $true
                 }
             }
             if ($reboot -eq $true) {
-                Write-Host "Install completed. A reboot is required to finish installation - reboot now? If not, you will need to reboot before deploying the Hybrid Jumpstart..." -ForegroundColor Green
+                Write-Host "Install completed. A reboot is required to finish installation - reboot now?`nIf not, you will need to reboot before deploying the Hybrid Jumpstart..." -ForegroundColor Green
                 if ((Read-Host "(Type Y or N)") -eq "Y") {
-                    Restart-Computer -Force
+                    Restart-Computer -Force -Timeout 5
                 }
                 else {
                     Write-Host 'You did not enter "Y" to confirm rebooting your host. Exiting... ' -ForegroundColor Red
@@ -88,25 +88,25 @@ try {
     }
 
     if (!($azureStackHCINodes)) {
-        while ($azureStackHCINodes -notmatch ("1", "2", "3", "4")) {
+        while ($azureStackHCINodes -notin ("1", "2", "3", "4")) {
             $azureStackHCINodes = Read-Host "Select the number of Azure Stack HCI nodes you'd like to deploy - Enter 1, 2, 3 or 4"
         }
     }
 
     if (!($azureStackHCINodeMemory)) {
-        while ($azureStackHCINodeMemory -notmatch ("4", "8", "12", "16", "24", "32", "48")) {
+        while ($azureStackHCINodeMemory -notin ("4", "8", "12", "16", "24", "32", "48")) {
             $azureStackHCINodeMemory = Read-Host "Select the amount of memory in GB for each of your Azure Stack HCI nodes - Enter 4, 8, 12, 16, 24, 32, or 48"
         }
     }
 
     if (!($telemetryLevel)) {
-        while ($telemetryLevel -notmatch ("Full", "Basic", "None")) {
+        while ($telemetryLevel -notin ("Full", "Basic", "None")) {
             $telemetryLevel = Read-Host "Select the telemetry level for the deployment. This helps to improve the deployment experience - Enter Full, Basic or None"
         }
     }
 
     if (!($updateImages)) {
-        while ($updateImages -notmatch ("Y", "N")) {
+        while ($updateImages -notin ("Y", "N")) {
             $updateInput = Read-Host "Do you wish to update your Azure Stack HCI and Windows Server images automatically? This will increase deployment time. Enter Y or N"
             if ($updateInput -eq "Y") {
                 $updateImages = "Yes"
