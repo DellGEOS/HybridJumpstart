@@ -41,6 +41,7 @@ configuration HybridJumpstart
         [String]$wsIsoUri = "https://go.microsoft.com/fwlink/p/?LinkID=2195280"
         [String]$azsHCIIsoUri = "https://aka.ms/2CNBagfhSZ8BM7jyEV8I"
         [String]$labConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/LabConfig.ps1"
+        [String]$rdpConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/RDP.rdp"
 
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -50,6 +51,9 @@ configuration HybridJumpstart
 
         $dateStamp = Get-Date -Format "MMddyyyy"
         $vmPrefix = "HybridJumpstart-$dateStamp"
+        $msLabUsername = "dell\labadmin"
+        $msLabPassword = ConvertTo-SecureString 'LS1setup!' -AsPlainText -Force
+        $msLabCreds = New-Object System.Management.Automation.PSCredential ($msLabUsername, $msLabPassword)
 
         # Calculate Host Memory Sizing to account for oversizing
         [INT]$totalFreePhysicalMemory = Get-CimInstance Win32_OperatingSystem -Verbose:$false | ForEach-Object { [math]::round($_.FreePhysicalMemory / 1MB) }
@@ -84,7 +88,7 @@ configuration HybridJumpstart
         $ssuPath = "$updatePath\SSU"
         $isoPath = "$jumpstartPath\ISO"
         $flagsPath = "$jumpstartPath\Flags"
-        $azsHciVhdPath = "$parentDiskPath\AzSHCI21H2_G2.vhdx"
+        $azsHciVhdPath = "$parentDiskPath\AzSHCI22H2_G2.vhdx"
 
         if (!((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77")) {
             # If this is on-prem, user should have supplied a folder/path they wish to install into
@@ -360,8 +364,8 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($updateImages -eq "Yes") {
-                    $cuSearchString = "Cumulative Update for Microsoft server operating system version 21H2 for x64-based Systems"
-                    $cuID = "Microsoft Server operating system-21H2"
+                    $cuSearchString = "Cumulative Update for Microsoft server operating system*version 22H2 for x64-based Systems"
+                    $cuID = "Microsoft Server operating system-22H2"
                     $cuUpdate = Get-MSCatalogUpdate -Search $cuSearchString | Where-Object Products -eq $cuID | Where-Object Title -like "*$($cuSearchString)*" | Select-Object -First 1
                     if ($cuUpdate) {
                         $cuUpdate | Save-MSCatalogUpdate -Destination $using:cuPath -AcceptMultiFileUpdates
@@ -398,8 +402,8 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($updateImages -eq "Yes") {
-                    $ssuSearchString = "Servicing Stack Update for Microsoft server operating system version 21H2 for x64-based Systems"
-                    $ssuID = "Microsoft Server operating system-21H2"
+                    $ssuSearchString = "Servicing Stack Update for Microsoft server operating system*version 22H2 for x64-based Systems"
+                    $ssuID = "Microsoft Server operating system-22H2"
                     $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString | Where-Object Products -eq $ssuID | Select-Object -First 1
                     if ($ssuUpdate) {
                         $ssuUpdate | Save-MSCatalogUpdate -Destination $using:ssuPath
@@ -422,33 +426,6 @@ configuration HybridJumpstart
             }
             DependsOn  = "[File]SSU"
         }
-
-        <#Script "Download SSU" {
-            GetScript  = {
-                $result = ((Test-Path -Path "$using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$using:ssuPath\*" -Include "NoSSUAvailable.txt"))
-                return @{ 'Result' = $result }
-            }
-
-            SetScript  = {
-                $ssuSearchString = "Servicing Stack Update for Microsoft server operating system version 21H2 for x64-based Systems"
-                $ssuID = "Microsoft Server operating system-21H2"
-                $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString | Where-Object Products -eq $ssuID | Select-Object -First 1
-                if ($ssuUpdate) {
-                    $ssuUpdate | Save-MSCatalogUpdate -Destination $using:ssuPath
-                }
-                else {
-                    $NoSSUFlag = "$using:ssuPath\NoSSUAvailable.txt"
-                    New-Item $NoSSUFlag -ItemType file -Force
-                }
-            }
-
-            TestScript = {
-                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
-                $state = [scriptblock]::Create($GetScript).Invoke()
-                return $state.Result
-            }
-            DependsOn  = "[File]SSU"
-        } #>
 
         #### SET WINDOWS DEFENDER EXCLUSION FOR VM STORAGE ####
 
@@ -747,6 +724,179 @@ configuration HybridJumpstart
                 return $state.Result
             }
             DependsOn  = "[Script]MSLab DeployEnvironment"
+        }
+
+        $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
+
+        Script "Download RDP File" {
+            GetScript  = {
+                $result = ((Get-Item $using:rdpConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                Invoke-WebRequest -Uri "$using:rdpConfigUri" -OutFile "$using:rdpConfigPath" -UseBasicParsing
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]MSLab DeployEnvironment"
+        }
+
+        Script "Edit RDP file" {
+            GetScript  = {
+                $result = !(Test-Path -Path "$using:rdpConfigPath")
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                $vmIpAddress = (Get-VMNetworkAdapter -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
+                $rdpConfigFile = Get-Content -Path "$using:rdpConfigPath"
+                $rdpConfigFile = $rdpConfigFile.Replace("<<VM_IP_Address>>", $vmIpAddress)
+                Out-File -FilePath "$using:rdpConfigPath" -InputObject $rdpConfigFile -Force
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]Download RDP File"
+        }
+
+        Script "Enable RDP on DC" {
+            GetScript  = {
+                $vmIpAddress = (Get-VMNetworkAdapter -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
+                if ((Test-NetConnection $vmIpAddress -CommonTCPPort rdp).TcpTestSucceeded -eq "True") {
+                    $result = $true
+                }
+                else {
+                    $result = $false
+                }
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
+                    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+                    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+                    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+                }
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]Edit RDP File"
+        }
+
+        Script "Deploy WAC" {
+            GetScript  = {
+                $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                    [bool] (Get-WmiObject -class win32_product  | Where-Object { $_.Name -eq "Windows Admin Center" })
+                }
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                    if (-not (Test-Path -Path "C:\WindowsAdminCenter.msi")) {
+                        Invoke-WebRequest -Uri 'https://aka.ms/WACDownload' -OutFile "C:\WindowsAdminCenter.msi" -UseBasicParsing
+                    }
+                    Start-Process msiexec.exe -Wait -ArgumentList `
+                        "/i C:\WindowsAdminCenter.msi /qn /L*v log.txt REGISTRY_REDIRECT_PORT_80=1 SME_PORT=443 SSL_CERTIFICATE_OPTION=generate"
+                    do {
+                        if ((Get-Service ServerManagementGateway -ErrorAction SilentlyContinue).status -ne "Running") {
+                            Write-Output "Starting Windows Admin Center (ServerManagementGateway) Service"
+                            Start-Service ServerManagementGateway
+                        }
+                        Start-sleep -Seconds 5
+                    } until ((Test-NetConnection -ComputerName "localhost" -port 443).TcpTestSucceeded)
+                }
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]MSLab DeployEnvironment"
+        }
+
+        Script "Update DC" {
+            GetScript  = {
+                $result = Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
+                    [bool] ({ Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -eq "CN=Windows Admin Center" })
+                }
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
+                    $GatewayServerName = "WACGW"
+                    Start-Sleep 10
+                    $cert = Invoke-Command -ComputerName $GatewayServerName `
+                        -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=Windows Admin Center" }
+                    $cert | Export-Certificate -FilePath $env:TEMP\WACCert.cer
+                    Import-Certificate -FilePath $env:TEMP\WACCert.cer -CertStoreLocation Cert:\LocalMachine\Root\
+                    $gatewayObject = Get-ADComputer -Identity $GatewayServerName
+                    $computers = (Get-ADComputer -Filter { OperatingSystem -eq "Azure Stack HCI" }).Name
+                    foreach ($computer in $computers) {
+                        $computerObject = Get-ADComputer -Identity $computer
+                        Set-ADComputer -Identity $computerObject -PrincipalsAllowedToDelegateToAccount $gatewayObject
+                    }
+                }
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]Deploy WAC"
+        }
+
+        Script "Update WAC Extensions" {
+            GetScript  = {
+                $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                    [bool] (Test-Path -Path "C:\WACExtensionsUpdated.txt")
+                }
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                    $GatewayServerName = "WACGW"
+                    # Import Windows Admin Center PowerShell Modules
+                    $items = Get-ChildItem -Path "C:\Program Files\Windows Admin Center\PowerShell\Modules" -Recurse | `
+                        Where-Object Extension -eq ".psm1"
+                    foreach ($item in $items) {
+                        Import-Module $item.fullName
+                    }
+                    # Grab installed extensions that are not up to date.
+                    $InstalledExtensions = Get-Extension -GatewayEndpoint $GatewayServerName  | Where-Object status -eq Installed
+                    $ExtensionsToUpdate = $InstalledExtensions | Where-Object IsLatestVersion -eq $False
+
+                    # Update out-of-date extensions
+                    foreach ($Extension in $ExtensionsToUpdate) {
+                        Update-Extension -GatewayEndpoint https://$GatewayServerName -ExtensionId $Extension.ID
+                    }
+                    $extensionsFlag = "C:\WACExtensionsUpdated.txt"
+                    New-Item $extensionsFlag -ItemType file -Force
+                }
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]Update DC"
         }
     }
 }
