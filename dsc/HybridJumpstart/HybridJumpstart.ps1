@@ -274,7 +274,7 @@ configuration HybridJumpstart
 
         Script "Replace LabConfig" {
             GetScript  = {
-                $result = ((Get-Item $Using:labConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
+                $result = ((Get-Item $labConfigPath).LastWriteTime -ge (Get-Date))
                 return @{ 'Result' = $result }
             }
 
@@ -730,7 +730,7 @@ configuration HybridJumpstart
 
         Script "Download RDP File" {
             GetScript  = {
-                $result = !(Test-Path -Path "$Using:rdpConfigPath")
+                $result = Test-Path -Path "$Using:rdpConfigPath"
                 return @{ 'Result' = $result }
             }
 
@@ -753,7 +753,7 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
-                $vmIpAddress = (Get-VMNetworkAdapter -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
+                $vmIpAddress = (Get-VMNetworkAdapter -Name 'Internet' -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
                 $rdpConfigFile = Get-Content -Path "$Using:rdpConfigPath"
                 $rdpConfigFile = $rdpConfigFile.Replace("<<VM_IP_Address>>", $vmIpAddress)
                 Out-File -FilePath "$Using:rdpConfigPath" -InputObject $rdpConfigFile -Force
@@ -769,7 +769,7 @@ configuration HybridJumpstart
 
         Script "Enable RDP on DC" {
             GetScript  = {
-                $vmIpAddress = (Get-VMNetworkAdapter -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
+                $vmIpAddress = (Get-VMNetworkAdapter -Name 'Internet' -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
                 if ((Test-NetConnection $vmIpAddress -CommonTCPPort rdp).TcpTestSucceeded -eq "True") {
                     $result = $true
                 }
