@@ -52,12 +52,6 @@ configuration HybridJumpstart
         $dateStamp = Get-Date -Format "MMddyyyy"
         $vmPrefix = "HybridJumpstart-$dateStamp"
 
-        $msLabUsername = "dell\labadmin"
-        $msLabPassword = 'LS1setup!'
-        $secMsLabPassword = New-Object -TypeName System.Security.SecureString
-        $msLabPassword.ToCharArray() | ForEach-Object {$secMsLabPassword.AppendChar($_)}
-        $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-
         # Calculate Host Memory Sizing to account for oversizing
         [INT]$totalFreePhysicalMemory = Get-CimInstance Win32_OperatingSystem -Verbose:$false | ForEach-Object { [math]::round($_.FreePhysicalMemory / 1MB) }
         [INT]$totalInfraMemoryRequired = "4"
@@ -783,6 +777,11 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
                     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
                     Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
@@ -800,6 +799,11 @@ configuration HybridJumpstart
 
         Script "Deploy WAC" {
             GetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
                     [bool] (Get-WmiObject -class win32_product  | Where-Object { $_.Name -eq "Windows Admin Center" })
                 }
@@ -807,6 +811,11 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
                     if (-not (Test-Path -Path "C:\WindowsAdminCenter.msi")) {
                         Invoke-WebRequest -Uri 'https://aka.ms/WACDownload' -OutFile "C:\WindowsAdminCenter.msi" -UseBasicParsing
@@ -833,6 +842,11 @@ configuration HybridJumpstart
 
         Script "Update DC" {
             GetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 $result = Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
                     if (Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -like "CN=Windows Admin Center") {
                         return $true
@@ -845,6 +859,11 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
                     $GatewayServerName = "WACGW"
                     Start-Sleep 10
@@ -871,6 +890,11 @@ configuration HybridJumpstart
 
         Script "Update WAC Extensions" {
             GetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
                     [bool] (Test-Path -Path "C:\WACExtensionsUpdated.txt")
                 }
@@ -878,6 +902,11 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
                     $GatewayServerName = "WACGW"
                     # Import Windows Admin Center PowerShell Modules
