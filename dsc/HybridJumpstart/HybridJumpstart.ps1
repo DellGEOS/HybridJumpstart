@@ -237,8 +237,8 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
+                $ProgressPreference = 'SilentlyContinue'
                 Invoke-WebRequest -Uri "$Using:mslabUri" -OutFile "$Using:mslabLocalPath" -UseBasicParsing
-                #Start-BitsTransfer -Source "$Using:mslabUri" -Destination "$Using:mslabLocalPath" -RetryInterval 60
             }
 
             TestScript = {
@@ -276,8 +276,8 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
+                $ProgressPreference = 'SilentlyContinue'
                 Invoke-WebRequest -Uri "$Using:labConfigUri" -OutFile "$Using:labConfigPath" -UseBasicParsing
-                #Start-BitsTransfer -Source "$Using:labConfigUri" -Destination "$Using:labConfigPath" -RetryInterval 60
             }
 
             TestScript = {
@@ -732,6 +732,7 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
+                $ProgressPreference = 'SilentlyContinue'
                 Invoke-WebRequest -Uri "$Using:rdpConfigUri" -OutFile "$Using:rdpConfigPath" -UseBasicParsing
             }
 
@@ -818,6 +819,7 @@ configuration HybridJumpstart
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
                     if (-not (Test-Path -Path "C:\WindowsAdminCenter.msi")) {
+                        $ProgressPreference = 'SilentlyContinue'
                         Invoke-WebRequest -Uri 'https://aka.ms/WACDownload' -OutFile "C:\WindowsAdminCenter.msi" -UseBasicParsing
                     }
                     Start-Process msiexec.exe -Wait -ArgumentList `
