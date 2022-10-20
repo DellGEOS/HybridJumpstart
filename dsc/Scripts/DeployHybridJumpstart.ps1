@@ -43,11 +43,11 @@ try {
     Write-Host "Checking if required Hyper-V role/features are installed..."
     $hypervState = ((Get-WindowsOptionalFeature -Online -FeatureName *Hyper-V*) | Where-Object { $_.State -eq "Disabled" })
     if ($hypervState) {
-        Write-Host "The following Hyper-V role/features are missing:"
+        Write-Host "`nThe following Hyper-V role/features are missing:`n"
         foreach ($feature in $hypervState) {
             "$($feature.DisplayName)"
         }
-        Write-Host "Do you wish to enable them now?" -ForegroundColor Green
+        Write-Host "`nDo you wish to enable them now?" -ForegroundColor Green
         if ((Read-Host "(Type Y or N)") -eq "Y") {
             Write-Host "`nYou chose to install the required Hyper-V role/features.`nYour machine will reboot once completed.`nRerun this script when back online..."
             Start-Sleep -Seconds 10
@@ -59,9 +59,10 @@ try {
                 }
             }
             if ($reboot -eq $true) {
-                Write-Host "Install completed. A reboot is required to finish installation - reboot now?`nIf not, you will need to reboot before deploying the Hybrid Jumpstart..." -ForegroundColor Green
+                Write-Host "`nInstall completed. A reboot is required to finish installation - reboot now?`nIf not, you will need to reboot before deploying the Hybrid Jumpstart..." -ForegroundColor Green
                 if ((Read-Host "(Type Y or N)") -eq "Y") {
-                    Restart-Computer -Force -Timeout 5
+                    Start-Sleep -Seconds 5
+                    Restart-Computer -Force
                 }
                 else {
                     Write-Host 'You did not enter "Y" to confirm rebooting your host. Exiting... ' -ForegroundColor Red
@@ -78,7 +79,7 @@ try {
         }
     }
     else {
-        Write-Host "All required Hyper-V role/features are present. Continuing process..." -ForegroundColor Green
+        Write-Host "`nAll required Hyper-V role/features are present. Continuing process..." -ForegroundColor Green
     }
 
     if (!($azureStackHCINodes)) {
@@ -319,7 +320,7 @@ try {
     # Change location to where the MOFs are located, then execute the DSC configuration
     Set-Location .\HybridJumpstart\
 
-    Write-Host "Starting Hybrid Jumpstart deployment....an remote desktop icon on your desktop will indicate completion..." -ForegroundColor Green
+    Write-Host "`nStarting Hybrid Jumpstart deployment....a remote desktop icon on your desktop will indicate completion..." -ForegroundColor Green
     Set-DscLocalConfigurationManager  -Path . -Force
     Start-DscConfiguration -Path . -Wait -Force -Verbose
 }
