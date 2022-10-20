@@ -235,13 +235,13 @@ configuration HybridJumpstart
 
         Script "Download MSLab" {
             GetScript  = {
-                $result = Test-Path -Path "$using:mslabLocalPath"
+                $result = Test-Path -Path "$Using:mslabLocalPath"
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Invoke-WebRequest -Uri "$using:mslabUri" -OutFile "$using:mslabLocalPath" -UseBasicParsing
-                #Start-BitsTransfer -Source "$using:mslabUri" -Destination "$using:mslabLocalPath" -RetryInterval 60
+                Invoke-WebRequest -Uri "$Using:mslabUri" -OutFile "$Using:mslabLocalPath" -UseBasicParsing
+                #Start-BitsTransfer -Source "$Using:mslabUri" -Destination "$Using:mslabLocalPath" -RetryInterval 60
             }
 
             TestScript = {
@@ -254,13 +254,13 @@ configuration HybridJumpstart
 
         Script "Extract MSLab" {
             GetScript  = {
-                $result = !(Test-Path -Path "$using:mslabLocalPath")
+                $result = !(Test-Path -Path "$Using:mslabLocalPath")
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Expand-Archive -Path "$using:mslabLocalPath" -DestinationPath "$using:jumpstartPath" -Force
-                #$extractedFlag = "$using:flagsPath\MSLabExtracted.txt"
+                Expand-Archive -Path "$Using:mslabLocalPath" -DestinationPath "$Using:jumpstartPath" -Force
+                #$extractedFlag = "$Using:flagsPath\MSLabExtracted.txt"
                 #New-Item $extractedFlag -ItemType file -Force
             }
 
@@ -274,13 +274,13 @@ configuration HybridJumpstart
 
         Script "Replace LabConfig" {
             GetScript  = {
-                $result = ((Get-Item $using:labConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
+                $result = ((Get-Item $Using:labConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Invoke-WebRequest -Uri "$using:labConfigUri" -OutFile "$using:labConfigPath" -UseBasicParsing
-                #Start-BitsTransfer -Source "$using:labConfigUri" -Destination "$using:labConfigPath" -RetryInterval 60
+                Invoke-WebRequest -Uri "$Using:labConfigUri" -OutFile "$Using:labConfigPath" -UseBasicParsing
+                #Start-BitsTransfer -Source "$Using:labConfigUri" -Destination "$Using:labConfigPath" -RetryInterval 60
             }
 
             TestScript = {
@@ -293,19 +293,19 @@ configuration HybridJumpstart
 
         Script "Edit LabConfig" {
             GetScript  = {
-                $result = !(Test-Path -Path "$using:labConfigPath")
+                $result = !(Test-Path -Path "$Using:labConfigPath")
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                $labConfigFile = Get-Content -Path "$using:labConfigPath"
-                $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodes>>", $using:azureStackHCINodes)
-                $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodeMemory>>", $using:azureStackHCINodeMemory)
-                $labConfigFile = $labConfigFile.Replace("<<WSServerIsoFolder>>", $using:wsIsoPath)
-                $labConfigFile = $labConfigFile.Replace("<<MsuFolder>>", $using:updatePath)
-                $labConfigFile = $labConfigFile.Replace("<<VmPrefix>>", $using:vmPrefix)
-                $labConfigFile = $labConfigFile.Replace("<<TelemetryLevel>>", $using:telemetryLevel)
-                Out-File -FilePath "$using:labConfigPath" -InputObject $labConfigFile -Force
+                $labConfigFile = Get-Content -Path "$Using:labConfigPath"
+                $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodes>>", $Using:azureStackHCINodes)
+                $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodeMemory>>", $Using:azureStackHCINodeMemory)
+                $labConfigFile = $labConfigFile.Replace("<<WSServerIsoFolder>>", $Using:wsIsoPath)
+                $labConfigFile = $labConfigFile.Replace("<<MsuFolder>>", $Using:updatePath)
+                $labConfigFile = $labConfigFile.Replace("<<VmPrefix>>", $Using:vmPrefix)
+                $labConfigFile = $labConfigFile.Replace("<<TelemetryLevel>>", $Using:telemetryLevel)
+                Out-File -FilePath "$Using:labConfigPath" -InputObject $labConfigFile -Force
             }
 
             TestScript = {
@@ -318,12 +318,12 @@ configuration HybridJumpstart
 
         Script "Download Windows Server ISO" {
             GetScript  = {
-                $result = Test-Path -Path $using:wsISOLocalPath
+                $result = Test-Path -Path $Using:wsISOLocalPath
                 return @{ 'Result' = $result }
             }
     
             SetScript  = {
-                Start-BitsTransfer -Source $using:wsIsoUri -Destination $using:wsISOLocalPath   
+                Start-BitsTransfer -Source $Using:wsIsoUri -Destination $Using:wsISOLocalPath   
             }
             TestScript = {
                 # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
@@ -335,12 +335,12 @@ configuration HybridJumpstart
 
         Script "Download AzureStack HCI ISO" {
             GetScript  = {
-                $result = Test-Path -Path $using:azsHCIISOLocalPath
+                $result = Test-Path -Path $Using:azsHCIISOLocalPath
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Start-BitsTransfer -Source $using:azsHCIIsoUri -Destination $using:azsHCIISOLocalPath            
+                Start-BitsTransfer -Source $Using:azsHCIIsoUri -Destination $Using:azsHCIISOLocalPath            
             }
 
             TestScript = {
@@ -354,10 +354,10 @@ configuration HybridJumpstart
         Script "Download CU" {
             GetScript  = {
                 if ($updateImages -eq "Yes") {
-                    $result = ((Test-Path -Path "$using:cuPath\*" -Include "*.msu") -or (Test-Path -Path "$using:cuPath\*" -Include "NoUpdateDownloaded.txt"))
+                    $result = ((Test-Path -Path "$Using:cuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded.txt"))
                 }
                 else {
-                    $result = (Test-Path -Path "$using:cuPath\*" -Include "NoUpdateDownloaded.txt")
+                    $result = (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded.txt")
                 }
                 return @{ 'Result' = $result }
             }
@@ -368,15 +368,15 @@ configuration HybridJumpstart
                     $cuID = "Microsoft Server operating system-22H2"
                     $cuUpdate = Get-MSCatalogUpdate -Search $cuSearchString | Where-Object Products -eq $cuID | Where-Object Title -like "*$($cuSearchString)*" | Select-Object -First 1
                     if ($cuUpdate) {
-                        $cuUpdate | Save-MSCatalogUpdate -Destination $using:cuPath -AcceptMultiFileUpdates
+                        $cuUpdate | Save-MSCatalogUpdate -Destination $Using:cuPath -AcceptMultiFileUpdates
                     }
                     else {
-                        $NoCuFlag = "$using:cuPath\NoUpdateDownloaded.txt"
+                        $NoCuFlag = "$Using:cuPath\NoUpdateDownloaded.txt"
                         New-Item $NoCuFlag -ItemType file -Force
                     }
                 }
                 else {
-                    $NoCuFlag = "$using:cuPath\NoUpdateDownloaded.txt"
+                    $NoCuFlag = "$Using:cuPath\NoUpdateDownloaded.txt"
                     New-Item $NoCuFlag -ItemType file -Force
                 }
             }
@@ -392,10 +392,10 @@ configuration HybridJumpstart
         Script "Download SSU" {
             GetScript  = {
                 if ($updateImages -eq "Yes") {
-                    $result = ((Test-Path -Path "$using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$using:ssuPath\*" -Include "NoUpdateDownloaded.txt"))
+                    $result = ((Test-Path -Path "$Using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded.txt"))
                 }
                 else {
-                    $result = (Test-Path -Path "$using:ssuPath\*" -Include "NoUpdateDownloaded.txt")
+                    $result = (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded.txt")
                 }
                 return @{ 'Result' = $result }
             }
@@ -406,15 +406,15 @@ configuration HybridJumpstart
                     $ssuID = "Microsoft Server operating system-22H2"
                     $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString | Where-Object Products -eq $ssuID | Select-Object -First 1
                     if ($ssuUpdate) {
-                        $ssuUpdate | Save-MSCatalogUpdate -Destination $using:ssuPath
+                        $ssuUpdate | Save-MSCatalogUpdate -Destination $Using:ssuPath
                     }
                     else {
-                        $NoSsuFlag = "$using:ssuPath\NoUpdateDownloaded.txt"
+                        $NoSsuFlag = "$Using:ssuPath\NoUpdateDownloaded.txt"
                         New-Item $NoSsuFlag -ItemType file -Force
                     }
                 }
                 else {
-                    $NoSsuFlag = "$using:ssuPath\NoUpdateDownloaded.txt"
+                    $NoSsuFlag = "$Using:ssuPath\NoUpdateDownloaded.txt"
                     New-Item $NoSsuFlag -ItemType file -Force
                 }
             }
@@ -552,31 +552,31 @@ configuration HybridJumpstart
 
         Script "CreateAzSHCIDisk" {
             GetScript  = {
-                $result = Test-Path -Path $using:azsHciVhdPath
+                $result = Test-Path -Path $Using:azsHciVhdPath
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
                 # Create Azure Stack HCI Host Image from ISO
                 
-                $scratchPath = "$using:jumpstartPath\Scratch"
+                $scratchPath = "$Using:jumpstartPath\Scratch"
                 New-Item -ItemType Directory -Path "$scratchPath" -Force | Out-Null
                 
                 # Determine if any SSUs are available
-                $ssu = Test-Path -Path "$using:ssuPath\*" -Include "*.msu"
+                $ssu = Test-Path -Path "$Using:ssuPath\*" -Include "*.msu"
 
                 if ($ssu) {
-                    Convert-WindowsImage -SourcePath $using:azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $using:azsHciVhdPath `
-                        -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -Package $using:ssuPath -TempDirectory $using:scratchPath -Verbose
+                    Convert-WindowsImage -SourcePath $Using:azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $Using:azsHciVhdPath `
+                        -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -Package $Using:ssuPath -TempDirectory $Using:scratchPath -Verbose
                 }
                 else {
-                    Convert-WindowsImage -SourcePath $using:azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $using:azsHciVhdPath `
-                        -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -TempDirectory $using:scratchPath -Verbose
+                    Convert-WindowsImage -SourcePath $Using:azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $Using:azsHciVhdPath `
+                        -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -TempDirectory $Using:scratchPath -Verbose
                 }
 
                 Start-Sleep -Seconds 10
 
-                Mount-VHD -Path $using:azsHciVhdPath -Passthru -ErrorAction Stop -Verbose
+                Mount-VHD -Path $Using:azsHciVhdPath -Passthru -ErrorAction Stop -Verbose
                 Start-Sleep -Seconds 2
 
                 $disks = Get-CimInstance -ClassName Win32_DiskDrive | Where-Object Caption -eq "Microsoft Virtual Disk"            
@@ -589,7 +589,7 @@ configuration HybridJumpstart
                 }
                 $updatepath = $updatedrive.DeviceID + "\"
 
-                $updates = get-childitem -path $using:cuPath -Recurse | Where-Object { ($_.extension -eq ".msu") -or ($_.extension -eq ".cab") } | Select-Object fullname
+                $updates = get-childitem -path $Using:cuPath -Recurse | Where-Object { ($_.extension -eq ".msu") -or ($_.extension -eq ".cab") } | Select-Object fullname
                 foreach ($update in $updates) {
                     write-debug $update.fullname
                     $command = "dism /image:" + $updatepath + " /add-package /packagepath:'" + $update.fullname + "'"
@@ -606,14 +606,14 @@ configuration HybridJumpstart
                     Invoke-Expression $command
                 }
 
-                Dismount-VHD -path $using:azsHciVhdPath -confirm:$false
+                Dismount-VHD -path $Using:azsHciVhdPath -confirm:$false
 
                 Start-Sleep -Seconds 5
 
                 # Enable Hyper-V role on the Azure Stack HCI Host Image
                 $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
                 if ($osInfo.ProductType -eq 3) {
-                    Install-WindowsFeature -Vhd $using:azsHciVhdPath -Name Hyper-V
+                    Install-WindowsFeature -Vhd $Using:azsHciVhdPath -Name Hyper-V
                 }
 
                 # Remove the scratch folder
@@ -631,14 +631,14 @@ configuration HybridJumpstart
         # Start MSLab Deployment
         Script "MSLab Prereqs" {
             GetScript  = {
-                $result = (Test-Path -Path "$using:flagsPath\PreReqComplete.txt")
+                $result = (Test-Path -Path "$Using:flagsPath\PreReqComplete.txt")
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Set-Location "$using:jumpstartPath"
+                Set-Location "$Using:jumpstartPath"
                 .\1_Prereq.ps1
-                $preReqFlag = "$using:flagsPath\PreReqComplete.txt"
+                $preReqFlag = "$Using:flagsPath\PreReqComplete.txt"
                 New-Item $preReqFlag -ItemType file -Force
             }
 
@@ -652,14 +652,14 @@ configuration HybridJumpstart
 
         Script "MSLab CreateParentDisks" {
             GetScript  = {
-                $result = (Test-Path -Path "$using:flagsPath\CreateDisksComplete.txt")
+                $result = (Test-Path -Path "$Using:flagsPath\CreateDisksComplete.txt")
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Set-Location "$using:jumpstartPath"
+                Set-Location "$Using:jumpstartPath"
                 .\2_CreateParentDisks.ps1
-                $parentDiskFlag = "$using:flagsPath\CreateDisksComplete.txt"
+                $parentDiskFlag = "$Using:flagsPath\CreateDisksComplete.txt"
                 New-Item $parentDiskFlag -ItemType file -Force
             }
 
@@ -673,14 +673,14 @@ configuration HybridJumpstart
 
         Script "MSLab DeployEnvironment" {
             GetScript  = {
-                $result = (Test-Path -Path "$using:flagsPath\DeployComplete.txt")
+                $result = (Test-Path -Path "$Using:flagsPath\DeployComplete.txt")
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Set-Location "$using:jumpstartPath"
+                Set-Location "$Using:jumpstartPath"
                 .\Deploy.ps1
-                $deployFlag = "$using:flagsPath\DeployComplete.txt"
+                $deployFlag = "$Using:flagsPath\DeployComplete.txt"
                 New-Item $deployFlag -ItemType file -Force
             }
 
@@ -730,12 +730,12 @@ configuration HybridJumpstart
 
         Script "Download RDP File" {
             GetScript  = {
-                $result = !(Test-Path -Path "$using:rdpConfigPath")
+                $result = !(Test-Path -Path "$Using:rdpConfigPath")
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                Invoke-WebRequest -Uri "$using:rdpConfigUri" -OutFile "$using:rdpConfigPath" -UseBasicParsing
+                Invoke-WebRequest -Uri "$Using:rdpConfigUri" -OutFile "$Using:rdpConfigPath" -UseBasicParsing
             }
 
             TestScript = {
@@ -748,15 +748,15 @@ configuration HybridJumpstart
 
         Script "Edit RDP file" {
             GetScript  = {
-                $result = ((Get-Item $using:rdpConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
+                $result = ((Get-Item $Using:rdpConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
                 $vmIpAddress = (Get-VMNetworkAdapter -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
-                $rdpConfigFile = Get-Content -Path "$using:rdpConfigPath"
+                $rdpConfigFile = Get-Content -Path "$Using:rdpConfigPath"
                 $rdpConfigFile = $rdpConfigFile.Replace("<<VM_IP_Address>>", $vmIpAddress)
-                Out-File -FilePath "$using:rdpConfigPath" -InputObject $rdpConfigFile -Force
+                Out-File -FilePath "$Using:rdpConfigPath" -InputObject $rdpConfigFile -Force
             }
 
             TestScript = {
