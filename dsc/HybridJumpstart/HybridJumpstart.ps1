@@ -831,7 +831,12 @@ configuration HybridJumpstart
         Script "Update DC" {
             GetScript  = {
                 $result = Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
-                    [bool] ({ Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -eq "CN=Windows Admin Center" })
+                    if (Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -like "CN=Windows Admin Center") {
+                        return $true
+                    }
+                    else {
+                        return $false
+                    }
                 }
                 return @{ 'Result' = $result }
             }
