@@ -320,9 +320,10 @@ try {
     # Change location to where the MOFs are located, then execute the DSC configuration
     Set-Location .\HybridJumpstart\
 
-    Write-Host "`nStarting Hybrid Jumpstart deployment....a remote desktop icon on your desktop will indicate completion..." -ForegroundColor Green
+    Write-Host "`nStarting Hybrid Jumpstart deployment....Remote Desktop and VMConnect icons on your desktop will indicate completion..." -ForegroundColor Green
     Set-DscLocalConfigurationManager  -Path . -Force
     Start-DscConfiguration -Path . -Wait -Force -Verbose
+    Write-Host "`nDeployment complete....use the Remote Desktop or VMConnect icons to connect to your Domain Controller..." -ForegroundColor Green
 }
 catch {
     Set-Location $PSScriptRoot
