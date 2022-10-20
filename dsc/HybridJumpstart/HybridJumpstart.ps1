@@ -274,7 +274,7 @@ configuration HybridJumpstart
 
         Script "Replace LabConfig" {
             GetScript  = {
-                $result = ((Get-Item $labConfigPath).LastWriteTime -ge (Get-Date))
+                $result = ((Get-Item $Using:labConfigPath).LastWriteTime -ge (Get-Date))
                 return @{ 'Result' = $result }
             }
 
