@@ -730,7 +730,7 @@ configuration HybridJumpstart
 
         Script "Download RDP File" {
             GetScript  = {
-                $result = ((Get-Item $using:rdpConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
+                $result = !(Test-Path -Path "$using:rdpConfigPath")
                 return @{ 'Result' = $result }
             }
 
@@ -748,7 +748,7 @@ configuration HybridJumpstart
 
         Script "Edit RDP file" {
             GetScript  = {
-                $result = !(Test-Path -Path "$using:rdpConfigPath")
+                $result = ((Get-Item $using:rdpConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
                 return @{ 'Result' = $result }
             }
 
