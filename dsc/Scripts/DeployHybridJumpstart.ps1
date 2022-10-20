@@ -327,5 +327,6 @@ try {
 catch {
     Set-Location $PSScriptRoot
     throw $_.Exception.Message
-    return
+    Write-Host "Deployment failed - follow the troubleshooting steps online, and then retry"
+    Read-Host | Out-Null
 }

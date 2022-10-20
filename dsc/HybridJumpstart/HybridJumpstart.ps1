@@ -51,9 +51,12 @@ configuration HybridJumpstart
 
         $dateStamp = Get-Date -Format "MMddyyyy"
         $vmPrefix = "HybridJumpstart-$dateStamp"
+
         $msLabUsername = "dell\labadmin"
-        $msLabPassword = ConvertTo-SecureString 'LS1setup!' -AsPlainText -Force
-        $msLabCreds = New-Object System.Management.Automation.PSCredential ($msLabUsername, $msLabPassword)
+        $msLabPassword = 'LS1setup!'
+        $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+        $msLabPassword.ToCharArray() | ForEach-Object {$secMsLabPassword.AppendChar($_)}
+        $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
 
         # Calculate Host Memory Sizing to account for oversizing
         [INT]$totalFreePhysicalMemory = Get-CimInstance Win32_OperatingSystem -Verbose:$false | ForEach-Object { [math]::round($_.FreePhysicalMemory / 1MB) }
@@ -748,7 +751,7 @@ configuration HybridJumpstart
 
         Script "Edit RDP file" {
             GetScript  = {
-                $result = ((Get-Item $Using:rdpConfigPath).LastWriteTime.Millisecond -ge (Get-Date).Millisecond)
+                $result = ((Get-Item $Using:rdpConfigPath).LastWriteTime -ge (Get-Date))
                 return @{ 'Result' = $result }
             }
 
