@@ -12,6 +12,7 @@ param
 
 $Global:VerbosePreference = "SilentlyContinue"
 $Global:ProgressPreference = 'SilentlyContinue'
+try { Stop-Transcript | Out-Null } catch { }
 
 try {
 
@@ -21,7 +22,7 @@ try {
         Write-Host "-- Restarting as Administrator" -ForegroundColor Yellow ; Start-Sleep -Seconds 1
 
         if ($PSVersionTable.PSEdition -eq "Core") {
-            Start-Process pwsh.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs 
+            Start-Process pwsh.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
         }
         else {
             Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs 
@@ -33,7 +34,6 @@ try {
             Set-NetConnectionProfile -NetworkCategory Private -ErrorAction SilentlyContinue
     }
 
-           
     # Ensure WinRM is configured to allow DSC to run
     Write-Host "Checking PSRemoting to allow PowerShell DSC to run..."
     Enable-PSRemoting -Force -SkipNetworkProfileCheck
@@ -321,13 +321,35 @@ try {
     Set-Location .\HybridJumpstart\
 
     Write-Host "`nStarting Hybrid Jumpstart deployment....Remote Desktop and VMConnect icons on your desktop will indicate completion..." -ForegroundColor Green
+
+    ### START LOGGING ###
+    $fullLogPath = "$PSScriptRoot\JumpstartLog_$runTime.txt"
+    Write-Host -Message "Log folder full path is $fullLogPath"
+    Start-Transcript -Path "$fullLogPath" -Append
+    $startTime = Get-Date -Format g
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+
     Set-DscLocalConfigurationManager  -Path . -Force
     Start-DscConfiguration -Path . -Wait -Force -Verbose
     Write-Host "`nDeployment complete....use the Remote Desktop or VMConnect icons to connect to your Domain Controller..." -ForegroundColor Green
+
+    $endTime = Get-Date -Format g
+    $sw.Stop()
+    $Hrs = $sw.Elapsed.Hours
+    $Mins = $sw.Elapsed.Minutes
+    $Secs = $sw.Elapsed.Seconds
+    $difference = '{0:00}h:{1:00}m:{2:00}s' -f $Hrs, $Mins, $Secs
+
+    Write-Host "Hybrid Jumpstart deployment completed successfully, taking $difference." -ErrorAction SilentlyContinue
+    Write-Host "You started the Hybrid Jumpstart deployment at $startTime." -ErrorAction SilentlyContinue
+    Write-Host "Hybrid Jumpstart deployment completed at $endTime." -ErrorAction SilentlyContinue
 }
 catch {
     Set-Location $PSScriptRoot
     throw $_.Exception.Message
     Write-Host "Deployment failed - follow the troubleshooting steps online, and then retry"
     Read-Host | Out-Null
+}
+finally {
+    try { Stop-Transcript | Out-Null } catch { }
 }
