@@ -323,6 +323,7 @@ try {
     Write-Host "`nStarting Hybrid Jumpstart deployment....Remote Desktop and VMConnect icons on your desktop will indicate completion..." -ForegroundColor Green
 
     ### START LOGGING ###
+    $runTime = $(Get-Date).ToString("MMddyy-HHmmss")
     $fullLogPath = "$PSScriptRoot\JumpstartLog_$runTime.txt"
     Write-Host -Message "Log folder full path is $fullLogPath"
     Start-Transcript -Path "$fullLogPath" -Append
