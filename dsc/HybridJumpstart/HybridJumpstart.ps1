@@ -805,6 +805,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
+                Start-Sleep -Seconds 10
                 $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
                     [bool] (Get-WmiObject -class win32_product  | Where-Object { $_.Name -eq "Windows Admin Center" })
                 }
@@ -849,6 +850,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
+                Start-Sleep -Seconds 10
                 $result = Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
                     if (Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -like "CN=Windows Admin Center") {
                         return $true
