@@ -871,16 +871,18 @@ configuration HybridJumpstart
                 Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
                     $GatewayServerName = "WACGW"
                     Start-Sleep 10
-                    $cert = Invoke-Command -ComputerName $GatewayServerName `
-                        -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=Windows Admin Center" }
-                    $cert | Export-Certificate -FilePath $env:TEMP\WACCert.cer
-                    Import-Certificate -FilePath $env:TEMP\WACCert.cer -CertStoreLocation Cert:\LocalMachine\Root\
                     $gatewayObject = Get-ADComputer -Identity $GatewayServerName
                     $computers = (Get-ADComputer -Filter { OperatingSystem -eq "Azure Stack HCI" }).Name
                     foreach ($computer in $computers) {
                         $computerObject = Get-ADComputer -Identity $computer
                         Set-ADComputer -Identity $computerObject -PrincipalsAllowedToDelegateToAccount $gatewayObject
                     }
+                    Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/hybridjumpstart.png' -OutFile "C:\Windows\Web\Wallpaper\Windows\hybridjumpstart.png" -UseBasicParsing
+                    Set-GPPrefRegistryValue -Name "Default Domain Policy" -Context User -Action Replace -Key "HKCU\Control Panel\Desktop" -ValueName Wallpaper -Value "C:\Windows\Web\Wallpaper\Windows\hybridjumpstart.png" -Type String
+                    $cert = Invoke-Command -ComputerName $GatewayServerName `
+                        -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=Windows Admin Center" }
+                    $cert | Export-Certificate -FilePath $env:TEMP\WACCert.cer
+                    Import-Certificate -FilePath $env:TEMP\WACCert.cer -CertStoreLocation Cert:\LocalMachine\Root\
                 }
             }
 
