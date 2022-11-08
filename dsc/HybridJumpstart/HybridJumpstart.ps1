@@ -697,6 +697,7 @@ configuration HybridJumpstart
             $desktopPath = [Environment]::GetFolderPath("Desktop")
         }
 
+        <#
         Script "Create DC Shortcut" {
             GetScript  = {
                 $result = (Test-Path -Path "$Using:desktopPath\$Using:vmPrefix-DC.lnk")
@@ -722,6 +723,7 @@ configuration HybridJumpstart
             }
             DependsOn  = "[Script]MSLab DeployEnvironment"
         }
+        #>
 
         $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
 
