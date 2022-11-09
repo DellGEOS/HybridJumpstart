@@ -631,8 +631,6 @@ configuration HybridJumpstart
             DependsOn  = "[file]ParentDisks", "[Script]Download AzureStack HCI ISO", "[Script]Download SSU", "[Script]Download CU"
         }
 
-        <#
-
         # Start MSLab Deployment
         Script "MSLab Prereqs" {
             GetScript  = {
@@ -730,7 +728,7 @@ configuration HybridJumpstart
                 return $state.Result
             }
             DependsOn  = "[Script]MSLab DeployEnvironment"
-        }
+        } #>
 
         $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
 
@@ -950,7 +948,5 @@ configuration HybridJumpstart
             }
             DependsOn  = "[Script]Update DC"
         }
-
-        #>
     }
 }
