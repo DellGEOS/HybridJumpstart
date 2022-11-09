@@ -328,11 +328,11 @@ try {
     # Change location to where the MOFs are located, then execute the DSC configuration
     Set-Location .\HybridJumpstart\
 
-    Write-Host "`nStarting Hybrid Jumpstart deployment....Remote Desktop and VMConnect icons on your desktop will indicate completion..." -ForegroundColor Green
+    Write-Host "`nStarting Hybrid Jumpstart deployment....a Remote Desktop icon on your desktop will indicate completion..." -ForegroundColor Green
     Start-Sleep -Seconds 5
     Set-DscLocalConfigurationManager  -Path . -Force
     Start-DscConfiguration -Path . -Wait -Force -Verbose
-    Write-Host "`nDeployment complete....use the Remote Desktop or VMConnect icons to connect to your Domain Controller..." -ForegroundColor Green
+    Write-Host "`nDeployment complete....use the Remote Desktop icon to connect to your Domain Controller..." -ForegroundColor Green
 
     $endTime = Get-Date -Format g
     $sw.Stop()

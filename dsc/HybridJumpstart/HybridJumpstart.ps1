@@ -583,20 +583,12 @@ configuration HybridJumpstart
 
                 Start-Sleep -Seconds 10
 
-                Mount-VHD -Path $Using:azsHciVhdPath -Passthru -ErrorAction Stop -Verbose
+                $mount = Mount-VHD -Path $Using:azsHciVhdPath -Passthru -ErrorAction Stop -Verbose
                 Start-Sleep -Seconds 2
 
-                $disks = Get-CimInstance -ClassName Win32_DiskDrive | Where-Object Caption -eq "Microsoft Virtual Disk"            
-                foreach ($disk in $disks) {            
-                    $vols = Get-CimAssociatedInstance -CimInstance $disk -ResultClassName Win32_DiskPartition             
-                    foreach ($vol in $vols) {            
-                        $updatedrive = Get-CimAssociatedInstance -CimInstance $vol -ResultClassName Win32_LogicalDisk |            
-                        Where-Object VolumeName -ne 'System Reserved'
-                    }            
-                }
-                $updatepath = $updatedrive.DeviceID + "\"
-
-                $updates = get-childitem -path $Using:cuPath -Recurse | Where-Object { ($_.extension -eq ".msu") -or ($_.extension -eq ".cab") } | Select-Object fullname
+                $driveLetter = (Get-Disk -Number $mount.Number |Get-Partition | Where-Object Driveletter).DriveLetter
+                $updatepath = "$($driveLetter):\"
+                $updates = Get-ChildItem -path $Using:cuPath -Recurse | Where-Object { ($_.extension -eq ".msu") -or ($_.extension -eq ".cab") } | Select-Object fullname
                 foreach ($update in $updates) {
                     Write-Host "Found the following update file to inject: $($update.fullname)"
                     $command = "dism /image:" + $updatepath + " /add-package /packagepath:'" + $update.fullname + "'"
