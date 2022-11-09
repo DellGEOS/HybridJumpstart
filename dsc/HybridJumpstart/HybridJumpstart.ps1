@@ -361,6 +361,7 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($updateImages -eq "Yes") {
+                    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $cuSearchString = "Cumulative Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $cuID = "Microsoft Server operating system-22H2"
                     $cuUpdate = Get-MSCatalogUpdate -Search $cuSearchString | Where-Object Products -eq $cuID | Where-Object Title -like "*$($cuSearchString)*" | Select-Object -First 1
@@ -399,6 +400,7 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($updateImages -eq "Yes") {
+                    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $ssuSearchString = "Servicing Stack Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $ssuID = "Microsoft Server operating system-22H2"
                     $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString | Where-Object Products -eq $ssuID | Select-Object -First 1
