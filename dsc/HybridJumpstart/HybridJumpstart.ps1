@@ -13,7 +13,7 @@ configuration HybridJumpstart
         [ValidateSet("Full", "Basic", "None")]
         [String]$telemetryLevel,
         [ValidateSet("Yes", "No")]
-        [String]$updateImages = "No",
+        [String]$updateImages,
         [String]$customRdpPort,
         [String]$jumpstartPath,
         [String]$WindowsServerIsoPath,
