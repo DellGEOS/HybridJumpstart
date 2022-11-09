@@ -52,6 +52,8 @@ configuration HybridJumpstart
         $dateStamp = Get-Date -Format "MMddyyyy"
         $vmPrefix = "HybridJumpstart-$dateStamp"
 
+        Write-Host "Update Images set to: $updateImages"
+
         # Calculate Host Memory Sizing to account for oversizing
         [INT]$totalFreePhysicalMemory = Get-CimInstance Win32_OperatingSystem -Verbose:$false | ForEach-Object { [math]::round($_.FreePhysicalMemory / 1MB) }
         [INT]$totalInfraMemoryRequired = "4"

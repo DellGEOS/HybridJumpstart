@@ -292,6 +292,14 @@ try {
         }
     }
 
+    ### START LOGGING ###
+    $runTime = $(Get-Date).ToString("MMddyy-HHmmss")
+    $fullLogPath = "$PSScriptRoot\JumpstartLog_$runTime.txt"
+    Write-Host "Log folder full path is $fullLogPath"
+    Start-Transcript -Path "$fullLogPath" -Append
+    $startTime = Get-Date -Format g
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+
     # Download the Hybrid Jumpstart DSC files, and unzip them to C:\HybridJumpstartHost, then copy the PS modules to the main PS modules folder
     Write-Host "`nStarting Hybrid Jumpstart Deployment - please do not close this PowerShell window"
     Start-Sleep -Seconds 3
@@ -326,14 +334,6 @@ try {
     Set-Location .\HybridJumpstart\
 
     Write-Host "`nStarting Hybrid Jumpstart deployment....Remote Desktop and VMConnect icons on your desktop will indicate completion..." -ForegroundColor Green
-
-    ### START LOGGING ###
-    $runTime = $(Get-Date).ToString("MMddyy-HHmmss")
-    $fullLogPath = "$PSScriptRoot\JumpstartLog_$runTime.txt"
-    Write-Host -Message "Log folder full path is $fullLogPath"
-    Start-Transcript -Path "$fullLogPath" -Append
-    $startTime = Get-Date -Format g
-    $sw = [Diagnostics.Stopwatch]::StartNew()
 
     Set-DscLocalConfigurationManager  -Path . -Force
     Start-DscConfiguration -Path . -Wait -Force -Verbose
