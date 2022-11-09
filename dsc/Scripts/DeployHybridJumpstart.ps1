@@ -313,6 +313,11 @@ try {
     # Load the PowerShell file into memory
     . .\HybridJumpstart.ps1
 
+    Write-Host "The following command will be run"
+    Write-Host "HybridJumpstart -jumpstartPath $jumpstartPath -azureStackHCINodes $azureStackHCINodes `
+    -azureStackHCINodeMemory $azureStackHCINodeMemory -telemetryLevel $telemetryLevel -updateImages $updateImages `
+    -WindowsServerIsoPath $WindowsServerIsoPath -AzureStackHCIIsoPath $AzureStackHCIIsoPath"
+
     HybridJumpstart -jumpstartPath $jumpstartPath -azureStackHCINodes $azureStackHCINodes `
         -azureStackHCINodeMemory $azureStackHCINodeMemory -telemetryLevel $telemetryLevel -updateImages $updateImages `
         -WindowsServerIsoPath $WindowsServerIsoPath -AzureStackHCIIsoPath $AzureStackHCIIsoPath
