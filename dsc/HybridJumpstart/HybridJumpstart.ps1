@@ -351,7 +351,7 @@ configuration HybridJumpstart
         Script "Download CU" {
             GetScript  = {
                 if ($updateImages -eq "Yes") {
-                    $result = ((Test-Path -Path "$Using:cuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded.txt"))
+                    $result = ((Test-Path -Path "$Using:cuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded*.txt"))
                 }
                 else {
                     $result = (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded.txt")
@@ -364,7 +364,7 @@ configuration HybridJumpstart
                     Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $cuSearchString = "Cumulative Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $cuID = "Microsoft Server operating system-22H2"
-                    $cuUpdate = Get-MSCatalogUpdate -Search $cuSearchString | Where-Object Products -eq $cuID | Where-Object Title -like "*$($cuSearchString)*" | Select-Object -First 1
+                    $cuUpdate = Get-MSCatalogUpdate -Search $cuSearchString -ErrorAction Stop | Where-Object Products -eq $cuID | Where-Object Title -like "*$($cuSearchString)*" | Select-Object -First 1
                     if ($cuUpdate) {
                         $cuUpdate | Save-MSCatalogUpdate -Destination $Using:cuPath -AcceptMultiFileUpdates
                     }
@@ -374,7 +374,7 @@ configuration HybridJumpstart
                     }
                 }
                 else {
-                    $NoCuFlag = "$Using:cuPath\NoUpdateDownloaded.txt"
+                    $NoCuFlag = "$Using:cuPath\NoUpdateDownloaded2.txt"
                     New-Item $NoCuFlag -ItemType file -Force
                 }
             }
@@ -390,7 +390,7 @@ configuration HybridJumpstart
         Script "Download SSU" {
             GetScript  = {
                 if ($updateImages -eq "Yes") {
-                    $result = ((Test-Path -Path "$Using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded.txt"))
+                    $result = ((Test-Path -Path "$Using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded*.txt"))
                 }
                 else {
                     $result = (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded.txt")
@@ -403,7 +403,7 @@ configuration HybridJumpstart
                     Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $ssuSearchString = "Servicing Stack Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $ssuID = "Microsoft Server operating system-22H2"
-                    $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString | Where-Object Products -eq $ssuID | Select-Object -First 1
+                    $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString -ErrorAction Stop | Where-Object Products -eq $ssuID | Select-Object -First 1
                     if ($ssuUpdate) {
                         $ssuUpdate | Save-MSCatalogUpdate -Destination $Using:ssuPath
                     }
@@ -413,7 +413,7 @@ configuration HybridJumpstart
                     }
                 }
                 else {
-                    $NoSsuFlag = "$Using:ssuPath\NoUpdateDownloaded.txt"
+                    $NoSsuFlag = "$Using:ssuPath\NoUpdateDownloaded2.txt"
                     New-Item $NoSsuFlag -ItemType file -Force
                 }
             }
