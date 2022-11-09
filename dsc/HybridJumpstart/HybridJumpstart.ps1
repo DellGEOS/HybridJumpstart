@@ -598,21 +598,24 @@ configuration HybridJumpstart
 
                 $updates = get-childitem -path $Using:cuPath -Recurse | Where-Object { ($_.extension -eq ".msu") -or ($_.extension -eq ".cab") } | Select-Object fullname
                 foreach ($update in $updates) {
-                    write-debug $update.fullname
+                    Write-Host "Found the following update file to inject: $($update.fullname)"
                     $command = "dism /image:" + $updatepath + " /add-package /packagepath:'" + $update.fullname + "'"
-                    write-debug $command
+                    Write-Host "Executing the following command: $command"
                     Invoke-Expression $command
                 }
-            
+
+                Write-Host "Cleaning up the image..."
                 $command = "dism /image:" + $updatepath + " /Cleanup-Image /spsuperseded"
                 Invoke-Expression $command
 
                 $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
                 if ($osInfo.ProductType -eq 1) {
+                    Write-Host "Enabling the Hyper-V role..."
                     $command = "dism /image:" + $updatepath + " /enable-Feature:Microsoft-Hyper-V"
                     Invoke-Expression $command
                 }
 
+                Write-Host "Dismounting the Virtual Disk..."
                 Dismount-VHD -path $Using:azsHciVhdPath -confirm:$false
 
                 Start-Sleep -Seconds 5
