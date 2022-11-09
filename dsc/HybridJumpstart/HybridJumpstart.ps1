@@ -623,6 +623,7 @@ configuration HybridJumpstart
                 # Enable Hyper-V role on the Azure Stack HCI Host Image
                 $osInfo = Get-CimInstance -ClassName Win32_OperatingSystem
                 if ($osInfo.ProductType -eq 3) {
+                    Write-Host "Enabling the Hyper-V role..."
                     Install-WindowsFeature -Vhd $Using:azsHciVhdPath -Name Hyper-V
                 }
 
@@ -637,6 +638,8 @@ configuration HybridJumpstart
             }
             DependsOn  = "[file]ParentDisks", "[Script]Download AzureStack HCI ISO", "[Script]Download SSU", "[Script]Download CU"
         }
+
+        <#
 
         # Start MSLab Deployment
         Script "MSLab Prereqs" {
@@ -736,7 +739,6 @@ configuration HybridJumpstart
             }
             DependsOn  = "[Script]MSLab DeployEnvironment"
         }
-        #>
 
         $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
 
@@ -956,5 +958,7 @@ configuration HybridJumpstart
             }
             DependsOn  = "[Script]Update DC"
         }
+
+        #>
     }
 }
