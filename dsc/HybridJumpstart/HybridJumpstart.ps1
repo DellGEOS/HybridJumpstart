@@ -696,7 +696,7 @@ configuration HybridJumpstart
         }
 
         if ((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
-            $azureUsername = $($Using:Admincreds.UserName)
+            $azureUsername = $($Admincreds.UserName)
             $desktopPath = "C:\Users\$azureUsername\Desktop"
         }
         else {
