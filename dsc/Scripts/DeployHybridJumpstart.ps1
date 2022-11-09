@@ -187,7 +187,7 @@ try {
         while ($updateInput -notin ("Y", "N", "Q")) {
             $updateInput = Read-Host "`nDo you wish to update your Azure Stack HCI and Windows Server images automatically?`nThis will increase deployment time. Enter Y or N (or Q to exit)..."
             if ($updateInput -eq "Y") {
-                Write-Host "`nYou have chosen to update your images that are created during this process.\nThis will add additional time, but your images will have the latest patches." -ForegroundColor Green
+                Write-Host "`nYou have chosen to update your images that are created during this process.`nThis will add additional time, but your images will have the latest patches." -ForegroundColor Green
                 $updateImages = "Yes"
             }
             elseif ($updateInput -eq "N") {
