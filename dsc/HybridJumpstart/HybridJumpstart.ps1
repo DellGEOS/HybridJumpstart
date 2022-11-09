@@ -52,8 +52,6 @@ configuration HybridJumpstart
         $dateStamp = Get-Date -Format "MMddyyyy"
         $vmPrefix = "HybridJumpstart-$dateStamp"
 
-        Write-Host "Update Images set to: $updateImages"
-
         # Calculate Host Memory Sizing to account for oversizing
         [INT]$totalFreePhysicalMemory = Get-CimInstance Win32_OperatingSystem -Verbose:$false | ForEach-Object { [math]::round($_.FreePhysicalMemory / 1MB) }
         [INT]$totalInfraMemoryRequired = "4"
@@ -352,7 +350,7 @@ configuration HybridJumpstart
 
         Script "Download CU" {
             GetScript  = {
-                if ($updateImages -eq "Yes") {
+                if ($Using:updateImages -eq "Yes") {
                     $result = ((Test-Path -Path "$Using:cuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded*.txt"))
                 }
                 else {
@@ -362,7 +360,7 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
-                if ($updateImages -eq "Yes") {
+                if ($Using:updateImages -eq "Yes") {
                     Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $cuSearchString = "Cumulative Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $cuID = "Microsoft Server operating system-22H2"
@@ -395,7 +393,7 @@ configuration HybridJumpstart
 
         Script "Download SSU" {
             GetScript  = {
-                if ($updateImages -eq "Yes") {
+                if ($Using:updateImages -eq "Yes") {
                     $result = ((Test-Path -Path "$Using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded*.txt"))
                 }
                 else {
@@ -405,7 +403,7 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
-                if ($updateImages -eq "Yes") {
+                if ($Using:updateImages -eq "Yes") {
                     Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $ssuSearchString = "Servicing Stack Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $ssuID = "Microsoft Server operating system-22H2"
