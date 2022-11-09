@@ -108,7 +108,9 @@ configuration HybridJumpstart
             }
         }
         else {
+            $wsIsoPath = "$isoPath\WS"
             $wsISOLocalPath = "$wsIsoPath\WS2022.iso"
+            $azsHciIsoPath = "$isoPath\AzSHCI"
             $azsHCIISOLocalPath = "$azsHciIsoPath\AzSHCI.iso"
         }
 
@@ -535,24 +537,6 @@ configuration HybridJumpstart
                 Name   = "Microsoft-Hyper-V-All"
                 Ensure = "Enable"
             }
-
-            <#
-            Script "EnableHyperVWinClient" {
-                GetScript  = {
-                    $result = ((Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All).state -eq "Enabled")
-                    return @{ 'Result' = $result }
-                }
-    
-                SetScript  = {
-                    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
-                }
-    
-                TestScript = {
-                    # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
-                    $state = [scriptblock]::Create($GetScript).Invoke()
-                    return $state.Result
-                }
-            } #>
         }
 
         #### Start AzSHCI VHDx Creation ####
@@ -702,33 +686,6 @@ configuration HybridJumpstart
         else {
             $desktopPath = [Environment]::GetFolderPath("Desktop")
         }
-
-        <#
-        Script "Create DC Shortcut" {
-            GetScript  = {
-                $result = (Test-Path -Path "$Using:desktopPath\$Using:vmPrefix-DC.lnk")
-                return @{ 'Result' = $result }
-            }
-            SetScript  = {
-                $VMname = "$Using:vmPrefix-DC"
-                $WshShell2 = New-Object -comObject WScript.Shell
-                $Shortcut = $WshShell2.CreateShortcut("$Using:desktopPath\$VMname.lnk")
-                $Shortcut.TargetPath = "C:\Windows\System32\vmconnect.exe"
-                $Shortcut.Arguments = "localhost $VMname"
-                $Shortcut.WorkingDirectory = "C:\WINDOWS\system32"
-                $Shortcut.IconLocation = "vmconnect.exe, 0";
-                $Shortcut.Save()
-                $bytes = [System.IO.File]::ReadAllBytes("$Using:desktopPath\$VMname.lnk")
-                $bytes[0x15] = $bytes[0x15] -bor 0x20 #set byte 21 (0x15) bit 6 (0x20) ON
-                [System.IO.File]::WriteAllBytes("$Using:desktopPath\$VMname.lnk", $bytes)
-            }
-            TestScript = {
-                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
-                $state = [scriptblock]::Create($GetScript).Invoke()
-                return $state.Result
-            }
-            DependsOn  = "[Script]MSLab DeployEnvironment"
-        } #>
 
         $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
 
