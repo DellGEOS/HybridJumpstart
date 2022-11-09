@@ -351,7 +351,7 @@ configuration HybridJumpstart
         Script "Download CU" {
             GetScript  = {
                 if ($Using:updateImages -eq "Yes") {
-                    $result = ((Test-Path -Path "$Using:cuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded*.txt"))
+                    $result = ((Test-Path -Path "$Using:cuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded.txt"))
                 }
                 else {
                     $result = (Test-Path -Path "$Using:cuPath\*" -Include "NoUpdateDownloaded.txt")
@@ -361,24 +361,24 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($Using:updateImages -eq "Yes") {
-                    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $cuSearchString = "Cumulative Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $cuID = "Microsoft Server operating system-22H2"
                     Write-Host "Looking for updates that match: $cuSearchString and $cuID"
                     $cuUpdate = Get-MSCatalogUpdate -Search $cuSearchString -ErrorAction Stop | Where-Object Products -eq $cuID | Where-Object Title -like "*$($cuSearchString)*" | Select-Object -First 1
                     if ($cuUpdate) {
-                        Write-Host "Found update"
+                        Write-Host "Found the latest update: $($cuUpdate.Title)"
+                        Write-Host "Downloading..."
                         $cuUpdate | Save-MSCatalogUpdate -Destination $Using:cuPath -AcceptMultiFileUpdates
                     }
                     else {
-                        Write-Host "No update found"
+                        Write-Host "No updates found, moving on..."
                         $NoCuFlag = "$Using:cuPath\NoUpdateDownloaded.txt"
                         New-Item $NoCuFlag -ItemType file -Force
                     }
                 }
                 else {
-                    Write-Host "User chose to not update images with latest updates."
-                    $NoCuFlag = "$Using:cuPath\NoUpdateDownloaded2.txt"
+                    Write-Host "User selected to not update images with latest updates."
+                    $NoCuFlag = "$Using:cuPath\NoUpdateDownloaded.txt"
                     New-Item $NoCuFlag -ItemType file -Force
                 }
             }
@@ -394,7 +394,7 @@ configuration HybridJumpstart
         Script "Download SSU" {
             GetScript  = {
                 if ($Using:updateImages -eq "Yes") {
-                    $result = ((Test-Path -Path "$Using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded*.txt"))
+                    $result = ((Test-Path -Path "$Using:ssuPath\*" -Include "*.msu") -or (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded.txt"))
                 }
                 else {
                     $result = (Test-Path -Path "$Using:ssuPath\*" -Include "NoUpdateDownloaded.txt")
@@ -404,24 +404,24 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($Using:updateImages -eq "Yes") {
-                    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
                     $ssuSearchString = "Servicing Stack Update for Microsoft server operating system*version 22H2 for x64-based Systems"
                     $ssuID = "Microsoft Server operating system-22H2"
                     Write-Host "Looking for updates that match: $ssuSearchString and $ssuID"
                     $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString -ErrorAction Stop | Where-Object Products -eq $ssuID | Select-Object -First 1
                     if ($ssuUpdate) {
-                        Write-Host "Found update"
+                        Write-Host "Found the latest update: $($ssuUpdate.Title)"
+                        Write-Host "Downloading..."
                         $ssuUpdate | Save-MSCatalogUpdate -Destination $Using:ssuPath
                     }
                     else {
-                        Write-Host "No update found"
+                        Write-Host "No updates found"
                         $NoSsuFlag = "$Using:ssuPath\NoUpdateDownloaded.txt"
                         New-Item $NoSsuFlag -ItemType file -Force
                     }
                 }
                 else {
-                    Write-Host "User chose to not update images with latest updates."
-                    $NoSsuFlag = "$Using:ssuPath\NoUpdateDownloaded2.txt"
+                    Write-Host "User selected to not update images with latest updates."
+                    $NoSsuFlag = "$Using:ssuPath\NoUpdateDownloaded.txt"
                     New-Item $NoSsuFlag -ItemType file -Force
                 }
             }

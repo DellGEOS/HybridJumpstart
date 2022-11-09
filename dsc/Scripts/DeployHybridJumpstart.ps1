@@ -295,7 +295,7 @@ try {
     ### START LOGGING ###
     $runTime = $(Get-Date).ToString("MMddyy-HHmmss")
     $fullLogPath = "$PSScriptRoot\JumpstartLog_$runTime.txt"
-    Write-Host "Log folder full path is $fullLogPath"
+    Write-Host "`nLog folder full path is $fullLogPath"
     Start-Transcript -Path "$fullLogPath" -Append
     $startTime = Get-Date -Format g
     $sw = [Diagnostics.Stopwatch]::StartNew()
@@ -329,7 +329,7 @@ try {
     Set-Location .\HybridJumpstart\
 
     Write-Host "`nStarting Hybrid Jumpstart deployment....Remote Desktop and VMConnect icons on your desktop will indicate completion..." -ForegroundColor Green
-
+    Start-Sleep -Seconds 5
     Set-DscLocalConfigurationManager  -Path . -Force
     Start-DscConfiguration -Path . -Wait -Force -Verbose
     Write-Host "`nDeployment complete....use the Remote Desktop or VMConnect icons to connect to your Domain Controller..." -ForegroundColor Green
