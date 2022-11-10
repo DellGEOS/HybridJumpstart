@@ -570,7 +570,7 @@ configuration HybridJumpstart
                 $mount = Mount-VHD -Path $Using:azsHciVhdPath -Passthru -ErrorAction Stop -Verbose
                 Start-Sleep -Seconds 2
 
-                $driveLetter = (Get-Disk -Number $mount.Number |Get-Partition | Where-Object Driveletter).DriveLetter
+                $driveLetter = (Get-Disk -Number $mount.Number | Get-Partition | Where-Object Driveletter).DriveLetter
                 $updatepath = "$($driveLetter):\"
                 $updates = Get-ChildItem -path $Using:cuPath -Recurse | Where-Object { ($_.extension -eq ".msu") -or ($_.extension -eq ".cab") } | Select-Object fullname
                 foreach ($update in $updates) {
@@ -682,12 +682,12 @@ configuration HybridJumpstart
         if ((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
             $azureUsername = $($Admincreds.UserName)
             $desktopPath = "C:\Users\$azureUsername\Desktop"
+            $rdpConfigPath = "$jumpstartPath\$vmPrefix-DC.rdp"
         }
         else {
             $desktopPath = [Environment]::GetFolderPath("Desktop")
+            $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
         }
-
-        $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
 
         Script "Download RDP File" {
             GetScript  = {
@@ -727,6 +727,29 @@ configuration HybridJumpstart
                 return $state.Result
             }
             DependsOn  = "[Script]Download RDP File"
+        }
+
+        if ((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
+
+            Script "Create RDP RunOnce" {
+                GetScript  = {
+                    $result = [bool] (Get-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name '!CopyRDPFile' -ErrorAction SilentlyContinue)
+                    return @{ 'Result' = $result }
+                }
+    
+                SetScript  = {
+                    $command = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -command `"Copy-Item -Path `'$rdpConfigPath`' -Destination `'$desktopPath`' -Force`""
+                    Set-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name '!CopyRDPFile' `
+                        -Value $command
+                }
+
+                TestScript = {
+                    # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                    $state = [scriptblock]::Create($GetScript).Invoke()
+                    return $state.Result
+                }
+                DependsOn  = "[Script]Edit RDP File"
+            }
         }
 
         Script "Enable RDP on DC" {
