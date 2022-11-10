@@ -154,17 +154,6 @@
                 "description": "Select the memory per Azure Stack HCI node. If you choose more memory than will fit on your host system, the per-node memory will be reduced automatically."
             }
         },
-        "updateImages": {
-            "type": "string",
-            "defaultValue": "No",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ],
-            "metadata": {
-                "description": "Choose whether you want to have your Azure Stack HCI and Windows Server images updated with the latest cumulative updates. This will increase deployment time."
-            }
-        },
         "telemetryLevel": {
             "type": "String",
             "defaultValue": "Full",
@@ -387,6 +376,7 @@
     },
     "variables": {
         "dataDisksCount": 8,
+        "updateImages": "No",
         "dscUri": "https://github.com/DellGEOS/HybridJumpstart/raw/main/dsc/HybridJumpstart.zip",
         "artifactsLocation": "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/",
         "randomGUID": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, parameters('virtualMachineName')),0,6)]",
@@ -593,7 +583,7 @@
                                 "azureStackHCINodes": "[parameters('azureStackHCINodes')]",
                                 "azureStackHCINodeMemory": "[parameters('azureStackHCINodeMemory')]",
                                 "telemetryLevel": "[parameters('telemetryLevel')]",
-                                "updateImages": "[parameters('updateImages')]"
+                                "updateImages": "[variables('updateImages')]"
                             }
                         },
                         "protectedSettings": {
