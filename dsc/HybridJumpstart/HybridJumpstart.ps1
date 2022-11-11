@@ -792,7 +792,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                Start-Sleep -Seconds 10
+                Start-Sleep -Seconds 60
                 $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
                     [bool] (Get-WmiObject -class win32_product  | Where-Object { $_.Name -eq "Windows Admin Center" })
                 }
