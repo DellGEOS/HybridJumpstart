@@ -738,7 +738,7 @@ configuration HybridJumpstart
                 }
     
                 SetScript  = {
-                    $command = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -command `"Copy-Item -Path `'$rdpConfigPath`' -Destination `'$desktopPath`' -Force`""
+                    $command = "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -command `"Copy-Item -Path `'$Using:rdpConfigPath`' -Destination `'$Using:desktopPath`' -Force`""
                     Set-ItemProperty "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce" -Name '!CopyRDPFile' `
                         -Value $command
                 }
@@ -770,7 +770,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
+                Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $msLabCreds -ScriptBlock {
                     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
                     Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
                     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
@@ -793,7 +793,7 @@ configuration HybridJumpstart
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Start-Sleep -Seconds 10
-                $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
                     [bool] (Get-WmiObject -class win32_product  | Where-Object { $_.Name -eq "Windows Admin Center" })
                 }
                 return @{ 'Result' = $result }
@@ -805,7 +805,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
                     if (-not (Test-Path -Path "C:\WindowsAdminCenter.msi")) {
                         $ProgressPreference = 'SilentlyContinue'
                         Invoke-WebRequest -Uri 'https://aka.ms/WACDownload' -OutFile "C:\WindowsAdminCenter.msi" -UseBasicParsing
@@ -827,7 +827,7 @@ configuration HybridJumpstart
                 $state = [scriptblock]::Create($GetScript).Invoke()
                 return $state.Result
             }
-            DependsOn  = "[Script]MSLab DeployEnvironment"
+            DependsOn  = "[Script]Enable RDP on DC"
         }
 
         Script "Update DC" {
@@ -838,7 +838,7 @@ configuration HybridJumpstart
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Start-Sleep -Seconds 10
-                $result = Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
+                $result = Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $msLabCreds -ScriptBlock {
                     if (Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -like "CN=Windows Admin Center") {
                         return $true
                     }
@@ -855,7 +855,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $Using:msLabCreds -ScriptBlock {
+                Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $msLabCreds -ScriptBlock {
                     $GatewayServerName = "WACGW"
                     Start-Sleep 10
                     $gatewayObject = Get-ADComputer -Identity $GatewayServerName
@@ -888,7 +888,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
                     [bool] (Test-Path -Path "C:\WACExtensionsUpdated.txt")
                 }
                 return @{ 'Result' = $result }
@@ -900,7 +900,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $Using:msLabCreds -ScriptBlock {
+                Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
                     $GatewayServerName = "WACGW"
                     # Import Windows Admin Center PowerShell Modules
                     $items = Get-ChildItem -Path "C:\Program Files\Windows Admin Center\PowerShell\Modules" -Recurse | `
