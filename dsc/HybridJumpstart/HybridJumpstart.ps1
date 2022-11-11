@@ -669,6 +669,8 @@ configuration HybridJumpstart
                 .\Deploy.ps1
                 $deployFlag = "$Using:flagsPath\DeployComplete.txt"
                 New-Item $deployFlag -ItemType file -Force
+                Write-Host "Sleeping for 2 minutes to allow for VMs to join domain and reboot as required"
+                Start-Sleep -Seconds 120
             }
 
             TestScript = {
@@ -792,7 +794,7 @@ configuration HybridJumpstart
                 $secMsLabPassword = New-Object -TypeName System.Security.SecureString
                 $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
                 $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                Start-Sleep -Seconds 60
+                Start-Sleep -Seconds 10
                 $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
                     [bool] (Get-WmiObject -class win32_product  | Where-Object { $_.Name -eq "Windows Admin Center" })
                 }
