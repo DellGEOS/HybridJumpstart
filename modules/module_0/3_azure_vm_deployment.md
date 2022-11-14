@@ -7,11 +7,11 @@ As mentioned earlier, with the introduction of [nested virtualization support in
 
 Section duration <!-- omit in toc -->
 -------------
-00 Minutes
+60 Minutes
 __________________________
 
 ### Important Note <!-- omit in toc -->
-If you have existing suitable physical hardware to participate in the jumpstart, you do not need to deploy an Azure VM. You may proceed onto the next step - [**get started with MSLab**](/modules/module_0/4_mslab.md), and learn how it forms a critical part of the hands-on-lab experience.
+If you have existing suitable physical hardware to participate in the jumpstart, you do not need to deploy an Azure VM. You may proceed onto the next step - [**get started with MSLab**](/modules/module_0/4_physical_deployment.md), and learn how it forms a critical part of the hands-on-lab experience.
 __________________________
 
 Contents <!-- omit in toc -->
@@ -19,6 +19,7 @@ Contents <!-- omit in toc -->
 
 - [Architecture](#architecture)
 - [Azure VM Size Considerations](#azure-vm-size-considerations)
+  - [Managing Azure costs](#managing-azure-costs)
 - [Deploying the Azure VM](#deploying-the-azure-vm)
 - [Access your Azure VM](#access-your-azure-vm)
 - [Next steps](#next-steps)
@@ -51,8 +52,6 @@ This is just one VM size that we recommend - you can adjust accordingly to suit 
 | Standard_D16d_v4 | 16 | 64  | 600 | No |
 | Standard_D16ds_v4 | 16 | 64 | 600 | Yes |
 
-For reference, the Standard_D16s_v4 VM size costs approximately US $0.77 per hour based on East US region, under a Visual Studio subscription.
-
 **E-series VMs (Memory optimized - Recommended for this Hybrid Jumpstart) with at least 64GB memory**
 
 | Size | vCPU | Memory: GiB | Temp storage (SSD): GiB | Premium Storage |
@@ -67,17 +66,36 @@ For reference, the Standard_D16s_v4 VM size costs approximately US $0.77 per hou
 | Standard_E16d_v4 | 16 | 128  | 600 | No |
 | Standard_E16ds_v4 | 16 | 128 | 600 | Yes |
 
-For reference, the Standard_E8s_v4 VM size costs approximately US $0.50 per hour based on East US region, under a Visual Studio subscription.
-
 **NOTE 1** - A number of these VM sizes include temp storage, which offers high performance, but is not persistent through reboots, Azure host migrations and more. It's therefore advisable, that if you are going to be running the Azure VM for a period of time, but shutting down frequently, that you choose a VM size with no temp storage, and ensure your nested VMs are placed on the persistent data drive within the OS.
 
 **NOTE 2** - It's strongly recommended that you choose a VM size that supports **premium storage** - when running nested virtual machines, increasing the number of available IOPS can have a significant impact on performance, hence choosing **premium storage** over Standard HDD or Standard SSD, is strongly advised. Refer to the table above to make the most appropriate selection.
 
 **NOTE 3** - Please ensure that whichever VM size you choose, it [supports nested virtualization](https://docs.microsoft.com/en-us/azure/virtual-machines/acu "Nested virtualization support") and is [available in your chosen region](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=virtual-machines "Virtual machines available by region").
 
+### Managing Azure costs
+When it comes to running these larger VMs in Azure, if you leave them running all day every day, the costs can mount up and easily comsume any subscription credits that you may have been allocated. If you ensure you are powering on/off your VMs when you're using them, you can keep the costs low, even for some of the larger VM sizes.
+
+Based on the [Azure calculator](https://docs.microsoft.com/en-us/azure/virtual-machines/acu "Nested virtualization support"), below are a few examples of per-hour costs for running a select set of VM sizes that can host your Hybrid Jumpstart sandbox:
+
+| Size | vCPU | Memory: GB | Region | Cost | Cost (w/ AHB) |
+|:--|---|---|---|---|---|
+**Standard_D16s_v4/v5** | 16 | 64 | East US | $1.534 | $0.804
+**Standard_E8s_v4/v5** | 8 | 64 | East US | $0.906 | $0.534
+**Standard_E16s_v4/v5** | 16 | 128 | East US | $1.778 | $1.044
+**Standard_E32s_v4/v5** | 32 | 256 | East US | $3.522 | $2.054
+
+**Key points**
+
+* Cost is shown **per hour**
+* AHB = Azure Hybrid Benefit, available for Windows Server + Software Assurance customers
+* Cost of VM OS disk (Standard HDD LRS) = $5.89 per month, or **$0.008 per hour** + transactions
+* Cost of VM data disks (8 x 32 GiB Standard SSD LRS) = $19.20 per month or **$0.026 per hour** + transactions
+
+As you can see, you could run this environment, using the **Standard_E16s_v5** as an example, for an 8-hour working day, for less than $9 USD if you have existing Windows Server with Software Assurance licenses. This size VM will allow you to test the vast majority of the scenarios in this Hybrid Jumpstart.
+
 Deploying the Azure VM
 -----------
-The guidance below provides a simple template-based option for deploying the Azure VM. The template deployment will be automated to the point of which you can proceed to the next step, learning about MSLab, and progress through your jumpstart from there.
+The guidance below provides a simple template-based option for deploying the Azure VM. The template deployment will be automated to the point of which you can proceed to the starting to build your Azure Stack HCI environment and beyond.
 
 ### Deployment detail <!-- omit in toc -->
 As part of the deployment, the following steps will be **automated for you**:
@@ -85,10 +103,10 @@ As part of the deployment, the following steps will be **automated for you**:
 1. A Windows Server 2022 Datacenter VM will be deployed in Azure
 2. 8 x 32GiB (by default) Azure Managed Disks will be attached and provisioned with a Simple Storage Space for optimal nested VM performance
 3. The Hyper-V role and management tools will be installed and configured
-4. An Internal vSwitch will be created and NAT configured to enable outbound networking
-5. The Microsoft Edge browser will be installed
+4. PowerShell DSC will be used to automatically download all necessary software binaries and scripts and optimized the host configuration.
+5. MSLab will be used to automatically deploy a Windows Server 2022-based Domain Controller, management server and Azure Stack HCI nodes, all of which will be domain joined and optimally configured.
 
-This automated deployment **should take around 10 minutes**.
+This automated deployment **should take around 60 minutes**.
 
 ### Creating the VM with an Azure Resource Manager JSON Template <!-- omit in toc -->
 To keep things simple, and graphical, we'll show you how to deploy your VM via an Azure Resource Manager template. To simplify things further, we'll use the following buttons.
@@ -101,13 +119,18 @@ Secondly, the **Deploy to Azure** button, when clicked, will take you directly t
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDellGEOS%2FHybridJumpstart%2Fmain%2Fjson%2Fhybridjumpstart.json "Deploy to Azure")
 
-Upon clicking the **Deploy to Azure** button, enter the details, which should look something similar to those shown below, and click **Purchase**.
+Upon clicking the **Deploy to Azure** button, enter the details, which should look something similar to those shown below. You can choose the number of nested Azure Stack HCI nodes (from 1-4) and how much memory to allocate to the nested nodes, then click **Review + Create**.
+
+_________________
+### Important Note <!-- omit in toc -->
+If you select a greater amount of node memory than is able to fit within your chosen Azure VM size, **the automation process will automatically shrink the node memory** to allow the deployment to complete successfully.
+_________________
 
 ![Custom template deployment in Azure](/modules/module_0/media/azure_vm_custom_template.png "Custom template deployment in Azure")
 
 **NOTE** - For customers with Software Assurance, Azure Hybrid Benefit for Windows Server allows you to use your on-premises Windows Server licenses and run Windows virtual machines on Azure at a reduced cost. By selecting **Yes** for the "Already have a Windows Server License", **you confirm I have an eligible Windows Server license with Software Assurance or Windows Server subscription to apply this Azure Hybrid Benefit** and have reviewed the [Azure hybrid benefit compliance](http://go.microsoft.com/fwlink/?LinkId=859786 "Azure hybrid benefit compliance document")
 
-The custom template will be validated, and if all of your entries are correct, you can click **Create**. Within a few minutes, your VM will be created.
+The custom template will be validated, and if all of your entries are correct, you can click **Create**. Within about 60 minutes, your environment will be ready.
 
 ![Custom template deployment in Azure completed](/modules/module_0/media/azure_vm_custom_template_completed.png "Custom template deployment in Azure completed")
 
@@ -124,7 +147,7 @@ You'll now be notified when the VM has been successfully shut down as the reques
 With that completed, skip on to [connecting to your Azure VM](#connect-to-your-azure-vm)
 
 #### Deployment errors ####
-If your Azure VM fails to deploy successfully, and the error relates to the **HybridHost001/ConfigureHybridHost** PowerShell DSC extension, please refer to the [troubleshooting steps below](#troubleshooting).
+If your Azure VM fails to deploy successfully, and the error relates to the **HybridHost001/ConfigureHybridJumpstart** PowerShell DSC extension, please refer to the [troubleshooting steps below](#troubleshooting).
 
 Access your Azure VM
 -----------
@@ -157,9 +180,9 @@ Accept any certificate prompts, and within a few moments, you should be successf
 
 Next steps
 -----------
-In this step, you've successfully created and automatically configured your Azure VM, which will serve as the host for all of the hands-on-labs for the jumpstart. You're now ready to move on to the next step, where you'll learn more about MSLab, and how it forms a critical part of the overall jumpstart solution.
+In this step, you've successfully created and automatically configured your sandbox environment, which will serve as the host for all of the hands-on-labs for the jumpstart.
 
-* [Get started with MSLab](/modules/module_0/4_mslab.md "Get started with MSLab")
+You're now ready to create and deploy your first Azure Stack HCI cluster. However, before doing so, it's recommended that you spend some time familiarizing yourself with the [**hybrid landscape in module 1**](/modules/module_1/1_hybrid_landscape.md).
 
 Troubleshooting
 -----------
@@ -167,7 +190,7 @@ From time to time, a transient, random deployment error may cause the Azure VM t
 
 ![Azure VM deployment error](/modules/module_0/media/vm_deployment_error.png "Azure VM deployment error")
 
-If the error is related to the **HybridHost001/ConfigureHybridHost**, most likely the installation did complete successfully in the end, but to double-check, you can perform these steps:
+If the error is related to the **HybridHost001/ConfigureHybridJumpstart**, most likely the installation did complete successfully in the end, but to double-check, you can perform these steps:
 
 1. Follow the steps above to [connect to your Azure VM](#connect-to-your-azure-vm)
 2. Once successfully connected, open a **PowerShell console as administrator** and run the following command to confirm the status of the last run:
@@ -182,16 +205,16 @@ Get-DscConfigurationStatus
 3. When you run **Get-DscConfigurationStatus**, if you get a status of **Failure** you can re-run the DSC configuration by **running the following commands**:
 
 ```powershell
-cd "C:\Packages\Plugins\Microsoft.Powershell.DSC\*\DSCWork\hybridhost.0\HybridHost"
+cd "C:\Packages\Plugins\Microsoft.Powershell.DSC\*\DSCWork\HybridJumpstart.0\HybridJumpstart"
 Set-DscLocalConfigurationManager  -Path . -Force
 Start-DscConfiguration -Path . -Wait -Force -Verbose
 ```
 
-4. Depending on where the initial failure happened, your VM may reboot and you will be disconnected. If that's the case, log back into the VM and wait for deployment to complete. See #2 above to check progress. Generally speaking, once you see the **Edge** icon, along with the Recycle bin icon on your desktop, the process has completed.
+4. Depending on where the initial failure happened, your VM may reboot and you will be disconnected. If that's the case, log back into the VM and wait for deployment to complete. See #2 above to check progress. Generally speaking, once you see the **Remote Desktop** icon, along with the Recycle bin icon on your desktop, the process has completed.
 
-![Edge and Recycle Bin icons](/modules/module_0/media/deployment_complete.png "Edge and Reccyle Bin icons")
+![Remote Desktop icon](/modules/module_0/media/deployment_complete.png "Remote Desktop and Recycle Bin icons")
 
-5. If all goes well, you should see the DSC configuration reapplied without issues. If you then re-run the following PowerShell command, you should see success, with over **100 resources** deployed/configured.
+5. If all goes well, you should see the DSC configuration reapplied without issues. If you then re-run the following PowerShell command, you should see success, with a number of resources deployed/configured.
 
 ```powershell
 # Check for last run
