@@ -59,7 +59,7 @@ Next steps
 -----------
 Based on your available hardware, choose one of the following options:
 
-- **Lab Deployment on Physical Hardware** - If you've got your own **suitable hardware**, proceed on to [get started with MSLab](/modules/module_0/4_mslab.md), and learn how it forms a critical part of the hands-on-lab experience.
+- **Lab Deployment on Physical Hardware** - If you've got your own **suitable hardware**, proceed on to [deploy the hybrid jumpstart on your physical hardware](/modules/module_0/4_physical_deployment.md).
 - **Lab Deployment in Azure** - If you're choosing to deploy with an **Azure virtual machine**, head on over to the [Azure VM deployment guidance](/modules/module_0/3_azure_vm_deployment.md).
 
 Raising issues
