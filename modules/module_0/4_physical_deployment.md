@@ -34,6 +34,7 @@ In order to streamline the deployment of the hybrid jumpstart on your existing W
 ```powershell
 # Update PowerShell Execution Policy
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
+
 # Create directory on the desktop.
 $desktopPath = "$([Environment]::GetFolderPath("Desktop"))\HybridJumpstart"
 New-Item -ItemType Directory -Force -Path $desktopPath
@@ -41,7 +42,8 @@ Set-Location $desktopPath
 
 # Download the AzSPoC Script.
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-Invoke-Webrequest https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/Scripts/DeployHybridJumpstart.ps1 -UseBasicParsing -OutFile DeployHybridJumpstart.ps1
+Invoke-Webrequest https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/Scripts/DeployHybridJumpstart.ps1 `
+    -UseBasicParsing -OutFile DeployHybridJumpstart.ps1
 ```
 
 2. You should now have the DeployHybridJumpstart.ps1 in a folder on your desktop. Once run, the script will generate a log file that will also appear in this folder, which can help with troubleshooting, should something go wrong.
@@ -84,17 +86,15 @@ The simplest, and fastest way to run the DeployHybridJumpstart.ps1 script, is to
 #### Deployment with automatic ISO downloads
 
 ```powershell
-.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 `
--updateImages "No" -jumpstartPath "D:\HybridJumpstart" -AutoDownloadWSiso `
--AutoDownloadAzSHCIiso -telemetryLevel "Full"
+.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
+    -AutoDownloadWSiso -AutoDownloadAzSHCIiso -telemetryLevel "Full"
 ```
 
 #### Deployment with user-provided ISOs
 
 ```powershell
-.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 `
--updateImages "No" -jumpstartPath "D:\HybridJumpstart" -WindowsServerIsoPath "D:\WS\WS2022.iso" `
--AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -telemetryLevel "Full"
+.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
+    -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -telemetryLevel "Full"
 ```
 
 The script will begin to execute. If the Hyper-V role and accompanying management tools are not installed, you will be prompted to install and enable those:
@@ -116,7 +116,7 @@ Set-Location $desktopPath
 
 ![Deployment started - Running PowerShell DSC](/modules/module_0/media/deploy_hybrid_jumpstart_started.png "Deployment started - Running PowerShell DSC")
 
-6. After around 60 minutes, the deployment should have completed successfully, and you should see a new remote desktop icon on your desktop. As you can see, in this case, the deployment took around 51 minutes, of which downloading the ISO files took 12 minutes.
+6. After around 60 minutes, the deployment should have completed successfully, and you should see a new **remote desktop icon** on your desktop. As you can see, in this case, the deployment took around 51 minutes, of which downloading the ISO files took 12 minutes.
 
 ![Deployment complete](/modules/module_0/media/deploy_hybrid_jumpstart_complete.png "Deployment complete")
 
@@ -126,7 +126,7 @@ Option 2 - Semi-automated deployment with manual inputs
 --------
 If you prefer to step through the deployment in a slightly more manual approach, this option is for you.
 
-1. From your desktop, navigate into the **HybridJumpstart folder**, then right-click the **DeployHybridJumpstart.ps1** file, and select **Run with PowerShell**
+1. From your desktop, navigate into the **HybridJumpstart folder**, then right-click the **DeployHybridJumpstart.ps1** file that you downloaded earlier, and select **Run with PowerShell**
 
 ![Initiate manual deployment](/modules/module_0/media/deploy_hybrid_jumpstart_run.png "Initiate manual deployment")
 
@@ -138,7 +138,7 @@ If you prefer to step through the deployment in a slightly more manual approach,
 4. When prompted, enter **Y** to continue. Once the install has completed, enter **Y** again to reboot your machine.
 
 5. Once back online, from your desktop, navigate back into the **HybridJumpstart folder**, right-click the **DeployHybridJumpstart.ps1** file, and select **Run with PowerShell**.
-6. Accept the **run as administrator** prompt by selecting **Yes**.
+6. Accept the **Run as administrator** prompt by selecting **Yes**.
 
 You'll then be asked to work through a number of questions to customize your deployment.
 
@@ -157,7 +157,7 @@ With the questions complete, the deployment will begin. **Leave the PowerShell w
 
 ![Deployment started - Running PowerShell DSC](/modules/module_0/media/deploy_hybrid_jumpstart_manual_started.png "Deployment started - Running PowerShell DSC")
 
-13.  After around 40-60 minutes, once completed, you'll see the results in the PowerShell window. In addition, you can also review the successful completion by navigating to the **HybridJumpstart folder** on the desktop, and opening the log file in Notepad. As you can see below, in my case, deployment took 37 minutes, when using existing ISO's.
+13.  After around 40-60 minutes, once completed, you'll see the results in the PowerShell window. In addition, you can also review the successful completion by navigating to the **HybridJumpstart folder** on the desktop, and **opening the log file in Notepad**. As you can see below, in our case, deployment took 37 minutes, when using existing ISO's.
 
 ![Deployment complete](/modules/module_0/media/deploy_hybrid_jumpstart_manual_complete.png "Deployment complete")
 
@@ -172,8 +172,8 @@ With the deployment completed, it's worthwhile taking a few minutes to explore w
 
 ![List of Hyper-V virtual machines](/modules/module_0/media/hyperv_vm_list.png "List of Hyper-V virtual machines")
 
-3. As you can see, all VMs have been named with a prefix to match the HybridJumpstart, then the date of the deployment.
-4. In in the list of VMs, there's a **single Active Directory Domain Controller** (DC), and a **dedicated management server** on which Windows Admin Center has been deployed (WACGW). You can also see your **nested Azure Stack HCI nodes**.
+3. As you can see, all VMs have been named with a prefix to match the HybridJumpstart, then the date of the deployment, along with the specific VM name.
+4. In in the list of VMs, there's a **single Active Directory Domain Controller** (DC), and a **dedicated management server** on which Windows Admin Center has been deployed (WACGW). You can also see your **nested Azure Stack HCI nodes** (AzSHCI1, AzSHCI2 etc).
 5. The domain controller provides core Active Directory services, in addition to DHCP, DNS and Routing and Remote Access services, to ensure the other virtual machines traverse through the DC to access external networks.
 6. On the right-hand side of Hyper-V Manager, click on **Virtual Switch Manager**.
 

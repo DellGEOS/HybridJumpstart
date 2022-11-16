@@ -22,6 +22,7 @@ Contents <!-- omit in toc -->
   - [Managing Azure costs](#managing-azure-costs)
 - [Deploying the Azure VM](#deploying-the-azure-vm)
 - [Access your Azure VM](#access-your-azure-vm)
+- [Exploring the environment](#exploring-the-environment)
 - [Next steps](#next-steps)
 - [Troubleshooting](#troubleshooting)
 - [Raising issues](#raising-issues)
@@ -177,6 +178,25 @@ Once downloaded, locate the .rdp file on your local machine, and double-click to
 **Password:** password-you-used-at-VM-deployment-time
 
 Accept any certificate prompts, and within a few moments, you should be successfully logged into the Windows Server 2022 VM.
+
+Exploring the environment
+--------
+With the deployment completed, it's worthwhile taking a few minutes to explore what's been deployed.
+
+1. Inside your Azure VM, from your start menu, search for **Hyper-V** and open **Hyper-V Manager**.
+2. Once opened, you should see your virtual machines running on your Azure VM.
+
+![List of Hyper-V virtual machines](/modules/module_0/media/hyperv_vm_list.png "List of Hyper-V virtual machines")
+
+3. As you can see, all VMs have been named with a prefix to match the HybridJumpstart, then the date of the deployment, along with the specific VM name.
+4. In in the list of VMs, there's a **single Active Directory Domain Controller** (DC), and a **dedicated management server** on which Windows Admin Center has been deployed (WACGW). You can also see your **nested Azure Stack HCI nodes** (AzSHCI1, AzSHCI2 etc).
+5. The domain controller provides core Active Directory services, in addition to DHCP, DNS and Routing and Remote Access services, to ensure the other virtual machines traverse through the DC to access external networks.
+6. On the right-hand side of Hyper-V Manager, click on **Virtual Switch Manager**.
+
+![Hyper-V Virtual Switches](/modules/module_0/media/vswitches.png "Hyper-V Virtual Switches")
+
+7. Here, you'll see the **Default Switch**, which allows the VMs to access external endpoints, for example, to reach the internet. You'll also see a **HybridJumpstart-\<date>-vSwitch** which is a Private vSwitch. Private vSwitches are isolated from the Azure VM host, and just allow VM to VM communication. In this case, all the VMs that were deployed are attached to this specific vSwitch, and can communicate with each other privately. If they need to access the internet, the traffic first reaches the Domain Controller, which, using the Routing and Remote Access capabilities, handles the NAT outbound and inbound traffic.
+8. In the **Virtual Switch Manager** window, click **close**.
 
 Next steps
 -----------
