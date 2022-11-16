@@ -5,12 +5,13 @@ param
     [String]$telemetryLevel,
     [String]$updateImages,
     [String]$jumpstartPath,
+    [String]$WindowsServerIsoPath,
     [String]$AzureStackHCIIsoPath,
-    [Switch]$skipWSisoDownload,
-    [Switch]$skipAzSHCIisoDownload
+    [Switch]$AutoDownloadWSiso,
+    [Switch]$AutoDownloadAzSHCIiso
 )
 
-$Global:VerbosePreference = "SilentlyContinue"
+$Global:VerbosePreference = 'SilentlyContinue'
 $Global:ProgressPreference = 'SilentlyContinue'
 try { Stop-Transcript | Out-Null } catch { }
 
@@ -22,10 +23,10 @@ try {
         Write-Host "-- Restarting as Administrator" -ForegroundColor Yellow ; Start-Sleep -Seconds 1
 
         if ($PSVersionTable.PSEdition -eq "Core") {
-            Start-Process pwsh.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+            Start-Process pwsh.exe "-NoExit -NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
         }
         else {
-            Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs 
+            Start-Process powershell.exe "-NoExit -NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs 
         }
         exit
     }
@@ -49,7 +50,7 @@ try {
         }
         Write-Host "`nDo you wish to enable them now?" -ForegroundColor Green
         if ((Read-Host "(Type Y or N)") -eq "Y") {
-            Write-Host "`nYou chose to install the required Hyper-V role/features.`nYour machine will reboot once completed.`nRerun this script when back online..."
+            Write-Host "`nYou chose to install the required Hyper-V role/features.`nYou will be prompted to reboot your machine once completed.`nRerun this script when back online..."
             Start-Sleep -Seconds 10
             $reboot = $false
             foreach ($feature in $hypervState) {
@@ -204,15 +205,15 @@ try {
             }
         }
     }
-    elseif ($updateImages -notin ("Y", "N")) {
-        Write-Host "Invalid entry for -updateImages.`nPlease re-run the script with either Yes or No." -ForegroundColor Red
-        break
-    }
     elseif ($updateImages -eq "Yes") {
         Write-Host "`nYou have chosen to update your images that are created during this process.`nThis will add additional time, but your images will have the latest patches." -ForegroundColor Green
     }
     elseif ($updateImages -eq "No") {
         Write-Host "`nYou have chosen not to update your images - you can patch VMs once they've been deployed." -ForegroundColor Yellow
+    }
+    elseif ($updateImages -notin ("Y", "N")) {
+        Write-Host "Invalid entry for -updateImages.`nPlease re-run the script with either Yes or No." -ForegroundColor Red
+        break
     }
 
     if (!($jumpstartPath)) {
@@ -234,7 +235,7 @@ try {
         }
     }
 
-    if (!($skipWSisoDownload)) {
+    if (!($AutoDownloadWSiso)) {
         if (!($WindowsServerIsoPath)) {
             Write-Host "`nHave you downloaded a Windows Server 2022 ISO? If not, one will be downloaded automatically for you"
             $wsIsoAvailable = Read-Host "Enter Y or N"
@@ -263,17 +264,17 @@ try {
         }
     }
 
-    if (!($skipAzSHCIisoDownload)) {
+    if (!($AutoDownloadAzSHCIiso)) {
         if (!($AzureStackHCIIsoPath)) {
-            Write-Host "`nHave you downloaded an Azure Stack HCI ISO? If not, one will be downloaded automatically for you"
+            Write-Host "`nHave you downloaded an Azure Stack HCI 22H2 ISO? If not, one will be downloaded automatically for you"
             $AzSIsoAvailable = Read-Host "Enter Y or N"
             if ($AzSIsoAvailable -eq "Y") {
-                Write-Host "`nPlease select latest Azure Stack HCI ISO..."
+                Write-Host "`nPlease select latest Azure Stack HCI 22H2 ISO..."
                 Start-Sleep -Seconds 3
                 Add-Type -AssemblyName System.Windows.Forms
                 #[reflection.assembly]::loadwithpartialname("System.Windows.Forms")
                 $openFile = New-Object System.Windows.Forms.OpenFileDialog -Property @{
-                    Title = "Please select latest Azure Stack HCI ISO..."
+                    Title = "Please select latest Azure Stack HCI 22H2 ISO..."
                 }
                 $openFile.Filter = "iso files (*.iso)|*.iso|All files (*.*)|*.*" 
                 if ($openFile.ShowDialog() -eq "OK") {
@@ -287,7 +288,7 @@ try {
                 }
             }
             else {
-                Write-Host "`nNo Azure Stack HCI ISO has been provided. One will be downloaded for you during deployment." -ForegroundColor Green
+                Write-Host "`nNo Azure Stack HCI 22H2 ISO has been provided. One will be downloaded for you during deployment." -ForegroundColor Green
             }
         }
     }
@@ -331,7 +332,7 @@ try {
     Write-Host "`nStarting Hybrid Jumpstart deployment....a Remote Desktop icon on your desktop will indicate completion..." -ForegroundColor Green
     Start-Sleep -Seconds 5
     Set-DscLocalConfigurationManager  -Path . -Force
-    Start-DscConfiguration -Path . -Wait -Force -Verbose
+    Start-DscConfiguration -Path . -Wait -Force -Verbose -ErrorAction 'Stop'
     Write-Host "`nDeployment complete....use the Remote Desktop icon to connect to your Domain Controller..." -ForegroundColor Green
 
     $endTime = Get-Date -Format g
