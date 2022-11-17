@@ -18,9 +18,12 @@ Video <!-- omit in toc -->
 
 Next steps
 -----------
-With a solid understanding of Azure Stack HCI under your belt, you can now start with a deployment of your first Azure Stack HCI cluster. Head on over to:
+With a solid understanding of Azure Stack HCI under your belt, you can now start with a deployment of your first Azure Stack HCI cluster. When it comes to deploying Azure Stack HCI, you have 2 choices - you can deploy with more of a graphical approach using Windows Admin Center, or a more programmatical approach, using PowerShell. Both paths below will result in the same end point, so choose your preferred path:
 
-* [**Module 2 | Scenario 2 - Deploying the Azure Stack HCI Infrastructure** to get started](/modules/module_2/2_Deploy_AzSHCI.md).
+Head on over to:
+
+* **Module 2 | Scenario 2a** - [Deploying Azure Stack HCI with Windows Admin Center](/modules/module_2/2a_Cluster_AzSHCI_WAC.md)
+* **Module 2 | Scenario 2b** - [Deploying Azure Stack HCI with PowerShell](/modules/module_2/2b_Cluster_AzSHCI_PS.md)
 
 Raising issues
 -----------
