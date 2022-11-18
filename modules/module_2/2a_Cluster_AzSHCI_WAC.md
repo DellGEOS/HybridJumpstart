@@ -12,51 +12,85 @@ Scenario duration <!-- omit in toc -->
 
 Contents <!-- omit in toc -->
 -----------
-- [Module 2 | Scenario 2a - Clustering Azure Stack HCI with Windows Admin Center](#module-2--scenario-2a---clustering-azure-stack-hci-with-windows-admin-center)
-  - [Before you begin](#before-you-begin)
-    - [Decide on cluster type](#decide-on-cluster-type)
-  - [Creating a (local) cluster](#creating-a-local-cluster)
-    - [Get started](#get-started)
-    - [Networking](#networking)
-      - [Shared compute and management with separate storage](#shared-compute-and-management-with-separate-storage)
-      - [Shared compute and storage with separate management](#shared-compute-and-storage-with-separate-management)
-      - [Shared compute and storage with separate management](#shared-compute-and-storage-with-separate-management-1)
-      - [Network Setup Overview](#network-setup-overview)
-    - [Clustering](#clustering)
-    - [Storage](#storage)
-    - [SDN](#sdn)
-  - [Configuring the cluster witness](#configuring-the-cluster-witness)
-    - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
-    - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
-  - [Next steps](#next-steps)
-  - [Raising issues](#raising-issues)
+- [Before you begin](#before-you-begin)
+- [Architecture](#architecture)
+  - [Log into your environment](#log-into-your-environment)
+  - [Decide on cluster type](#decide-on-cluster-type)
+- [Creating a (local) cluster](#creating-a-local-cluster)
+  - [Get started](#get-started)
+  - [Networking](#networking)
+  - [Clustering](#clustering)
+  - [Storage](#storage)
+  - [SDN](#sdn)
+- [Configuring the cluster witness](#configuring-the-cluster-witness)
+  - [Witness Option 1 - File Share Witness](#witness-option-1---file-share-witness)
+  - [Witness Option 2 - Cloud Witness](#witness-option-2---cloud-witness)
+- [Next steps](#next-steps)
+- [Raising issues](#raising-issues)
 
 Before you begin
 -----------
-At this stage, you should have completed the previous section of the jumpstart, [Deploying the Azure Stack HCI Infrastructure](/modules/module_2/2_Deploy_AzSHCI.md) and you should have a set of virtual machines running in your environment, visible in Hyper-V Manager:
+Before we create our Azure Stack HCI cluster, it's important to double check the **Infrastructure prerequisites** and the **Azure prerequisites** to ensure you'll be able to proceed through the deployment process.
 
-![Jumpstart machines running](/modules/module_0/media/mslab_vms_running.png "Jumpstart machines running")
+### Infrastructure prerequisites <!-- omit in toc -->
+You should have completed the **initial hybrid jumpstart deployment** either on a [**physical system**](/modules/module_0/4_physical_deployment.md), or inside an [**Azure virtual machine**](/modules/module_0/3_azure_vm_deployment.md). If you haven't, go back and perform the deployment - it should take between 40-60 minutes, depending on your configuration choices.
 
-If you don't have those VMs running, go over and do that now - it should take about 10 minutes.
+### Azure prerequisites <!-- omit in toc -->
+For connecting and integrating the Azure Stack HCI environment with Azure, you'll need to review the list below.
 
-Moving on to Windows Admin Center, you now have the ability to construct Azure Stack HCI clusters from the previously deployed nodes. There are no additional extensions to install, the workflow is built-in and ready to go, however, it's worth checking to ensure that your Cluster Creation extension is fully up to date and make a few changes to the Edge browser to streamline things later.
+* **Get an Azure subscription** - if you don't have one, read [more information here](/modules/module_0/2_azure_prerequisites.md#get-an-azure-subscription)
+* **Azure subscription permissions** - Owner **or** User Access Administrator + Contributer **or** Custom ([Instructions here](https://docs.microsoft.com/en-us/azure-stack/hci/deploy/register-with-azure#assign-permissions-from-azure-portal))
+* **Firewall / Proxy** - If you are running the environment inside your own lab, ensure that your lab deployment has access to all external resources listed below:
+  * [Host requirements](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/firewall-requirements)
+  * [Arc-enabled Servers requirements](https://docs.microsoft.com/en-us/azure/azure-arc/servers/agent-overview#networking-configuration)
+
+Architecture
+-----------
+As shown on the architecture graphic below, in this step, you'll be creating the **Nested Azure Stack HCI cluster**, shown on the left hand side of the graphic. The automated deployment process you performed previously, has deployed the DC, WACGW and the AzSHCI nodes themselves, so you're ready to **transform them into an Azure Stack HCI cluster**. You'll be focused on **creating a cluster in a single site**.
+
+![Architecture diagram for Azure Stack HCI nested](/modules/module_0/media/nested_virt_physical.png "Architecture diagram for Azure Stack HCI nested")
+
+### Log into your environment
+If you aren't already, make sure you're logged into your Hyper-V host (either the previously deployed Azure VM, or your physical system).
+
+1. Once logged in, from your start menu, search for **Hyper-V** and open **Hyper-V Manager**.
+2. Once opened, you should see your virtual machines **running** on your physical system. If any of the VM's aren't running, right-click the VM, and click **Start**.
+
+![List of Hyper-V virtual machines](/modules/module_0/media/hyperv_vm_list.png "List of Hyper-V virtual machines")
+
+3. Minimize Hyper-V Manager, and from your desktop, double-click the **HybridJumpstart** remote desktop icon to remotely connect to the Domain Controller inside the hybrid jumpstart sandbox.
+
+4. Provide the appropriate credentials for the lab, which are:
+
+* **Username:** dell\labadmin
+* **Password:** LS1setup!
+
+5. Once logged into the Domain Controller VM, open **Server Manager**.
+6. Once opened, right-click on **All Servers** and select **Add Servers**
+
+![Add Servers in Server Manager](/modules/module_0/media/server_manager_add_servers.png "Add Servers in Server Manager")
+
+7. In the **Add Servers** window, click **Find Now**, and you'll see all the domain-joined machines in the current jumpstart deployment. Select all the servers in the list, then click the **right arrow** to add them to the management view on this Domain Controller machine, then click **OK**.
+8. In **Server Manager**, under **All Servers**, you should now see all the servers in the domain listed, and available for management from this interface.
 
 ### Allow popups in Edge browser <!-- omit in toc -->
 To give the optimal experience with Windows Admin Center, you should enable **Microsoft Edge** to allow popups for Windows Admin Center.
 
-1. If you're not already logged in, log into the **HybridJumpstart-DC** virtual machine, open the **Microsoft Edge icon** on your taskbar.
+1. From inside your **DC** machine, open the **Microsoft Edge icon** on your taskbar.
 2. If you haven't already, complete the initial Edge configuration settings.
 3. Navigate to **edge://settings/content/popups**
 4. Click the slider button to **disable** pop-up blocking
 5. Close the **settings tab**.
 
 ### Configure Windows Admin Center <!-- omit in toc -->
-During the [lab deployment earlier](/modules/module_2/2_Deploy_AzSHCI.md#step-2---installing-windows-admin-center), you installed the latest version of Windows Admin Center, however there are some additional configuration steps that must be performed before you can use it to deploy Azure Stack HCI.
+With Windows Admin Center, you have the ability to construct Azure Stack HCI clusters from the previously deployed nodes. There are no additional extensions to install, the workflow is built-in and ready to go, however, it's worth checking to ensure that your Cluster Creation extension is fully up to date and make a few changes to the Edge browser to streamline things later.
+
+During the **initial hybrid jumpstart deployment** either on a [**physical system**](/modules/module_0/4_physical_deployment.md), or inside an [**Azure virtual machine**](/modules/module_0/3_azure_vm_deployment.md), the latest version of Windows Admin Center was automatically installed for you. In addition, all previously installed extensions should have been updated, however there are some additional configuration steps that must be performed before you can use it to deploy Azure Stack HCI.
 
 1. In your Edge browser, navigate to **https://wacgw**.
 2. If you're prompted, log in with your usual credentials, which by default, are:
 
-   * **Username**: LabAdmin
+   * **Username**: dell\labadmin
    * **Password**: LS1setup!
 
 3. Once Windows Admin Center is open, you may receive notifications in the top-right corner, indicating that some extensions are updating automatically. **Let these finish updating before proceeding**. Windows Admin Center may refresh automatically during this process.
