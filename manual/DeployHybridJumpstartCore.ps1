@@ -22,6 +22,7 @@ param
 $Global:VerbosePreference = "Continue"
 $Global:ErrorActionPreference = 'Stop'
 $Global:ProgressPreference = 'SilentlyContinue'
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 try { Stop-Transcript | Out-Null } catch { }
 
@@ -41,6 +42,11 @@ try {
         exit
     }
 
+    Write-Host "Checking for NuGet and installing if not present..."
+    if ($null -eq (Get-PackageProvider -Name NuGet)) {   
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Confirm:$false -Force
+    }
+
     # Firstly, validate if Hyper-V is installed and prompt to enable and reboot if not
     Write-Host "Checking if required Hyper-V role/features are installed..."
     $hypervState = ((Get-WindowsOptionalFeature -Online -FeatureName *Hyper-V*) | Where-Object { $_.State -eq "Disabled" })
@@ -55,7 +61,7 @@ try {
             Start-Sleep -Seconds 10
             $reboot = $false
             foreach ($feature in $hypervState) {
-                $rebootCheck = Enable-WindowsOptionalFeature -Online -FeatureName $($feature.FeatureName) -ErrorAction Stop -NoRestart -WarningAction SilentlyContinue
+                $rebootCheck = Enable-WindowsOptionalFeature -Online -FeatureName $($feature.FeatureName) -ErrorAction Stop -NoRestart -Verbose -WarningAction SilentlyContinue
                 if ($($rebootCheck.RestartNeeded) -eq $true) {
                     $reboot = $true
                 }
@@ -107,8 +113,6 @@ try {
     $labConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/LabConfig.ps1"
     $rdpConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/RDP.rdp"
     $psModulesUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/manual/PSmodules.zip"
-    $dateStamp = Get-Date -Format "MMddyyyy"
-    $vmPrefix = "HybridJumpstart-$dateStamp"
     $desktopPath = [Environment]::GetFolderPath("Desktop")
     $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
     $jumpstartPath = "$jumpstartPath" + "\HybridJumpstart"
@@ -141,6 +145,15 @@ try {
 
     if (!$customRdpPort) {
         $customRdpPort = 3389
+    }
+
+    $dateStamp = Get-Date -Format "MMddyyyy"
+    $vmPrefix = "HybridJumpstart-$dateStamp"
+    if (Get-VM | Where-Object { $_.Name -like "*$vmPrefix*" }) {
+        Write-Host "There appears to be existing VMs on this system with the prefix: $vmPrefix..."
+        Start-Sleep -Seconds 5
+        $vmPrefix = Read-Host "Please enter a new prefix for your hybrid jumpstart VMs..."
+        Write-Host "New virtual machines will be created with the prefix: $vmPrefix"
     }
 
     # Calculate Host Memory Sizing to account for oversizing
@@ -393,6 +406,8 @@ try {
     if (!(Test-Path -Path "$rdpConfigPath")) {
         Write-Host "`nDownloading RDP file from GitHub..."
         Invoke-WebRequest -Uri "$rdpConfigUri" -OutFile "$rdpConfigPath" -UseBasicParsing
+        Write-Host "`nPreparing RDP file..."
+        Start-Sleep -Seconds 10
     }
 
     # Edit RDP file
@@ -403,8 +418,6 @@ try {
         $rdpConfigFile = $rdpConfigFile.Replace("<<VM_IP_Address>>", $vmIpAddress)
         Out-File -FilePath "$rdpConfigPath" -InputObject $rdpConfigFile -Force
     }
-
-
 
     # Enable RDP on DC
     $vmIpAddress = (Get-VMNetworkAdapter -Name 'Internet' -VMName "$vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }

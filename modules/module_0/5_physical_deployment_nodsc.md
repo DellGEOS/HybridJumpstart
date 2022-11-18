@@ -79,13 +79,13 @@ To run the DeployHybridJumpstartCore.ps1 script, you will need to provide all th
 #### Deployment with user-provided ISOs
 
 ```powershell
-.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
+.\DeployHybridJumpstartCore.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
     -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -telemetryLevel "Full"
 ```
 
 The script will begin to execute. If the Hyper-V role and accompanying management tools are not installed, you will be prompted to install and enable those:
 
-![Deployment started - enabling Hyper-V](/modules/module_0/media/deploy_hybrid_jumpstart_enable_hyperv.png "Deployment started - enabling Hyper-V")
+![Deployment started - enabling Hyper-V](/modules/module_0/media/deploy_hybrid_jumpstart_enable_hyperv2.png "Deployment started - enabling Hyper-V")
 
 2. When prompted, enter **Y** to continue. Once the install has completed, enter **Y** again to reboot your machine.
 
@@ -100,11 +100,9 @@ Set-Location $desktopPath
 
 5. Once you have the command in place, press **Enter** to execute the command and start the deployment process. This should take around **50-60 minutes**, depending on your download speed (to download the ISO files, if you didn't provide them) and the speed/performance of your physical system.
 
-![Deployment started - Running PowerShell DSC](/modules/module_0/media/deploy_hybrid_jumpstart_started.png "Deployment started - Running PowerShell DSC")
-
 6. After around 60 minutes, the deployment should have completed successfully, and you should see a new **remote desktop icon** on your desktop. As you can see, in this case, the deployment took around 51 minutes, of which downloading the ISO files took 12 minutes.
 
-![Deployment complete](/modules/module_0/media/deploy_hybrid_jumpstart_complete.png "Deployment complete")
+![Deployment complete](/modules/module_0/media/deploy_hybrid_jumpstart_complete2.png "Deployment complete")
 
 1. When you're ready, **close the PowerShell window**. If you run into issues, or the PowerShell DSC deployment doesn't complete successfully, please [raise an issue](#raising-issues).
 
