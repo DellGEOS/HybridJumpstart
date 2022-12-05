@@ -114,6 +114,8 @@ try {
     $rdpConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/RDP.rdp"
     $psModulesUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/manual/PSmodules.zip"
     $desktopPath = [Environment]::GetFolderPath("Desktop")
+    $dateStamp = Get-Date -Format "MMddyyyy"
+    $vmPrefix = "HybridJumpstart-$dateStamp"
     $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
     $jumpstartPath = "$jumpstartPath" + "\HybridJumpstart"
     $mslabLocalPath = "$jumpstartPath\mslab.zip"
@@ -147,8 +149,6 @@ try {
         $customRdpPort = 3389
     }
 
-    $dateStamp = Get-Date -Format "MMddyyyy"
-    $vmPrefix = "HybridJumpstart-$dateStamp"
     if (Get-VM | Where-Object { $_.Name -like "*$vmPrefix*" }) {
         Write-Host "There appears to be existing VMs on this system with the prefix: $vmPrefix..."
         Start-Sleep -Seconds 5
