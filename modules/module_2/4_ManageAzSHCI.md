@@ -12,16 +12,15 @@ Scenario duration <!-- omit in toc -->
 
 Contents <!-- omit in toc -->
 -----------
-- [Module 2 | Scenario 4 - Exploring local Azure Stack HCI management](#module-2--scenario-4---exploring-local-azure-stack-hci-management)
-  - [Before you begin](#before-you-begin)
-  - [Storage](#storage)
-    - [Explore Storage Settings](#explore-storage-settings)
-    - [Create volumes for VMs](#create-volumes-for-vms)
-  - [Explore Cluster-wide settings](#explore-cluster-wide-settings)
-  - [Explore Hyper-V Host settings](#explore-hyper-v-host-settings)
-  - [Deploy your first virtual machine](#deploy-your-first-virtual-machine)
-  - [Next steps](#next-steps)
-  - [Raising issues](#raising-issues)
+- [Before you begin](#before-you-begin)
+- [Storage](#storage)
+  - [Explore Storage Settings](#explore-storage-settings)
+  - [Create volumes for VMs](#create-volumes-for-vms)
+- [Explore Cluster-wide settings](#explore-cluster-wide-settings)
+- [Explore Hyper-V Host settings](#explore-hyper-v-host-settings)
+- [Deploy your first virtual machine](#deploy-your-first-virtual-machine)
+- [Next steps](#next-steps)
+- [Raising issues](#raising-issues)
 
 
 Before you begin
