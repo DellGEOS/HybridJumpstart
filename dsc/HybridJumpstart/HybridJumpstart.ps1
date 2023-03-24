@@ -300,7 +300,7 @@ configuration HybridJumpstart
                 $labConfigFile = Get-Content -Path "$Using:labConfigPath"
                 $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodes>>", $Using:azureStackHCINodes)
                 $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodeMemory>>", $Using:azureStackHCINodeMemory)
-                $labConfigFile = $labConfigFile.Replace("<<WSServerIsoFolder>>", $Using:wsIsoPath)
+                $labConfigFile = $labConfigFile.Replace("<<WSServerIsoPath>>", $Using:wsISOLocalPath)
                 $labConfigFile = $labConfigFile.Replace("<<MsuFolder>>", $Using:updatePath)
                 $labConfigFile = $labConfigFile.Replace("<<VmPrefix>>", $Using:vmPrefix)
                 $labConfigFile = $labConfigFile.Replace("<<TelemetryLevel>>", $Using:telemetryLevel)

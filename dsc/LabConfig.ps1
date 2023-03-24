@@ -1,5 +1,5 @@
 # Define core lab characteristics
-$LabConfig = @{ DomainAdminName = 'LabAdmin'; AdminPassword = 'LS1setup!'; DCEdition = '4'; ServerISOFolder = '<<WSServerIsoFolder>>'; `
+$LabConfig = @{ DomainAdminName = 'LabAdmin'; AdminPassword = 'LS1setup!'; DCEdition = '4'; ServerISOFolder = '<<WSServerIsoPath>>'; `
                 ServerMSUsFolder = '<<MsuFolder>>'; DomainNetbiosName = 'Dell'; DefaultOUName = "HybridJumpstart"; DomainName = "dell.hybrid"; `
                 Internet = $true ; TelemetryLevel = '<<TelemetryLevel>>'; AutoStartAfterDeploy = $true; VMs = @(); AutoClosePSWindows = $true; `
                 AutoCleanUp = $true; SwitchName = "vSwitch"; Prefix = "<<VmPrefix>>-"; AllowedVLANs="1-10,711-719"; AdditionalNetworksConfig=@()
