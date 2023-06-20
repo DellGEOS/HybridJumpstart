@@ -217,7 +217,7 @@ try {
         $labConfigFile = Get-Content -Path $labConfigPath
         $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodes>>", $azureStackHCINodes)
         $labConfigFile = $labConfigFile.Replace("<<azureStackHCINodeMemory>>", $azureStackHCINodeMemory)
-        $labConfigFile = $labConfigFile.Replace("<<WSServerIsoFolder>>", $wsIsoPath)
+        $labConfigFile = $labConfigFile.Replace("<<WSServerIsoPath>>", $wsISOLocalPath)
         $labConfigFile = $labConfigFile.Replace("<<MsuFolder>>", $updatePath)
         $labConfigFile = $labConfigFile.Replace("<<VmPrefix>>", $vmPrefix)
         $labConfigFile = $labConfigFile.Replace("<<TelemetryLevel>>", $telemetryLevel)
