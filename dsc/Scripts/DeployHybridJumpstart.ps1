@@ -8,12 +8,28 @@ param
     [String]$WindowsServerIsoPath,
     [String]$AzureStackHCIIsoPath,
     [Switch]$AutoDownloadWSiso,
-    [Switch]$AutoDownloadAzSHCIiso
+    [Switch]$AutoDownloadAzSHCIiso,
+    [String]$dnsForwarders
 )
 
 $Global:VerbosePreference = 'SilentlyContinue'
 $Global:ProgressPreference = 'SilentlyContinue'
 try { Stop-Transcript | Out-Null } catch { }
+
+try {
+    if (!$dnsForwarders) {
+        $customDNSForwarders = '8.8.8.8","1.1.1.1'
+    }
+    else {
+        $dnsForwarders = $dnsForwarders -replace '\s', ''
+        $dnsForwarders.Split(',') | ForEach-Object { [ipaddress]$_ } | Out-Null
+        $customDNSForwarders = $dnsForwarders.Replace(',','","')
+    }
+}
+catch {
+    Write-Host "You have provided at least one invalid DNS IPv4 address. Please check the guidance, validate your DNS entries and rerun the script." -ErrorAction Stop -ForegroundColor Red
+    return
+}
 
 try {
 
@@ -324,7 +340,7 @@ try {
 
     HybridJumpstart -jumpstartPath $jumpstartPath -azureStackHCINodes $azureStackHCINodes `
         -azureStackHCINodeMemory $azureStackHCINodeMemory -telemetryLevel $telemetryLevel -updateImages $updateImages `
-        -WindowsServerIsoPath $WindowsServerIsoPath -AzureStackHCIIsoPath $AzureStackHCIIsoPath
+        -WindowsServerIsoPath $WindowsServerIsoPath -AzureStackHCIIsoPath $AzureStackHCIIsoPath -customDNSForwarders $customDNSForwarders
 
     # Change location to where the MOFs are located, then execute the DSC configuration
     Set-Location .\HybridJumpstart\

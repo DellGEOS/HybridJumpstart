@@ -16,7 +16,8 @@ param
     [Parameter(Mandatory)]
     [String]$jumpstartPath,
     [String]$WindowsServerIsoPath,
-    [String]$AzureStackHCIIsoPath
+    [String]$AzureStackHCIIsoPath,
+    [String]$dnsForwarders
 )
 
 $Global:VerbosePreference = "Continue"
@@ -25,6 +26,21 @@ $Global:ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 try { Stop-Transcript | Out-Null } catch { }
+
+try {
+    if (!$dnsForwarders) {
+        $customDNSForwarders = '8.8.8.8","1.1.1.1'
+    }
+    else {
+        $dnsForwarders = $dnsForwarders -replace '\s', ''
+        $dnsForwarders.Split(',') | ForEach-Object { [ipaddress]$_ } | Out-Null
+        $customDNSForwarders = $dnsForwarders.Replace(',','","')
+    }
+}
+catch {
+    Write-Host "You have provided at least one invalid DNS IPv4 address. Please check the guidance, validate your DNS entries and rerun the script." -ErrorAction Stop -ForegroundColor Red
+    return
+}
 
 try {
 
@@ -221,6 +237,7 @@ try {
         $labConfigFile = $labConfigFile.Replace("<<MsuFolder>>", $updatePath)
         $labConfigFile = $labConfigFile.Replace("<<VmPrefix>>", $vmPrefix)
         $labConfigFile = $labConfigFile.Replace("<<TelemetryLevel>>", $telemetryLevel)
+        $labConfigFile = $labConfigFile.Replace("<<customDNSForwarders>>", $customDNSForwarders)
         Out-File -FilePath "$labConfigPath" -InputObject $labConfigFile -Force
     }
 

@@ -17,8 +17,8 @@ configuration HybridJumpstart
         [String]$customRdpPort,
         [String]$jumpstartPath,
         [String]$WindowsServerIsoPath,
-        [String]$AzureStackHCIIsoPath
-
+        [String]$AzureStackHCIIsoPath,
+        [String]$customDNSForwarders
     )
     
     Import-DscResource -ModuleName 'ComputerManagementDsc' -ModuleVersion 8.5.0
@@ -304,6 +304,7 @@ configuration HybridJumpstart
                 $labConfigFile = $labConfigFile.Replace("<<MsuFolder>>", $Using:updatePath)
                 $labConfigFile = $labConfigFile.Replace("<<VmPrefix>>", $Using:vmPrefix)
                 $labConfigFile = $labConfigFile.Replace("<<TelemetryLevel>>", $Using:telemetryLevel)
+                $labConfigFile = $labConfigFile.Replace("<<customDNSForwarders>>", $Using:customDNSForwarders)
                 Out-File -FilePath "$Using:labConfigPath" -InputObject $labConfigFile -Force
             }
 
