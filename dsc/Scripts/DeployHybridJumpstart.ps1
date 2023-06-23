@@ -17,21 +17,6 @@ $Global:ProgressPreference = 'SilentlyContinue'
 try { Stop-Transcript | Out-Null } catch { }
 
 try {
-    if (!$dnsForwarders) {
-        $customDNSForwarders = '8.8.8.8","1.1.1.1'
-    }
-    else {
-        $dnsForwarders = $dnsForwarders -replace '\s', ''
-        $dnsForwarders.Split(',') | ForEach-Object { [ipaddress]$_ } | Out-Null
-        $customDNSForwarders = $dnsForwarders.Replace(',','","')
-    }
-}
-catch {
-    Write-Host "You have provided at least one invalid DNS IPv4 address. Please check the guidance, validate your DNS entries and rerun the script." -ErrorAction Stop -ForegroundColor Red
-    return
-}
-
-try {
 
     # Verify Running as Admin
     $isAdmin = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")
@@ -308,6 +293,48 @@ try {
             }
         }
     }
+
+    try {
+        if (!($dnsForwarders)) {
+            Write-Host "`nWould you like to use custom external DNS forwarders?" 
+            Write-Host "For a single DNS forwarder, use the format like this example: 8.8.8.8"
+            Write-Host "For multiple DNS forwarders (maximum 2), use the format like this example, separated by a comma (,) and with no spaces: 8.8.8.8,1.1.1.1"
+            Write-Host "Alternatively, to use the default Hybrid Jumpstart DNS forwarders (8.8.8.8 and 1.1.1.1), simply press Enter to skip."
+            $askDnsQuestion = Read-Host "`nEnter your external DNS forwarder(s) IP addresses, or press enter to skip"
+            if ($askDnsQuestion.Length -eq 0) {
+                Write-Host "`nYou have not entered any custom external DNS forwarders - we will use 8.8.8.8 and 1.1.1.1 as your external DNS forwarders." -ForegroundColor Green
+                $customDNSForwarders = '8.8.8.8","1.1.1.1'
+            }
+            else {
+                $dnsForwarders = $askDnsQuestion
+                $dnsForwarders = $dnsForwarders -replace '\s', ''
+                $pattern = '^((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+                $dnsForwarders.Split(',') | ForEach-Object { if ($_ -notmatch $pattern) {
+                        throw "You have provided an invalid external DNS forwarder IPv4 address: $_.`nPlease check the guidance, validate your entries and rerun the script."
+                        return
+                    }
+                }
+                $customDNSForwarders = $dnsForwarders.Replace(',', '","')
+                Write-Host "`nYou have entered `"$customDNSForwarders`" as your custom external DNS forwarders." -ForegroundColor Green
+            }
+        }
+        else {
+            $dnsForwarders = $dnsForwarders -replace '\s', ''
+            $pattern = '^((?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$'
+            $dnsForwarders.Split(',') | ForEach-Object { if ($_ -notmatch $pattern) {
+                    throw "You have provided an invalid external DNS forwarder IPv4 address: $_.`nPlease check the guidance, validate your entries and rerun the script."
+                    return
+                }
+            }
+            $customDNSForwarders = $dnsForwarders.Replace(',', '","')
+            Write-Host "`nYou have entered $customDNSForwarders as your custom external DNS forwarders." -ForegroundColor Green
+        }
+    }
+    catch {
+        Write-Host "$_" -ForegroundColor Red
+        break
+    }
+
 
     ### START LOGGING ###
     $runTime = $(Get-Date).ToString("MMddyy-HHmmss")

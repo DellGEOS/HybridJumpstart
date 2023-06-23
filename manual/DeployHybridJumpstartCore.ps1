@@ -33,12 +33,16 @@ try {
     }
     else {
         $dnsForwarders = $dnsForwarders -replace '\s', ''
-        $dnsForwarders.Split(',') | ForEach-Object { [ipaddress]$_ } | Out-Null
-        $customDNSForwarders = $dnsForwarders.Replace(',','","')
+        $dnsForwarders.Split(',') | ForEach-Object { if ($_ -notmatch $pattern) {
+                throw "You have provided an invalid external DNS forwarder IPv4 address: $_.`nPlease check the guidance, validate your entries and rerun the script."
+                return
+            }
+        }
+        $customDNSForwarders = $dnsForwarders.Replace(',', '","')
     }
 }
 catch {
-    Write-Host "You have provided at least one invalid DNS IPv4 address. Please check the guidance, validate your DNS entries and rerun the script." -ErrorAction Stop -ForegroundColor Red
+    Write-Host "$_" -ForegroundColor Red
     return
 }
 
