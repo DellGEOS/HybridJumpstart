@@ -71,7 +71,7 @@ The script accepts a number of parameters to customize deployment of the hybrid 
 - **-AutoDownloadAzSHCIiso** - this switch will instruct the script to download the Azure Stack HCI 22H2 ISO automatically for you.
 - **-WindowsServerIsoPath** - if you have already downloaded the Windows Server 2022 iso, provide the full path.
 - **-AzureStackHCIIsoPath** - if you have already downloaded the Azure Stack HCI 22H2 iso, provide the full path.
-- **-dnsForwarders** - if you wish to use a custom external DNS forwarder(s), enter it here. Use the format "8.8.8.8". If you wish to use multiple DNS forwarders, enter like this, separated by a comma (,) and with no spaces: "8.8.8.8,1.1.1.1". Alternatively, use "Default" and the deployment will use 8.8.8.8 and 1.1.1.1.
+- **-dnsForwarders** - if you wish to use a custom external DNS forwarder(s), enter it here. Use the format "9.9.9.9". If you wish to use multiple DNS forwarders, enter like this, separated by a comma (,) and with no spaces: "9.9.9.9,149.112.112.112". Alternatively, enter the parameter "Default" and the deployment will use 8.8.8.8 and 1.1.1.1.
 - **-telemetryLevel** - this sets the telemetry level for the MSLab automated deployment. Options are Full, Basic and None. You can [read more about MSLab telemetry on GitHub](https://github.com/microsoft/MSLab/blob/master/Docs/mslab-telemetry.md).
 
 There are 2 options for deployment:
