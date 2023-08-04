@@ -90,15 +90,17 @@ The simplest, and fastest way to run the DeployHybridJumpstart.ps1 script, is to
 #### Deployment with automatic ISO downloads and default external DNS forwarders
 
 ```powershell
-.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
-    -AutoDownloadWSiso -AutoDownloadAzSHCIiso -dnsForwarders "Default" -telemetryLevel "Full"
+.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" `
+    -jumpstartPath "D:\HybridJumpstart" -AutoDownloadWSiso -AutoDownloadAzSHCIiso `
+    -dnsForwarders "Default" -telemetryLevel "Full"
 ```
 
 #### Deployment with user-provided ISOs and custom external DNS forwarders
 
 ```powershell
-.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
-    -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -dnsForwarders "208.67.222.222" -telemetryLevel "Full"
+.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" `
+    -jumpstartPath "D:\HybridJumpstart" -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath `
+    "D:\AzSHCI\AzSHCI22H2.iso" -dnsForwarders "208.67.222.222" -telemetryLevel "Full"
 ```
 
 The script will begin to execute. If the Hyper-V role and accompanying management tools are not installed, you will be prompted to install and enable those:
