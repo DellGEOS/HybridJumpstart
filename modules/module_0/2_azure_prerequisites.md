@@ -12,11 +12,12 @@ Section duration <!-- omit in toc -->
 
 Contents <!-- omit in toc -->
 --------
-- [Get an Azure subscription](#get-an-azure-subscription)
-- [Azure subscription & Azure Active Directory permissions](#azure-subscription--azure-active-directory-permissions)
-- [Firewall / Proxy Configuration](#firewall--proxy-configuration)
-- [Next steps](#next-steps)
-- [Raising issues](#raising-issues)
+- [Hybrid Jumpstart | Azure Prerequisites](#hybrid-jumpstart--azure-prerequisites)
+  - [Get an Azure subscription](#get-an-azure-subscription)
+  - [Azure subscription \& Azure Active Directory permissions](#azure-subscription--azure-active-directory-permissions)
+  - [Firewall / Proxy Configuration](#firewall--proxy-configuration)
+  - [Next steps](#next-steps)
+  - [Raising issues](#raising-issues)
 
 Get an Azure subscription
 -----------
@@ -39,7 +40,7 @@ Depending on the particular module and hands-on-lab, the permissions required fo
 | Module | Topic | Subscription Permissions | AAD Permissions |
 |:--|---|---|---|
 | 2 | Azure Stack HCI | Owner / User Access Administrator + Contributer / Custom | Not required
-| 3 | AKS on Azure Stack HCI | Owner / Custom Service Principal | Global Admin / Cloud Application Administration / Custom
+| 3 | AKS hybrid | Owner / Custom Service Principal | Global Admin / Cloud Application Administration / Custom
 
 
 Firewall / Proxy Configuration
@@ -50,8 +51,8 @@ If you are deploying the infrastructure on your own physical hardware, you may n
 |:--|---|---|
 | 2 | Azure Stack HCI | [Host requirements](https://docs.microsoft.com/en-us/azure-stack/hci/concepts/firewall-requirements)
 | 2 | Azure Stack HCI | [Arc-enabled Servers requirements](https://docs.microsoft.com/en-us/azure/azure-arc/servers/agent-overview#networking-configuration)
-| 3 | AKS on Azure Stack HCI | [AKS-HCI requirements](https://docs.microsoft.com/en-us/azure-stack/aks-hci/system-requirements#network-port-and-url-requirements)
-| 3 | AKS on Azure Stack HCI | [Arc-enabled Kubernetes requirements](https://docs.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli#meet-network-requirements)
+| 3 | AKS hybrid | [AKS hybrid](https://docs.microsoft.com/en-us/azure-stack/aks-hci/system-requirements#network-port-and-url-requirements)
+| 3 | AKS hybrid | [Arc-enabled Kubernetes requirements](https://docs.microsoft.com/en-us/azure/azure-arc/kubernetes/quickstart-connect-cluster?tabs=azure-cli#meet-network-requirements)
 
 With the Azure requirements and prerequisites reviewed, it's time to begin your deployment of the lab environment.
 
