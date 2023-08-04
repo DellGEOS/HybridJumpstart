@@ -71,7 +71,7 @@ The script accepts a number of parameters to customize deployment of the hybrid 
 - **-AutoDownloadAzSHCIiso** - this switch will instruct the script to download the Azure Stack HCI 22H2 ISO automatically for you.
 - **-WindowsServerIsoPath** - if you have already downloaded the Windows Server 2022 iso, provide the full path.
 - **-AzureStackHCIIsoPath** - if you have already downloaded the Azure Stack HCI 22H2 iso, provide the full path.
-- **-dnsForwarders** - if you wish to use a custom external DNS forwarder(s), enter it here. Use the format "9.9.9.9". If you wish to use multiple DNS forwarders, enter like this, separated by a comma (,) and with no spaces: "9.9.9.9,149.112.112.112". Alternatively, enter the parameter "Default" and the deployment will use 8.8.8.8 and 1.1.1.1.
+- **-dnsForwarders** - if you wish to use a custom external DNS forwarder(s), use the format "9.9.9.9". If you wish to use multiple DNS forwarders, enter them separated by a comma (,) and with no spaces: "9.9.9.9,149.112.112.112". Alternatively, enter the parameter "Default" and the deployment will use 8.8.8.8 and 1.1.1.1.
 - **-telemetryLevel** - this sets the telemetry level for the MSLab automated deployment. Options are Full, Basic and None. You can [read more about MSLab telemetry on GitHub](https://github.com/microsoft/MSLab/blob/master/Docs/mslab-telemetry.md).
 
 There are 2 options for deployment:
@@ -99,8 +99,8 @@ The simplest, and fastest way to run the DeployHybridJumpstart.ps1 script, is to
 
 ```powershell
 .\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" `
-    -jumpstartPath "D:\HybridJumpstart" -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath `
-    "D:\AzSHCI\AzSHCI22H2.iso" -dnsForwarders "208.67.222.222" -telemetryLevel "Full"
+    -jumpstartPath "D:\HybridJumpstart" -WindowsServerIsoPath "D:\WS\WS2022.iso" `
+    -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -dnsForwarders "208.67.222.222" -telemetryLevel "Full"
 ```
 
 The script will begin to execute. If the Hyper-V role and accompanying management tools are not installed, you will be prompted to install and enable those:

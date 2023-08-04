@@ -31,6 +31,9 @@ try {
     if (!$dnsForwarders) {
         $customDNSForwarders = '8.8.8.8","1.1.1.1'
     }
+    elseif ($dnsForwarders -like "Default") {
+        $customDNSForwarders = '8.8.8.8","1.1.1.1'
+    }
     else {
         $dnsForwarders = $dnsForwarders -replace '\s', ''
         $dnsForwarders.Split(',') | ForEach-Object { if ($_ -notmatch $pattern) {

@@ -3,7 +3,7 @@ Hybrid Jumpstart | Deployment on physical hardware (without PowerShell DSC)
 
 Overview <!-- omit in toc -->
 -----------
-If you have followed the instructions to deploy the hybrid jumpstart on physical hardware ([as described here](/modules/module_0/4_physical_deployment.md)), but have issues with WinRM, or PowerShell DSC deploying correctly, you cvan use these steps to take a more traditional PowerShell script-based approach to deploying the hybrid jumpstart environment.  There are no changes to the supported environment - this can be run on a physical server, workstation or a laptop, or, it could also be an appropriately sized virtual machine running on an an existing virtualization platform, such as Hyper-V or VMware vSphere.
+If you have followed the instructions to deploy the hybrid jumpstart on physical hardware ([as described here](/modules/module_0/4_physical_deployment.md)), but have issues with WinRM, or PowerShell DSC deploying correctly, you can use these steps to take a more traditional PowerShell script-based approach to deploying the hybrid jumpstart environment. There are no changes to the supported environment - this can be run on a physical server, workstation or a laptop, or, it could also be an appropriately sized virtual machine running on an an existing virtualization platform, such as Hyper-V or VMware vSphere.
 _____________________
 **NOTE** - If you do choose to deploy the environment inside a virtual machine on an existing virtualization platform, ensure that the VM you create is large enough, and supports nested virtualization.
 _____________________
@@ -15,11 +15,14 @@ Section duration <!-- omit in toc -->
 Contents <!-- omit in toc -->
 --------
 
-- [Download the DeployHybridJumpstartCore.ps1 script](#download-the-deployhybridjumpstartcoreps1-script)
-- [Starting deployment](#starting-deployment)
-- [Exploring the environment](#exploring-the-environment)
-- [Next steps](#next-steps)
-- [Raising issues](#raising-issues)
+- [Hybrid Jumpstart | Deployment on physical hardware (without PowerShell DSC)](#hybrid-jumpstart--deployment-on-physical-hardware-without-powershell-dsc)
+  - [Download the DeployHybridJumpstartCore.ps1 script](#download-the-deployhybridjumpstartcoreps1-script)
+  - [Starting deployment](#starting-deployment)
+      - [Deployment with automatic ISO downloads and default external DNS forwarders](#deployment-with-automatic-iso-downloads-and-default-external-dns-forwarders)
+      - [Deployment with user-provided ISOs and custom external DNS forwarders](#deployment-with-user-provided-isos-and-custom-external-dns-forwarders)
+  - [Exploring the environment](#exploring-the-environment)
+  - [Next steps](#next-steps)
+  - [Raising issues](#raising-issues)
 
 Download the DeployHybridJumpstartCore.ps1 script
 --------
@@ -61,6 +64,7 @@ The script accepts a number of parameters to customize deployment of the hybrid 
 - **-jumpstartPath** - this is the folder on your local system where all the hybrid jumpstart virtual machines and lab files will reside.
 - **-WindowsServerIsoPath** - if you have already downloaded the Windows Server 2022 iso, provide the full path.
 - **-AzureStackHCIIsoPath** - if you have already downloaded the Azure Stack HCI 22H2 iso, provide the full path.
+- **-dnsForwarders** - if you wish to use a custom external DNS forwarder(s), use the format "9.9.9.9". If you wish to use multiple DNS forwarders, enter them separated by a comma (,) and with no spaces: "9.9.9.9,149.112.112.112". Alternatively, enter the parameter "Default" and the deployment will use 8.8.8.8 and 1.1.1.1.
 - **-telemetryLevel** - this sets the telemetry level for the MSLab automated deployment. Options are Full, Basic and None. You can [read more about MSLab telemetry on GitHub](https://github.com/microsoft/MSLab/blob/master/Docs/mslab-telemetry.md).
 
 Starting deployment
@@ -69,18 +73,19 @@ To run the DeployHybridJumpstartCore.ps1 script, you will need to provide all th
 
 1. Still in your **PowerShell console as administrator** from earlier, run the following commands (adjust for your environment):
 
-#### Deployment with automatic ISO downloads
+#### Deployment with automatic ISO downloads and default external DNS forwarders
 
 ```powershell
 .\DeployHybridJumpstartCore.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" `
-    -jumpstartPath "D:\HybridJumpstart" -telemetryLevel "Full"
+    -jumpstartPath "D:\HybridJumpstart" -dnsForwarders "Default" -telemetryLevel "Full"
 ```
 
-#### Deployment with user-provided ISOs
+#### Deployment with user-provided ISOs and custom external DNS forwarders
 
 ```powershell
-.\DeployHybridJumpstartCore.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
-    -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -telemetryLevel "Full"
+.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" `
+    -jumpstartPath "D:\HybridJumpstart" -WindowsServerIsoPath "D:\WS\WS2022.iso" `
+    -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -dnsForwarders "208.67.222.222" -telemetryLevel "Full"
 ```
 
 The script will begin to execute. If the Hyper-V role and accompanying management tools are not installed, you will be prompted to install and enable those:
