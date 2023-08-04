@@ -296,7 +296,7 @@ try {
 
     try {
         if (!($dnsForwarders)) {
-            Write-Host "`nWould you like to use custom external DNS forwarders?" 
+            Write-Host "`nWould you like to use custom external DNS forwarders?`n" 
             Write-Host "For a single DNS forwarder, use the format like this example: 8.8.8.8"
             Write-Host "For multiple DNS forwarders (maximum 2), use the format like this example, separated by a comma (,) and with no spaces: 8.8.8.8,1.1.1.1"
             Write-Host "Alternatively, to use the default Hybrid Jumpstart DNS forwarders (8.8.8.8 and 1.1.1.1), simply press Enter to skip."
@@ -317,6 +317,10 @@ try {
                 $customDNSForwarders = $dnsForwarders.Replace(',', '","')
                 Write-Host "`nYou have entered `"$customDNSForwarders`" as your custom external DNS forwarders." -ForegroundColor Green
             }
+        }
+        elseif ($dnsForwarders -like "Default") {
+            $customDNSForwarders = '8.8.8.8","1.1.1.1'
+            Write-Host "`nYou have selected to use the default external DNS forwarders - we will use 8.8.8.8 and 1.1.1.1 as your external DNS forwarders." -ForegroundColor Green
         }
         else {
             $dnsForwarders = $dnsForwarders -replace '\s', ''

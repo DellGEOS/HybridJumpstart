@@ -16,14 +16,17 @@ Section duration <!-- omit in toc -->
 Contents <!-- omit in toc -->
 --------
 
-- [Download the DeployHybridJumpstart.ps1 script](#download-the-deployhybridjumpstartps1-script)
-  - [Exploring the DeployHybridJumpstart.ps1 script](#exploring-the-deployhybridjumpstartps1-script)
-- [Option 1 - Automated deployment with parameters](#option-1---automated-deployment-with-parameters)
-- [Option 2 - Semi-automated deployment with manual inputs](#option-2---semi-automated-deployment-with-manual-inputs)
-- [Exploring the environment](#exploring-the-environment)
-- [Next steps](#next-steps)
-- [Troubleshooting](#troubleshooting)
-- [Raising issues](#raising-issues)
+- [Hybrid Jumpstart | Deployment on physical hardware](#hybrid-jumpstart--deployment-on-physical-hardware)
+  - [Download the DeployHybridJumpstart.ps1 script](#download-the-deployhybridjumpstartps1-script)
+    - [Exploring the DeployHybridJumpstart.ps1 script](#exploring-the-deployhybridjumpstartps1-script)
+  - [Option 1 - Automated deployment with parameters](#option-1---automated-deployment-with-parameters)
+      - [Deployment with automatic ISO downloads and default external DNS forwarders](#deployment-with-automatic-iso-downloads-and-default-external-dns-forwarders)
+      - [Deployment with user-provided ISOs and custom external DNS forwarders](#deployment-with-user-provided-isos-and-custom-external-dns-forwarders)
+  - [Option 2 - Semi-automated deployment with manual inputs](#option-2---semi-automated-deployment-with-manual-inputs)
+  - [Exploring the environment](#exploring-the-environment)
+  - [Next steps](#next-steps)
+  - [Troubleshooting](#troubleshooting)
+  - [Raising issues](#raising-issues)
 
 Download the DeployHybridJumpstart.ps1 script
 --------
@@ -68,6 +71,7 @@ The script accepts a number of parameters to customize deployment of the hybrid 
 - **-AutoDownloadAzSHCIiso** - this switch will instruct the script to download the Azure Stack HCI 22H2 ISO automatically for you.
 - **-WindowsServerIsoPath** - if you have already downloaded the Windows Server 2022 iso, provide the full path.
 - **-AzureStackHCIIsoPath** - if you have already downloaded the Azure Stack HCI 22H2 iso, provide the full path.
+- **-dnsForwarders** - if you wish to use a custom external DNS forwarder(s), enter it here. Use the format "8.8.8.8". If you wish to use multiple DNS forwarders, enter like this, separated by a comma (,) and with no spaces: "8.8.8.8,1.1.1.1". Alternatively, use "Default" and the deployment will use 8.8.8.8 and 1.1.1.1.
 - **-telemetryLevel** - this sets the telemetry level for the MSLab automated deployment. Options are Full, Basic and None. You can [read more about MSLab telemetry on GitHub](https://github.com/microsoft/MSLab/blob/master/Docs/mslab-telemetry.md).
 
 There are 2 options for deployment:
@@ -83,18 +87,18 @@ The simplest, and fastest way to run the DeployHybridJumpstart.ps1 script, is to
 
 1. Still in your **PowerShell console as administrator** from earlier, run the following commands (adjust for your environment):
 
-#### Deployment with automatic ISO downloads
+#### Deployment with automatic ISO downloads and default external DNS forwarders
 
 ```powershell
 .\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
-    -AutoDownloadWSiso -AutoDownloadAzSHCIiso -telemetryLevel "Full"
+    -AutoDownloadWSiso -AutoDownloadAzSHCIiso -dnsForwarders "Default" -telemetryLevel "Full"
 ```
 
-#### Deployment with user-provided ISOs
+#### Deployment with user-provided ISOs and custom external DNS forwarders
 
 ```powershell
 .\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" -jumpstartPath "D:\HybridJumpstart" `
-    -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -telemetryLevel "Full"
+    -WindowsServerIsoPath "D:\WS\WS2022.iso" -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -dnsForwarders "208.67.222.222" -telemetryLevel "Full"
 ```
 
 The script will begin to execute. If the Hyper-V role and accompanying management tools are not installed, you will be prompted to install and enable those:
@@ -152,6 +156,7 @@ You'll then be asked to work through a number of questions to customize your dep
 
 11. For the **Have you downloaded a Windows Server 2022 ISO**, enter Y or N. If you choose N, a Windows Server 2022 ISO will be automatically downloaded for you. If you choose Y, you'll be prompted to navigate to the ISO using File Explorer.
 12. For the **Have you downloaded an Azure Stack HCI 22H2 ISO**, enter Y or N. If you choose N, a Windows Server 2022 ISO will be automatically downloaded for you. If you choose Y, you'll be prompted to navigate to the ISO using File Explorer.
+13. For the **Would you like to use custom external DNS forwarders?**, either enter the custom external DNS forwarder address in the format 9.9.9.9 (or for multiple addresses, separated by a comma (,) and with no spaces: 9.9.9.9,149.112.112.112). Alternatively, you can simply press enter to skip, and the deployment will use 8.8.8.8 and 1.1.1.1.
 
 With the questions complete, the deployment will begin. **Leave the PowerShell window open** as the PowerShell DSC executes. The process should take between 40-60 minutes depending on your selections.
 
