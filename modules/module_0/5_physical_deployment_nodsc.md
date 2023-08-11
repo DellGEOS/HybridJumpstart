@@ -83,7 +83,7 @@ To run the DeployHybridJumpstartCore.ps1 script, you will need to provide all th
 #### Deployment with user-provided ISOs and custom external DNS forwarders
 
 ```powershell
-.\DeployHybridJumpstart.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" `
+.\DeployHybridJumpstartCore.ps1 -azureStackHCINodes 2 -azureStackHCINodeMemory 16 -updateImages "No" `
     -jumpstartPath "D:\HybridJumpstart" -WindowsServerIsoPath "D:\WS\WS2022.iso" `
     -AzureStackHCIIsoPath "D:\AzSHCI\AzSHCI22H2.iso" -dnsForwarders "208.67.222.222" -telemetryLevel "Full"
 ```
