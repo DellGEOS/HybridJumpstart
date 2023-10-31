@@ -1,7 +1,7 @@
 param 
 (
     [Parameter(Mandatory)]
-    [ValidateSet("1", "2", "3", "4")]
+    [ValidateSet("1", "2", "3", "4", "5", "6")]
     [Int]$azureStackHCINodes,
     [Parameter(Mandatory)]
     [ValidateSet("4", "8", "12", "16", "24", "32", "48")]
@@ -137,7 +137,7 @@ try {
     $rdpConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/RDP.rdp"
     $psModulesUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/manual/PSmodules.zip"
     $desktopPath = [Environment]::GetFolderPath("Desktop")
-    $dateStamp = Get-Date -Format "MMddyyyy"
+    $dateStamp = Get-Date -UFormat %d%b%y
     $vmPrefix = "HybridJumpstart-$dateStamp"
     $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
     $jumpstartPath = "$jumpstartPath" + "\HybridJumpstart"

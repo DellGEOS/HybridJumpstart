@@ -4,7 +4,7 @@ configuration HybridJumpstart
     (
         [System.Management.Automation.PSCredential]$Admincreds,
         [Parameter(Mandatory)]
-        [ValidateSet("1", "2", "3", "4")]
+        [ValidateSet("1", "2", "3", "4", "5", "6")]
         [Int]$azureStackHCINodes,
         [Parameter(Mandatory)]
         [ValidateSet("4", "8", "12", "16", "24", "32", "48")]
@@ -49,7 +49,7 @@ configuration HybridJumpstart
             $customRdpPort = 3389
         }
 
-        $dateStamp = Get-Date -Format "MMddyyyy"
+        $dateStamp = Get-Date -UFormat %d%b%y
         $vmPrefix = "HybridJumpstart-$dateStamp"
 
         # Calculate Host Memory Sizing to account for oversizing
