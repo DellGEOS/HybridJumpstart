@@ -346,11 +346,11 @@ try {
         $ssu = Test-Path -Path "$ssuPath\*" -Include "*.msu"
 
         if ($ssu) {
-            Convert-WindowsImage -SourcePath $azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $azsHciVhdPath `
+            Convert-WindowsImage -SourcePath $azsHCIISOLocalPath -SizeBytes 127GB -VHDPath $azsHciVhdPath `
                 -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -Package $ssuPath -TempDirectory $scratchPath -Verbose
         }
         else {
-            Convert-WindowsImage -SourcePath $azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $azsHciVhdPath `
+            Convert-WindowsImage -SourcePath $azsHCIISOLocalPath -SizeBytes 127GB -VHDPath $azsHciVhdPath `
                 -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -TempDirectory $scratchPath -Verbose
         }
 
