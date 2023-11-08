@@ -10,21 +10,21 @@ $LabConfig = @{ DomainAdminName = 'LabAdmin'; AdminPassword = 'LS1setup!'; DCEdi
 1..<<azureStackHCINodes>> | ForEach-Object { 
         $VMNames = "Duvall-N" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; `
                         ParentVHD = 'AzSHCI22H2_G2.vhdx' ; HDDNumber = 12; HDDSize = 4TB ; `
-                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 4 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
+                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 2 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
         } 
 }
 
 1..<<azureStackHCINodes>> | ForEach-Object { 
         $VMNames = "Carnation-N" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; `
                         ParentVHD = 'AzSHCI22H2_G2.vhdx' ; HDDNumber = 12; HDDSize = 4TB ; `
-                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 4 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
+                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 2 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
         } 
 }
 
 1..<<azureStackHCINodes>> | ForEach-Object { 
         $VMNames = "Snoqualmie-N" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; `
                         ParentVHD = 'AzSHCI22H2_G2.vhdx' ; HDDNumber = 12; HDDSize = 4TB ; `
-                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 4 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
+                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 2 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
         } 
 }
 
@@ -33,3 +33,11 @@ $LabConfig.VMs += @{ VMName = 'WACGW' ; ParentVHD = 'Win2022Core_G2.vhdx' ; MGMT
 
 #Management machine
 $LabConfig.VMs += @{ VMName = 'Management' ; ParentVHD = 'Win2022_G2.vhdx'; MGMTNICs=1 ; AddToolsVHD=$True }
+
+#AKS hybrid hosts
+1..3 | ForEach-Object { 
+        $VMNames = "AKSHOST" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; `
+                        ParentVHD = 'Win2022_G2.vhdx' ; HDDNumber = 12; HDDSize = 4TB ; `
+                        MemoryStartupBytes = 48GB; MGMTNICs = 1; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
+        } 
+}
