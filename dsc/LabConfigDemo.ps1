@@ -10,7 +10,7 @@ $LabConfig = @{ DomainAdminName = 'LabAdmin'; AdminPassword = 'LS1setup!'; DCEdi
 1..<<azureStackHCINodes>> | ForEach-Object { 
         $VMNames = "AzSHCI" ; $LABConfig.VMs += @{ VMName = "$VMNames$_" ; Configuration = 'S2D' ; `
                         ParentVHD = 'AzSHCI22H2_G2.vhdx' ; HDDNumber = 12; HDDSize = 4TB ; `
-                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 4 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"
+                        MemoryStartupBytes = <<azureStackHCINodeMemory>>GB; MGMTNICs = 4 ; vTPM=$true ; NestedVirt = $true ; VMProcessorCount = "Max"; Unattend="NoDjoin"
         } 
 }
 
