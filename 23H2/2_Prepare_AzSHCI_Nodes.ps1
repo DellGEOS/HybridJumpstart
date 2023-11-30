@@ -32,6 +32,16 @@ $TrustedHosts = @()
 $TrustedHosts += $Servers
 Set-Item WSMan:\localhost\Client\TrustedHosts -Value $($TrustedHosts -join ',') -Force
 
+# Change Local Admin password to be at least 12 chars
+Invoke-Command -ComputerName $servers -ScriptBlock {
+    Set-LocalUser -Name Administrator -AccountNeverExpires -Password (ConvertTo-SecureString "LS1setup!LS1setup!" -AsPlainText -Force)
+} -Credential $Credentials
+
+# Update password
+$password = "LS1setup!LS1setup!"
+$SecuredPassword = ConvertTo-SecureString $password -AsPlainText -Force
+$Credentials = New-Object System.Management.Automation.PSCredential ($UserName, $SecuredPassword)
+
 # Remotely install AzSHCI Node Features and Latest Updates
 Invoke-Command -ComputerName $servers -ScriptBlock {
     Enable-WindowsOptionalFeature -FeatureName Microsoft-Hyper-V -Online -NoRestart
@@ -90,9 +100,9 @@ Invoke-Command -ComputerName $Servers -ScriptBlock {
     Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 } -Credential $Credentials
 
-# Install AzsHCI.ARCinstaller module on nodes
+# Install AzsHCI.ArcInstaller module on nodes
 Invoke-Command -ComputerName $Servers -ScriptBlock {
-    Install-Module -Name AzsHCI.ARCinstaller -Force
+    Install-Module -Name AzsHCI.ArcInstaller -Force
 } -Credential $Credentials
 
 # Install Az.Accounts module  on nodes
@@ -110,6 +120,18 @@ Invoke-Command -ComputerName $Servers -ScriptBlock {
     Install-Module Az.Resources -Force
 } -Credential $Credentials
 
+# Change Local Admin password to be at least 12 chars
+Invoke-Command -ComputerName $servers -ScriptBlock {
+    Set-LocalUser -Name Administrator -AccountNeverExpires -Password (ConvertTo-SecureString "LS1setup!LS1setup!" -AsPlainText -Force)
+} -Credential $Credentials
+
+# Ensure nodes only have a single NIC with a Default Gateway
+Invoke-Command -ComputerName $servers -ScriptBlock {
+    Get-NetIPConfiguration | Where-Object IPV4defaultGateway | Get-NetAdapter | Sort-Object Name `
+    | Select-Object -Skip 1 | Set-NetIPInterface -Dhcp Disabled
+    ipconfig /registerdns
+} -Credential $Credentials
+
 # Deploy the Arc Agent and Configuration on all nodes
 $ARMtoken = (Get-AzAccessToken).Token
 $id = (Get-AzContext).Account.Id
@@ -117,10 +139,4 @@ Invoke-Command -ComputerName $Servers -ScriptBlock {
     Invoke-AzStackHciArcInitialization -SubscriptionID $using:SubscriptionID `
         -ResourceGroup $using:ResourceGroupName -TenantID $using:TenantID -Cloud $using:Cloud `
         -Region $Using:Location -ArmAccessToken $using:ARMtoken -AccountID $using:id
-} -Credential $Credentials
-
-# Ensure nodes only have a single NIC with a Default Gateway
-Invoke-Command -ComputerName $servers -ScriptBlock {
-    Get-NetIPConfiguration | Where-Object IPV4defaultGateway | Get-NetAdapter | Sort-Object Name `
-    | Select-Object -Skip 1 | Set-NetIPInterface -Dhcp Disabled
 } -Credential $Credentials
