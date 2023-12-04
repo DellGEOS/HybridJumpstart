@@ -1,0 +1,125 @@
+.NAME
+    VhdFile
+
+.DESCRIPTION
+    Manages files or directories in a VHD.
+
+    You can use it to copy files/folders to the VHD, remove files/folders
+    from a VHD, and change attributes of a file in a VHD (e.g. change a
+    file attribute to 'ReadOnly' or 'Hidden').
+
+    This resource is particularly useful when bootstrapping DSC Configurations
+    into a VM.
+
+    ## Requirements
+
+    * The Hyper-V Role has to be installed on the machine.
+    * The Hyper-V PowerShell module has to be installed on the machine.
+
+.PARAMETER VhdPath
+    Key - String
+    Path to the VHD.
+
+.PARAMETER FileDirectory
+    Required - InstanceArray
+    The FileDirectory objects to copy to the VHD (as used in the File resource).
+
+.PARAMETER CheckSum
+    Write - String
+    Allowed values: ModifiedDate, SHA-1, SHA-256, SHA-512
+    Indicates the checksum type to use when determining whether two files are the same. The default value is ModifiedDate.
+
+.EXAMPLE 1
+
+Not yet written.
+
+Configuration Example
+{
+    param
+    (
+        [Parameter()]
+        $vhdPath = 'C:\temp\disk.vhdx',
+
+        [Parameter()]
+        $relativeDestinationPath = 'Temp',
+
+        [Parameter()]
+        [ValidateSet ('Archive', 'Hidden', 'ReadOnly', 'System' )]
+        $attribute = 'Archive'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    VhdFile Change-Attribute
+    {
+        VhdPath       = $vhdPath
+        FileDirectory = DSC_FileDirectory
+        {
+            DestinationPath = $relativeDestinationPath
+            Attributes      = $attribute
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Not yet written.
+
+Configuration Example
+{
+    param
+    (
+        [Parameter()]
+        $vhdPath = 'C:\temp\disk.vhdx',
+
+        [Parameter()]
+        $itemToCopy = 'C:\Temp',
+
+        [Parameter()]
+        $relativeDestinationPath = 'Temp'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    VhdFile FileCopy
+    {
+        VhdPath       = $vhdPath
+        FileDirectory = DSC_FileDirectory
+        {
+            SourcePath      = $itemToCopy
+            DestinationPath = $relativeDestinationPath
+        }
+    }
+}
+
+.EXAMPLE 3
+
+Not yet written.
+
+Configuration Example
+{
+    param
+    (
+        [Parameter()]
+        $vhdPath = 'C:\temp\disk.vhdx',
+
+        [Parameter()]
+        $relativeDestinationPath = 'Temp',
+
+        [Parameter()]
+        $Ensure = 'Absent'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    VhdFile RemoveFile
+    {
+        VhdPath       = $vhdPath
+        FileDirectory = DSC_FileDirectory
+        {
+            DestinationPath = $relativeDestinationPath
+            Ensure          = $Ensure
+        }
+    }
+}
+

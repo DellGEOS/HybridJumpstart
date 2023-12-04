@@ -1,0 +1,541 @@
+.NAME
+    VMHyperV
+
+.DESCRIPTION
+    Manages VMs in a Hyper-V host.
+
+    The following properties cannot be changed after VM creation:
+
+    * VhdPath
+    * Path
+    * Generation
+
+    ## Requirements
+
+    * The Hyper-V Role has to be installed on the machine.
+    * The Hyper-V PowerShell module has to be installed on the machine.
+
+.PARAMETER Name
+    Key - String
+    The desired name of the VM.
+
+.PARAMETER VhdPath
+    Required - String
+    The desired VHD associated with the VM.
+
+.PARAMETER SwitchName
+    Write - StringArray
+    Virtual switch(es) associated with the VM. Multiple NICs can now be assigned.
+
+.PARAMETER State
+    Write - String
+    Allowed values: Running, Paused, Off
+    State of the VM.
+
+.PARAMETER Path
+    Write - String
+    Folder where the VM data will be stored.
+
+.PARAMETER Generation
+    Write - UInt32
+    Virtual machine's generation. Generation 2 virtual machines only support VHDX files. The default value is 1.
+
+.PARAMETER StartupMemory
+    Write - UInt64
+    Startup RAM for the VM. If neither MinimumMemory nor MaximumMemory is specified, dynamic memory will be disabled.
+
+.PARAMETER MinimumMemory
+    Write - UInt64
+    Minimum RAM for the VM. Setting this property enables dynamic memory, with the exception; If MinimumMemory, MaximumMemory and StartupMemory is equal, dynamic memory will be disabled.
+
+.PARAMETER MaximumMemory
+    Write - UInt64
+    Maximum RAM for the VM. Setting this property enables dynamic memory, with the exception; If MinimumMemory, MaximumMemory and StartupMemory is equal, dynamic memory will be disabled.
+
+.PARAMETER MACAddress
+    Write - StringArray
+    MAC address(es) of the VM NICs. Multiple MAC addresses can now be assigned.
+
+.PARAMETER ProcessorCount
+    Write - UInt32
+    Processor count for the VM.
+
+.PARAMETER WaitForIP
+    Write - Boolean
+    If specified, waits for the VM to get valid IP address.
+
+.PARAMETER RestartIfNeeded
+    Write - Boolean
+    If specified, will shutdown and restart the VM as needed for property changes.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Specifies if the VM should be Present (created) or Absent (removed). The default value is Present.
+
+.PARAMETER Notes
+    Write - String
+    Notes about the VM.
+
+.PARAMETER SecureBoot
+    Write - Boolean
+    Specifies if Secure Boot should be enabled for Generation 2 virtual machines. Only supports generation 2 virtual machines. Default value is $true.
+
+.PARAMETER EnableGuestService
+    Write - Boolean
+    Enable Guest Service Interface for the VM. The default value is $false.
+
+.PARAMETER AutomaticCheckpointsEnabled
+    Write - Boolean
+    Enable AutomaticCheckpoints for the VM.
+
+.PARAMETER ID
+    Read - String
+    Returns the unique ID for the VM.
+
+.PARAMETER Status
+    Read - String
+    Returns the current status of the VM.
+
+.PARAMETER CPUUsage
+    Read - UInt32
+    Returns the current CPU usage of the VM.
+
+.PARAMETER MemoryAssigned
+    Read - UInt64
+    Returns the current memory assigned to the VM.
+
+.PARAMETER Uptime
+    Read - String
+    Returns the uptime of the VM.
+
+.PARAMETER CreationTime
+    Read - DateTime
+    Returns the creation time of the VM.
+
+.PARAMETER HasDynamicMemory
+    Read - Boolean
+    Returns $true if the VM has dynamic memory enabled.
+
+.PARAMETER NetworkAdapters
+    Read - StringArray
+    Returns the IP addresses of the virtual machine's network adapters.
+
+.EXAMPLE 1
+
+Create a new VM.
+
+configuration Example
+{
+    param
+    (
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VMName,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VhdPath
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV feature, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        # Ensures a VM with default settings
+        VMHyperV NewVM
+        {
+            Ensure    = 'Present'
+            Name      = $VMName
+            VhdPath   = $VhdPath
+            Generation = 2
+            DependsOn = '[WindowsFeature]HyperV'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Create a VM with DVD drive attached to it.
+
+configuration Example
+{
+    param
+    (
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VMName,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VhdPath,
+
+        [System.String]
+        $ISOPath
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV feature, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        # Ensures a VM with default settings
+        VMHyperV NewVM
+        {
+            Ensure    = 'Present'
+            Name      = $VMName
+            VhdPath   = $VhdPath
+            Generation = $VhdPath.Split('.')[-1]
+            DependsOn = '[WindowsFeature]HyperV'
+        }
+
+        # Adds DVD Drive with ISO
+        VMDvdDrive NewVMDvdDriveISO
+        {
+            Ensure             = 'Present'
+            VMName               = $VMName
+            ControllerNumber   = 0
+            ControllerLocation = 0
+            Path               = $ISOPath
+            DependsOn          = '[VMHyperV]NewVM'
+        }
+    }
+}
+
+.EXAMPLE 3
+
+Create a VM with nested virtualization.
+
+configuration Example
+{
+    param
+    (
+        [Parameter()]
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VMName,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VhdPath,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $Memory
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV feature, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        # Ensures a VM with default settings
+        VMHyperV NewVM
+        {
+            Ensure        = 'Present'
+            Name          = $VMName
+            VhdPath       = $VhdPath
+            Generation    = 2
+            StartupMemory = $Memory
+            MinimumMemory = $Memory
+            MaximumMemory = $Memory
+            DependsOn     = '[WindowsFeature]HyperV'
+        }
+
+        # Set the VM options
+        VMProcessor NestedVirtualization
+        {
+            VMName                         = $VMName
+            ExposeVirtualizationExtensions = $true
+            DependsOn                      = '[VMHyperV]NewVM'
+        }
+    }
+}
+
+.EXAMPLE 4
+
+Complete example.
+
+configuration Example
+{
+    param
+    (
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VMName,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $VhdSizeBytes,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $StartupMemory,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $MinimumMemory,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $MaximumMemory,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $SwitchName,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $Path,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt32]
+        $ProcessorCount,
+
+        [ValidateSet('Off','Paused','Running')]
+        [System.String]
+        $State = 'Off',
+
+        [Switch]
+        $WaitForIP,
+
+        [System.Boolean]
+        $AutomaticCheckpointsEnabled
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Logic to handle both Client and Server OS
+        # Configuration needs to be compiled on target server
+        $Operatingsystem = Get-CimInstance -ClassName Win32_OperatingSystem
+        if ($Operatingsystem.ProductType -eq 1)
+        {
+            # Client OS, install Hyper-V as OptionalFeature
+            $HyperVDependency = '[WindowsOptionalFeature]HyperV'
+            WindowsOptionalFeature HyperV
+            {
+                Ensure = 'Enable'
+                Name = 'Microsoft-Hyper-V-All'
+            }
+        }
+        else {
+            # Server OS, install HyperV as WindowsFeature
+            $HyperVDependency = '[WindowsFeature]HyperV','[WindowsFeature]HyperVPowerShell'
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+            WindowsFeature HyperVPowerShell
+            {
+                Ensure = 'Present'
+                Name   = 'Hyper-V-PowerShell'
+            }
+        }
+
+        # Create new VHD
+        Vhd NewVhd
+        {
+            Ensure           = 'Present'
+            Name             = "$VMName-OSDisk.vhdx"
+            Path             = $Path
+            Generation       = 'vhdx'
+            MaximumSizeBytes = $VhdSizeBytes
+            DependsOn        = $HyperVDependency
+        }
+
+        # Ensures a VM with all the properties
+        VMHyperV NewVM
+        {
+            Ensure          = 'Present'
+            Name            = $VMName
+            VhdPath         = (Join-Path -Path $Path -ChildPath "$VMName-OSDisk.vhdx")
+            SwitchName      = $SwitchName
+            State           = $State
+            Path            = $Path
+            Generation      = 2
+            StartupMemory   = $StartupMemory
+            MinimumMemory   = $MinimumMemory
+            MaximumMemory   = $MaximumMemory
+            ProcessorCount  = $ProcessorCount
+            MACAddress      = $MACAddress
+            RestartIfNeeded = $true
+            WaitForIP       = $WaitForIP
+            AutomaticCheckpointsEnabled = $AutomaticCheckpointsEnabled
+            DependsOn       = '[Vhd]NewVhd'
+        }
+    }
+}
+
+.EXAMPLE 5
+
+VM using dynamic memory.
+
+configuration Example
+{
+    param
+    (
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VMName,
+
+        [Parameter(Mandatory = $true)]
+        [System.String]
+        $VhdPath,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $StartupMemory,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $MinimumMemory,
+
+        [Parameter(Mandatory = $true)]
+        [System.UInt64]
+        $MaximumMemory
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV feature, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        # Ensures a VM with dynamic memory
+        VMHyperV NewVM
+        {
+            Ensure        = 'Present'
+            Name          = $VMName
+            VhdPath       = $VhdPath
+            Generation    = 2
+            StartupMemory = $StartupMemory
+            MinimumMemory = $MinimumMemory
+            MaximumMemory = $MaximumMemory
+            DependsOn     = '[WindowsFeature]HyperV'
+        }
+    }
+}
+
+.EXAMPLE 6
+
+Description not yet written.
+
+Configuration Example
+{
+    param
+    (
+        [Parameter()]
+        [System.String[]]
+        $NodeName = 'localhost',
+
+        [Parameter()]
+        [System.String]
+        $VMName = 'TestVM',
+
+        [Parameter()]
+        [System.String]
+        $VhdPath = 'C:\temp\disk.vhdx',
+
+        [Parameter()]
+        [System.String[]]
+        $SwitchName = @('MySwitch'),
+
+        [Parameter()]
+        [System.String[]]
+        $MACAddress = '0000000'
+    )
+
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    Node $NodeName
+    {
+        # Install HyperV features, if not installed - Server SKU only
+        WindowsFeature HyperV
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V'
+        }
+
+        WindowsFeature HyperVPowerShell
+        {
+            Ensure = 'Present'
+            Name   = 'Hyper-V-PowerShell'
+        }
+
+        # Dynamically build the 'DependsOn' array for the 'VMHyperV' feature
+        # based on the number of virtual switches specified
+        $VMHyperVDependsOn = @('[WindowsFeature]HyperV','[WindowsFeature]HyperVPowerShell')
+
+        # Create each virtual switch
+        foreach ($vmSwitch in $SwitchName)
+        {
+            # Remove spaces and hyphens from the identifier
+            $vmSwitchName = $vmSwitch -replace ' ','' -replace '-',''
+            # Add the virtual switch dependency
+            $VMHyperVDependsOn += "[VMSwitch]$vmSwitchName"
+
+            VMSwitch $vmSwitchName
+            {
+                Ensure         = 'Present'
+                Name           = $vmSwitch
+                Type           = 'Internal'
+                DependsOn      = '[WindowsFeature]HyperV','[WindowsFeature]HyperVPowerShell'
+            }
+        }
+
+        # Ensures a VM with all the properties
+        VMHyperV $VMName
+        {
+            Ensure     = 'Present'
+            Name       = $VMName
+            VhdPath    = $VhdPath
+            SwitchName = $SwitchName
+            MACAddress = $MACAddress
+            # Use the dynamically created dependency list/array
+            DependsOn  = $VMHyperVDependsOn
+        }
+    }
+}
+

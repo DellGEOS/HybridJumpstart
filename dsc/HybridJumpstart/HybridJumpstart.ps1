@@ -78,14 +78,14 @@ configuration HybridJumpstart
         }
 
         $mslabLocalPath = "$jumpstartPath\mslab.zip"
-        $labConfigPath = "$jumpstartPath\LabConfig.ps1"
+        $labConfigPath = "$jumpstartPath\LabConfigDemo.ps1"
         $parentDiskPath = "$jumpstartPath\ParentDisks"
         $updatePath = "$parentDiskPath\Updates"
         $cuPath = "$updatePath\CU"
         $ssuPath = "$updatePath\SSU"
         $isoPath = "$jumpstartPath\ISO"
         $flagsPath = "$jumpstartPath\Flags"
-        $azsHciVhdPath = "$parentDiskPath\AzSHCI22H2_G2.vhdx"
+        $azsHciVhdPath = "$parentDiskPath\AzSHCI23H2_G2.vhdx"
 
         if (!((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77")) {
             # If this is on-prem, user should have supplied a folder/path they wish to install into
@@ -558,11 +558,11 @@ configuration HybridJumpstart
                 $ssu = Test-Path -Path "$Using:ssuPath\*" -Include "*.msu"
 
                 if ($ssu) {
-                    Convert-WindowsImage -SourcePath $Using:azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $Using:azsHciVhdPath `
+                    Convert-WindowsImage -SourcePath $Using:azsHCIISOLocalPath -SizeBytes 127GB -VHDPath $Using:azsHciVhdPath `
                         -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -Package $Using:ssuPath -TempDirectory $Using:scratchPath -Verbose
                 }
                 else {
-                    Convert-WindowsImage -SourcePath $Using:azsHCIISOLocalPath -SizeBytes 60GB -VHDPath $Using:azsHciVhdPath `
+                    Convert-WindowsImage -SourcePath $Using:azsHCIISOLocalPath -SizeBytes 127GB -VHDPath $Using:azsHciVhdPath `
                         -VHDFormat VHDX -VHDType Dynamic -VHDPartitionStyle GPT -TempDirectory $Using:scratchPath -Verbose
                 }
 

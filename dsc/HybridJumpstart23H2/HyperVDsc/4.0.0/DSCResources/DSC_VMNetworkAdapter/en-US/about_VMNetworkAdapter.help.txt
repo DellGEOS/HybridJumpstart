@@ -1,0 +1,201 @@
+.NAME
+    VMNetworkAdapter
+
+.DESCRIPTION
+    Manages VM network adapters attached to a Hyper-V virtual machine or the
+    management OS.
+
+    ## Requirements
+
+    * The Hyper-V Role has to be installed on the machine.
+    * The Hyper-V PowerShell module has to be installed on the machine.
+
+.PARAMETER Id
+    Key - String
+    Unique string for identifying the resource instance.
+
+.PARAMETER Name
+    Required - String
+    Name of the network adapter as it appears either in the management OS or attached to a VM.
+
+.PARAMETER SwitchName
+    Required - String
+    Virtual Switch name to connect to.
+
+.PARAMETER VMName
+    Required - String
+    Name of the VM to attach to. If you want to attach new VM Network adapter to the management OS, set this property to 'ManagementOS'.
+
+.PARAMETER MacAddress
+    Write - String
+    Use this to specify a Static MAC Address. If this parameter is not specified, dynamic MAC Address will be set.
+
+.PARAMETER NetworkSetting
+    Write - Instance
+    Network Settings of the network adapter. If this parameter is not supplied, DHCP will be used.
+
+.PARAMETER VlanId
+    Write - String
+    Use this to specify a Vlan id on the Network Adapter.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Ensures that the VM Network Adapter is Present or Absent. The default value is Present.
+
+.PARAMETER DynamicMacAddress
+    Read - Boolean
+    Returns $true if the network adapter uses a dynamic MAC address.
+
+.EXAMPLE 1
+
+Description not yet written.
+
+Configuration Example
+{
+    Import-DscResource -ModuleName 'HyperVDsc' -Name VMNetworkAdapter
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    VMNetworkAdapter HostOSAdapter {
+        Id = 'Management-NIC'
+        Name = 'Management-NIC'
+        SwitchName = 'SETSwitch'
+        VMName = 'ManagementOS'
+        Ensure = 'Present'
+    }
+}
+
+.EXAMPLE 2
+
+Description not yet written.
+
+Configuration Example
+{
+    Import-DscResource -ModuleName 'HyperVDsc' -Name VMNetworkAdapter
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    VMNetworkAdapter ManagementAdapter {
+        Id = 'Management-NIC'
+        Name = 'Management-NIC'
+        SwitchName = 'SETSwitch'
+        VMName = 'ManagementOS'
+        Ensure = 'Present'
+    }
+
+    VMNetworkAdapter ClusterAdapter {
+        Id = 'Cluster-NIC'
+        Name = 'Cluster-NIC'
+        SwitchName = 'SETSwitch'
+        VMName = 'ManagementOS'
+        Ensure = 'Present'
+    }
+}
+
+.EXAMPLE 3
+
+Add three network adapters to the same switch.
+
+Configuration Example
+{
+    Import-DscResource -ModuleName 'HyperVDsc' -Name VMNetworkAdapter
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    VMNetworkAdapter MyVM01NIC {
+        Id = 'MyVM01-NIC'
+        Name = 'MyVM01-NIC'
+        SwitchName = 'SETSwitch'
+        VMName = 'MyVM01'
+        Ensure = 'Present'
+    }
+
+    VMNetworkAdapter MyVM02NIC {
+        Id = 'MyVM02-NIC'
+        Name = 'NetAdapter'
+        SwitchName = 'SETSwitch'
+        VMName = 'MyVM02'
+        Ensure = 'Present'
+    }
+
+    VMNetworkAdapter MyVM03NIC {
+        Id = 'MyVM03-NIC'
+        Name = 'NetAdapter'
+        SwitchName = 'SETSwitch'
+        VMName = 'MyVM03'
+        Ensure = 'Present'
+    }
+}
+
+.EXAMPLE 4
+
+Description not yet written.
+
+Configuration Example
+{
+    Import-DscResource -ModuleName 'HyperVDsc' -Name VMNetworkAdapter
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    VMNetworkAdapter MyVM01NIC {
+        Id = 'MyVM01-NIC'
+        Name = 'MyVM01-NIC'
+        SwitchName = 'SETSwitch'
+        MacAddress = '001523be0c00'
+        VMName = 'MyVM01'
+        Ensure = 'Present'
+    }
+
+    VMNetworkAdapter MyVM02NIC {
+        Id = 'MyVM02-NIC'
+        Name = 'MyVM02-NIC'
+        SwitchName = 'SETSwitch'
+        MacAddress = '001523be0c00'
+        VMName = 'MyVM02'
+        Ensure = 'Present'
+    }
+}
+
+.EXAMPLE 5
+
+Add a network adapter that is using static IP address.
+
+Configuration Example
+{
+    Import-DscResource -ModuleName 'HyperVDsc'
+
+    VMNetworkAdapter MyVM01NIC
+    {
+        Ensure = 'Present'
+        Id = 'MyVM01-NIC'
+        Name = 'MyVM01-NIC'
+        SwitchName = 'SETSwitch'
+        MacAddress = '001523be0c00'
+        VMName = 'MyVM01'
+        NetworkSetting = VMNetworkAdapterNetworkSettings
+        {
+            IpAddress = '192.168.0.100'
+            Subnet = '255.255.255.255'
+            DefaultGateway = '192.168.0.1'
+            DnsServer = @( '192.168.0.1', '192.168.0.2' )
+        }
+    }
+}
+
+.EXAMPLE 6
+
+Add a network adapter that is using a VLAN tag.
+
+Configuration Example
+{
+    Import-DscResource -ModuleName 'HyperVDsc' -Name VMNetworkAdapter
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    VMNetworkAdapter MyVM01NIC {
+        Id = 'MyVM01-NIC'
+        Name = 'MyVM01-NIC'
+        SwitchName = 'SETSwitch'
+        MacAddress = '001523be0c00'
+        VMName = 'MyVM01'
+        VlanId = '1'
+        Ensure = 'Present'
+    }
+}
+

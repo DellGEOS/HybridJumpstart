@@ -110,19 +110,9 @@ Invoke-Command -ComputerName $Servers -ScriptBlock {
     Install-Module -Name Az.Accounts -Force
 } -Credential $Credentials
 
-# Install Az.ConnectedMachine module on nodes
-Invoke-Command -ComputerName $Servers -ScriptBlock {
-    Install-Module -Name Az.ConnectedMachine -Force
-} -Credential $Credentials
-
 # Install Az.Resources module on nodes
 Invoke-Command -ComputerName $Servers -ScriptBlock {
     Install-Module Az.Resources -Force
-} -Credential $Credentials
-
-# Change Local Admin password to be at least 12 chars
-Invoke-Command -ComputerName $servers -ScriptBlock {
-    Set-LocalUser -Name Administrator -AccountNeverExpires -Password (ConvertTo-SecureString "LS1setup!LS1setup!" -AsPlainText -Force)
 } -Credential $Credentials
 
 # Ensure nodes only have a single NIC with a Default Gateway
