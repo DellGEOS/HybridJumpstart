@@ -364,8 +364,8 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($Using:updateImages -eq "Yes") {
-                    $cuSearchString = "Cumulative Update for Microsoft server operating system*version 22H2 for x64-based Systems"
-                    $cuID = "Microsoft Server operating system-22H2"
+                    $cuSearchString = "Cumulative Update for Microsoft server operating system*version 23H2 for x64-based Systems"
+                    $cuID = "Microsoft Server operating system-23H2"
                     Write-Host "Looking for updates that match: $cuSearchString and $cuID"
                     $cuUpdate = Get-MSCatalogUpdate -Search $cuSearchString -ErrorAction Stop | Where-Object Products -eq $cuID | Where-Object Title -like "*$($cuSearchString)*" | Select-Object -First 1
                     if ($cuUpdate) {
@@ -407,8 +407,8 @@ configuration HybridJumpstart
 
             SetScript  = {
                 if ($Using:updateImages -eq "Yes") {
-                    $ssuSearchString = "Servicing Stack Update for Microsoft server operating system*version 22H2 for x64-based Systems"
-                    $ssuID = "Microsoft Server operating system-22H2"
+                    $ssuSearchString = "Servicing Stack Update for Microsoft server operating system*version 23H2 for x64-based Systems"
+                    $ssuID = "Microsoft Server operating system-23H2"
                     Write-Host "Looking for updates that match: $ssuSearchString and $ssuID"
                     $ssuUpdate = Get-MSCatalogUpdate -Search $ssuSearchString -ErrorAction Stop | Where-Object Products -eq $ssuID | Select-Object -First 1
                     if ($ssuUpdate) {
