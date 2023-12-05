@@ -179,7 +179,7 @@
         },
         "dataDiskSize": {
             "type": "string",
-            "defaultValue": "32",
+            "defaultValue": "64",
             "allowedValues": [
                 "32",
                 "64",
@@ -189,7 +189,7 @@
                 "1024"
             ],
             "metadata": {
-                "description": "The size of the individual data disks in GiB. 8 of these will be provisioned therefore 32GiB is the recommended default."
+                "description": "The size of the individual data disks in GiB. 8 of these will be provisioned and 64GiB is the recommended default."
             }
         },
         "azureVMUsername": {
