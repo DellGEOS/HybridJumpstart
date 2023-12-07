@@ -40,7 +40,7 @@ configuration HybridJumpstart
         [String]$mslabUri = "https://aka.ms/mslab/download"
         [String]$wsIsoUri = "https://go.microsoft.com/fwlink/p/?LinkID=2195280"
         [String]$azsHCIIsoUri = "https://aka.ms/PVenEREWEEW"
-        [String]$labConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/LabConfigDemo.ps1"
+        [String]$labConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/LabConfig23H2.ps1"
         [String]$rdpConfigUri = "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/dsc/RDP.rdp"
 
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
