@@ -126,7 +126,7 @@
             }
         },
         "AzureLocalMachines": {
-            "type": "Int",
+            "type": "int",
             "defaultValue": 2,
             "allowedValues": [
                 1,
@@ -139,12 +139,9 @@
             }
         },
         "AzureLocalMachineMemory": {
-            "type": "Int",
-            "defaultValue": 4,
+            "type": "int",
+            "defaultValue": 16,
             "allowedValues": [
-                4,
-                8,
-                12,
                 16,
                 24,
                 32,
@@ -155,7 +152,7 @@
             }
         },
         "telemetryLevel": {
-            "type": "String",
+            "type": "string",
             "defaultValue": "Full",
             "allowedValues": [
                 "None",
@@ -397,7 +394,7 @@
     "resources": [
         {
             "name": "[variables('publicIpAddressName')]",
-            "type": "Microsoft.Network/publicIpAddresses",
+            "type": "Microsoft.Network/publicIPAddresses",
             "apiVersion": "2024-05-01",
             "location": "[resourceGroup().location]",
             "sku": {
