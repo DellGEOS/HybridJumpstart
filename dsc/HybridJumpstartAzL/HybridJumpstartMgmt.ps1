@@ -685,11 +685,11 @@ configuration HybridJumpstart
         if ((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
             $azureUsername = $($Admincreds.UserName)
             $desktopPath = "C:\Users\$azureUsername\Desktop"
-            $rdpConfigPath = "$jumpstartPath\$vmPrefix-DC.rdp"
+            $rdpConfigPath = "$jumpstartPath\$vmPrefix-MGMT.rdp"
         }
         else {
             $desktopPath = [Environment]::GetFolderPath("Desktop")
-            $rdpConfigPath = "$desktopPath\$vmPrefix-DC.rdp"
+            $rdpConfigPath = "$desktopPath\$vmPrefix-MGMT.rdp"
         }
 
         Script "Download RDP File" {
@@ -718,7 +718,7 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
-                $vmIpAddress = (Get-VMNetworkAdapter -Name 'Internet' -VMName "$Using:vmPrefix-DC").IpAddresses | Where-Object { $_ -notmatch ':' }
+                $vmIpAddress = (Get-VMNetworkAdapter -Name 'Management1' -VMName "$Using:vmPrefix-MGMT").IpAddresses | Where-Object { $_ -notmatch ':' }
                 $rdpConfigFile = Get-Content -Path "$Using:rdpConfigPath"
                 $rdpConfigFile = $rdpConfigFile.Replace("<<VM_IP_Address>>", $vmIpAddress)
                 Out-File -FilePath "$Using:rdpConfigPath" -InputObject $rdpConfigFile -Force
@@ -787,6 +787,40 @@ configuration HybridJumpstart
             }
             DependsOn  = "[Script]Edit RDP File"
         }
+
+        Script "Enable RDP on MGMT" {
+            GetScript  = {
+                $vmIpAddress = (Get-VMNetworkAdapter -Name 'Management1' -VMName "$Using:vmPrefix-MGMT").IpAddresses | Where-Object { $_ -notmatch ':' }
+                if ((Test-NetConnection $vmIpAddress -CommonTCPPort rdp).TcpTestSucceeded -eq "True") {
+                    $result = $true
+                }
+                else {
+                    $result = $false
+                }
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
+                Invoke-Command -VMName "$Using:vmPrefix-MGMT" -Credential $msLabCreds -ScriptBlock {
+                    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+                    Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+                    Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+                }
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]Edit RDP File"
+        }
+
         
         Script "Deploy WAC" {
             GetScript  = {
@@ -846,7 +880,7 @@ configuration HybridJumpstart
                 $state = [scriptblock]::Create($GetScript).Invoke()
                 return $state.Result
             }
-            DependsOn  = "[Script]Enable RDP on DC"
+            DependsOn  = "[Script]Enable RDP on MGMT"
         }
 
         Script "Update DC" {
@@ -885,6 +919,48 @@ configuration HybridJumpstart
                     }
                     Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/media/hybridjumpstart.png' -OutFile "C:\Windows\Web\Wallpaper\Windows\hybridjumpstart.png" -UseBasicParsing
                     Set-GPPrefRegistryValue -Name "Default Domain Policy" -Context User -Action Replace -Key "HKCU\Control Panel\Desktop" -ValueName Wallpaper -Value "C:\Windows\Web\Wallpaper\Windows\hybridjumpstart.png" -Type String
+                    $cert = Invoke-Command -ComputerName $GatewayServerName `
+                        -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=Windows Admin Center" }
+                    $cert | Export-Certificate -FilePath $env:TEMP\WACCert.cer
+                    Import-Certificate -FilePath $env:TEMP\WACCert.cer -CertStoreLocation Cert:\LocalMachine\Root\
+                }
+            }
+
+            TestScript = {
+                # Create and invoke a scriptblock using the $GetScript automatic variable, which contains a string representation of the GetScript.
+                $state = [scriptblock]::Create($GetScript).Invoke()
+                return $state.Result
+            }
+            DependsOn  = "[Script]Deploy WAC"
+        }
+
+        Script "Update MGMT" {
+            GetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
+                Start-Sleep -Seconds 10
+                $result = Invoke-Command -VMName "$Using:vmPrefix-MGMT" -Credential $msLabCreds -ScriptBlock {
+                    if (Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -like "CN=Windows Admin Center") {
+                        return $true
+                    }
+                    else {
+                        return $false
+                    }
+                }
+                return @{ 'Result' = $result }
+            }
+
+            SetScript  = {
+                $msLabUsername = "dell\labadmin"
+                $msLabPassword = 'LS1setup!'
+                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
+                Invoke-Command -VMName "$Using:vmPrefix-MGMT" -Credential $msLabCreds -ScriptBlock {
+                    $GatewayServerName = "WACGW"
                     $cert = Invoke-Command -ComputerName $GatewayServerName `
                         -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=Windows Admin Center" }
                     $cert | Export-Certificate -FilePath $env:TEMP\WACCert.cer
