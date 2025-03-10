@@ -378,14 +378,14 @@
         "artifactsLocation": "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/",
         "randomGUID": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, parameters('virtualMachineName')),0,6)]",
         "dnsNameForPublicIP": "[toLower(concat(parameters('virtualMachineName'), variables('randomGUID')))]",
-        "virtualNetworkName": "HybridJumpstartvNet",
-        "networkInterfaceName": "HybridJumpstartNIC1",
-        "networkSecurityGroupName": "HybridJumpstartNSG",
+        "virtualNetworkName": "[concat(parameters('virtualMachineName'), 'vNET')]",
+        "networkInterfaceName": "[concat(parameters('virtualMachineName'), 'NIC1')]",
+        "networkSecurityGroupName": "[concat(parameters('virtualMachineName'), 'NSG')]",
         "addressPrefix": "10.0.0.0/16",
         "privateIPAddress": "10.0.0.4",
-        "subnetName": "HybridJumpstartSubnet",
+        "subnetName": "[concat(parameters('virtualMachineName'), 'Subnet')]",
         "subnetPrefix": "10.0.0.0/24",
-        "publicIpAddressName": "HybridJumpstartPubIP",
+        "publicIpAddressName": "[concat(parameters('virtualMachineName'), 'PubIP')]",
         "publicIpAddressType": "Dynamic",
         "publicIpAddressSku": "Basic",
         "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', variables('virtualNetworkName'))]",
@@ -409,7 +409,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2024-11-01",
+            "apiVersion": "2024-07-01",
             "name": "[variables('virtualNetworkName')]",
             "properties": {
                 "mode": "Incremental",
@@ -558,7 +558,7 @@
                 {
                     "type": "extensions",
                     "name": "ConfigureHybridJumpstart",
-                    "apiVersion": "2021-03-01",
+                    "apiVersion": "2024-07-01",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
                         "[parameters('virtualMachineName')]"
