@@ -1,0 +1,10 @@
+{
+    "Modules": [
+        "StorageDSC",
+        "NetworkingDSC",
+        "ComputerManagementDsc",
+        "HyperVDsc",
+        "MSCatalogLTS",
+        "Hyper-ConvertImage"
+    ]
+}

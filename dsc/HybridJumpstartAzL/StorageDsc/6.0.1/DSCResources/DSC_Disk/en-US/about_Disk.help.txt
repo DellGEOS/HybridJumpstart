@@ -1,0 +1,480 @@
+.NAME
+    Disk
+
+.DESCRIPTION
+    The resource is used to initialize, format and mount the partition/volume as a drive
+    letter.
+    The disk to add the partition/volume to is selected by specifying the DiskId and
+    optionally DiskIdType.
+    The DiskId value can be a Disk Number, Unique Id,  Guid, Location,
+    FriendlyName or SerialNumber.
+
+    **Important: The Disk Number is not a reliable method of selecting a disk because
+    it has been shown to change between reboots in some environments.
+    It is recommended to use the Unique Id if possible.**
+
+    The Disk Number, Unique Id, Guid, Location, FriendlyName and SerialNumber
+    can be identified for a disk by using the PowerShell command:
+
+    `powershell
+    Get-Disk | Select-Object -Property FriendlyName,DiskNumber,UniqueId,Guid,Location,SerialNumber
+    `
+
+    Note: The Guid identifier method of specifying disks is only supported as an
+    identifier for disks with GPT partition table format. If the disk is RAW
+    (e.g. the disk has been initialized) then the Guid identifier method can not
+    be used. This is because the Guid for a disk is only assigned once the partition
+    table for the disk has been created.
+
+    ## Dev Drive
+
+    The Dev Drive feature is currently available on Windows 11 in builds 10.0.22621.2338
+    or later. See https://learn.microsoft.com/en-us/windows/dev-drive/.
+
+    ### What is a Dev Drive volume and how is it different from regular volumes?
+
+    Dev Drive volumes from a storage perspective are just like regular ReFS volumes
+    on a Windows machine. The difference However, is that most of the filter drivers
+    except the antivirus filter will not attach to the volume at boot time by default.
+    This is a low-level concept that most users will never need to interact with but
+    for further reading, see the documentation https://learn.microsoft.com/en-us/windows/dev-drive/#how-do-i-configure-additional-filters-on-dev-drive
+    for further reading.
+
+    ### What is the default state of the Dev Drive flag in this resource?
+
+    By default, the Dev Drive flag is set to false. This means that a Dev Drive
+    volume will not be created with the inputted parameters. This is used to
+    create/reconfigure non Dev Drive volumes. Setting the flag to true will
+    attempt to create/reconfigure a volume as a Dev Drive volume using the users'
+    inputted parameters.
+
+    ### Can more than one Dev Drive be mounted at a time?
+
+    Yes, more than one Dev Drive volume can be mounted at a time. You can have as
+    many Dev Drive volumes as the physical storage amount on the disk permits.
+    Though, it should be noted, that the minimum size for a single Dev Drive volume
+    is 50 Gb.
+
+    ### If I have a non Dev Drive volume that is 50 Gb or more can it be reformatted as a Dev Drive volume?
+
+    Yes, since the Dev Drive volume is just like any other volume storage wise to the
+    Windows operating system, a non Dev Drive ReFS volume can be reformatted as a
+    Dev Drive volume. An NTFS volume can also be reformatted as a Dev Drive volume.
+    Note, the Disk resource will throw an exception, should you also attempt to resize
+    a ReFS volume while attempting to reformat it as a Dev Drive volume since ReFS
+    volumes cannot be resized. As Dev Drive volumes are also ReFS volumes, they carry
+    the same restrictions, see: https://learn.microsoft.com/en-us/windows-server/storage/refs/refs-overview
+
+    ### If I don't have any unallocated space available to create a Dev Drive volume, what will happen?
+
+    The Disk resource uses the Get-PartitionSupportedSize cmdlet to know which
+    volume can be be resized to a safe size to create enough unallocated space for
+    the Dev Drive volume to be created. As long as the size parameter is used, the
+    Disk resource will shrink the first non ReFS Drive whose (MaxSize - MinSize) is
+    greater than or equal to the size entered in the size parameter.
+
+    If unallocated space exists but isn't enough to create a Dev Drive volume with,
+    the Disk Resource will only shrink the volume noted above by the minimum size
+    needed, to add to the existing unallocated space so it can be equal to the size
+    parameter. For example, if you wanted to create a new 50 Gb Dev Drive volume on
+    disk 0, and let's say on disk 0 there was only a 'C' drive that was 800 Gb in size.
+    Next to the 'C' drive there was only 40 Gb of free contiguous unallocated space.
+    The Disk resource would shrink the 'C' drive by 10 Gb,  creating an addition 10
+    Gb of unallocated space. Now the unallocated space would be 50 Gb in size. The
+    disk resource would then create a new partition and create the Dev Drive volume
+    into this new partition.
+
+    Note: if no size is entered the disk resource will throw an error stating that size is 0 gb, so no partitions can be resized.
+
+    ### Dev Drive requirements for this resource
+
+    There are only five requirements:
+
+    1. The Dev Drive feature must be available on the machine. We assert that this
+       is true in order to format a Dev Drive volume onto a partition.
+    1. The Dev Drive feature is enabled on the machine.
+       > Note: the feature could be disabled by either a group or system policy, so
+       > if ran in an enterprise environment this should be checked. Note, once a Dev
+       > Drive volume is created, its functionality will not change and will not be
+       > affected should the feature become disabled afterwards. Disablement would
+       > only prevent new Dev Drive volumes from being created. However, this could
+       > affect the idempotence for the Drive. For example, changes to this drive
+       > after disablement (e.g., reformatting the volume as an NTFS volume) would
+       > not be corrected by rerunning the configuration. Since the feature is
+       > disabled, attempting reformat the volume as a Dev Drive volume will throw an
+       > error advising you that it is not possible due to the feature being disabled.
+    1. If the size parameter is entered, the value must be greater than or equal to
+       50 Gb in size. We assert that this is true in order to format a Dev Drive
+       volume onto a partition.
+    1. Currently today, if the size parameter is not entered then the Disk resource
+       will use the maximum space available on the Disk. When the DevDrive flag is
+       set to $true, then we assert that the maximum available free unallocated space
+       on the Disk should be 50 Gb or more in size. This assertion only comes into
+       play if the volume doesn't already exist.
+    1. The FSformat parameter must be set to 'ReFS', when the DevDrive flag is
+       set to true. We assert that this is true and throw an exception if it is not.
+
+    ## Testing
+
+    Note: Integration tests are not run for the Disk resource when SerialNumber
+    is used since the virtual disk that is created does not have a serial number.
+
+    There are no Dev Drive integration tests as the feature is not available in Server
+    2019 and 2022.
+
+    ## Known Issues
+
+    ### Defragsvc Conflict
+
+    The 'defragsvc' service ('Optimize Drives') may cause the following errors when
+    enabled with this resource. The following error may occur when testing the state
+    of the resource:
+
+    `text
+    PartitionSupportedSize
+    + CategoryInfo : NotSpecified: (StorageWMI:) [], CimException
+    + FullyQualifiedErrorId : StorageWMI 4,Get-PartitionSupportedSize
+    + PSComputerName : localhost
+    `
+
+    The 'defragsvc' service should be stopped and set to manual start up to prevent
+    this error. Use the Service resource in either the 'xPSDesiredStateConfgiuration'
+    or 'PSDSCResources' resource module to set the 'defragsvc' service is always
+    stopped and set to manual start up.
+
+    ### Null Location
+
+    The Location for a disk may be null for some types of disk,
+    e.g. file-based virtual disks. Physical disks or Virtual disks provided via a
+    hypervisor or other hardware virtualization platform should not be affected.
+
+    ### Maximum Supported Partition Size
+
+    On some disks the maximum supported partition size may differ from the actual
+    size of a partition created when specifying the maximum size. This difference
+    in reported size is always less than 1MB, so if the reported _maximum supported
+    partition size_ is less than 1MB then the partition will be considered to be
+    in the correct state. This is a work around for https://windowsserver.uservoice.com/forums/301869-powershell/suggestions/36967870-get-partitionsupportedsize-and-msft-partition-clas
+    that has been reported on user voice and also discussed in https://github.com/dsccommunity/StorageDsc/issues/181.
+
+    ### ReFS on Windows Server 2019
+
+    On Windows Server 2019 (build 17763 and above), Format-Volume throws an
+    'Invalid Parameter' exception when called with ReFS as the FileSystem
+    parameter. This results in an 'Invalid Parameter' exception being thrown
+    in the Set in the 'Disk' resource.
+    There is currently no known work around for this issue. It is being tracked
+    in https://github.com/dsccommunity/StorageDsc/issues/227.
+
+.PARAMETER DriveLetter
+    Key - String
+    Specifies the identifier for which disk to modify.
+
+.PARAMETER DiskId
+    Required - String
+    Specifies the disk identifier for the disk to modify.
+
+.PARAMETER DiskIdType
+    Write - String
+    Allowed values: Number, UniqueId, Guid, Location, FriendlyName, SerialNumber
+    Specifies the identifier type the DiskId contains. Defaults to Number.
+
+.PARAMETER PartitionStyle
+    Write - String
+    Allowed values: MBR, GPT
+    Specifies the partition style of the disk. Defaults to GPT.
+
+.PARAMETER Size
+    Write - UInt64
+    Specifies the size of new volume. Leave empty to use the remaining free space.
+
+.PARAMETER FSLabel
+    Write - String
+    Define volume label if required.
+
+.PARAMETER AllocationUnitSize
+    Write - UInt32
+    Specifies the allocation unit size to use when formatting the volume.
+
+.PARAMETER FSFormat
+    Write - String
+    Allowed values: NTFS, ReFS
+    Specifies the file system format of the new volume.
+
+.PARAMETER AllowDestructive
+    Write - Boolean
+    Specifies if potentially destructive operations may occur.
+
+.PARAMETER ClearDisk
+    Write - Boolean
+    Specifies if the disks partition schema should be removed entirely, even if data and OEM partitions are present. Only possible with AllowDestructive enabled.
+
+.PARAMETER DevDrive
+    Write - Boolean
+    Specifies if the volume should be formatted as a Dev Drive.
+
+.EXAMPLE 1
+
+This configuration will wait for disk 2 to become available, and then make the disk available as
+two new formatted volumes, 'G' and 'J', with 'J' using all available space after 'G' has been
+created. It also creates a new ReFS formated volume on disk 3 attached as drive letter 'S'.
+
+Configuration Disk_InitializeDataDisk
+{
+    Import-DSCResource -ModuleName StorageDsc
+
+    Node localhost
+    {
+        WaitForDisk Disk2
+        {
+             DiskId = 2
+             RetryIntervalSec = 60
+             RetryCount = 60
+        }
+
+        Disk GVolume
+        {
+             DiskId = 2
+             DriveLetter = 'G'
+             Size = 10737418240
+             DependsOn = '[WaitForDisk]Disk2'
+        }
+
+        Disk JVolume
+        {
+             DiskId = 2
+             DriveLetter = 'J'
+             FSLabel = 'Data'
+             DependsOn = '[Disk]GVolume'
+        }
+
+        WaitForDisk Disk3
+        {
+             DiskId = 3
+             RetryIntervalSec = 60
+             RetryCount = 60
+        }
+
+        Disk SVolume
+        {
+             DiskId = 3
+             DriveLetter = 'S'
+             Size = 107374182400
+             FSFormat = 'ReFS'
+             AllocationUnitSize = 64KB
+             DependsOn = '[WaitForDisk]Disk3'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+This configuration will wait for disk 2 with Unique Id '5E1E50A401000000001517FFFF0AEB84' to become
+available, and then make the disk available as two new formatted volumes, 'G' and 'J', with 'J'
+using all available space after 'G' has been created. It also creates a new ReFS formated
+volume on disk 3 with Unique Id '5E1E50A4010000000029AB39450AC9A5' attached as drive letter 'S'.
+
+Configuration Disk_InitializeDataDiskUsingUniqueId
+{
+    Import-DSCResource -ModuleName StorageDsc
+
+    Node localhost
+    {
+        WaitForDisk Disk2
+        {
+             DiskId = '5E1E50A401000000001517FFFF0AEB84' # Disk 2
+             DiskIdType = 'UniqueId'
+             RetryIntervalSec = 60
+             RetryCount = 60
+        }
+
+        Disk GVolume
+        {
+             DiskId = '5E1E50A401000000001517FFFF0AEB84' # Disk 2
+             DiskIdType = 'UniqueId'
+             DriveLetter = 'G'
+             Size = 10GB
+             DependsOn = '[WaitForDisk]Disk2'
+        }
+
+        Disk JVolume
+        {
+             DiskId = '5E1E50A401000000001517FFFF0AEB84' # Disk 2
+             DiskIdType = 'UniqueId'
+             DriveLetter = 'J'
+             FSLabel = 'Data'
+             DependsOn = '[Disk]GVolume'
+        }
+
+        WaitForDisk Disk3
+        {
+             DiskId = '5E1E50A4010000000029AB39450AC9A5' # Disk 3
+             DiskIdType = 'UniqueId'
+             RetryIntervalSec = 60
+             RetryCount = 60
+        }
+
+        Disk SVolume
+        {
+             DiskId = '5E1E50A4010000000029AB39450AC9A5' # Disk 3
+             DiskIdType = 'UniqueId'
+             DriveLetter = 'S'
+             Size = 100GB
+             FSFormat = 'ReFS'
+             AllocationUnitSize = 64KB
+             DependsOn = '[WaitForDisk]Disk3'
+        }
+    }
+}
+
+.EXAMPLE 3
+
+For this scenario we want to create two 60 Gb Dev Drive volumes. We know that disk 2 has 3 existing
+NTFS volumes and we prefer not to remove them. At most we only want the disk DSC resource to shrink any
+of them should there not be enough space for any of the Dev Drive volumes to be created. We also know that the
+the 3 existing volumes are 100Gb, 200Gb and 300Gb in size and disk 2 is 600 Gb in size. Since all the space
+is being used by the existing volumes, The Disk Dsc resource will resize the existing volumes to create
+space for our new Dev Drive volumes. An example of what could happen is the Disk resource could resize the
+300Gb volume to 240Gb for the first Dev Drive volume and then resize the 240Gb volume again to 180Gb for the second.
+Thats just one combination, the disk Dsc resource uses the Get-PartitionSupportedSize cmdlet to know which volume
+can be be resized to a safe size to create enough unallocated space for the Dev Drive volume to be created. Note:
+ReFS volumes cannot be resized, so if the existing volumes were all ReFS volumes, the Disk Dsc resource would not be able
+to resize any volumes and would instead throw an exception.
+
+This configuration below will wait for disk 2 to become available, and then create two new 60 Gb Dev Drive volumes,
+'E' and 'F'. The volumes will be formatted as ReFS volumes and labeled 'Dev Drive 1' and 'Dev Drive 2' respectively.
+Note: setting 'AllowDestructive' to $true will not cause the disk to be cleared, as the flag is only used when there
+is a need to resize an existing partition. It is used as confirmation that you agree to the resizing which will
+create the necessary space for the Dev Drive volume. This flag is **NOT** needed if you already know there is enough
+unallocated space on the disk to create the Dev Drive volume. If this flag is not used and there is not enough space
+to create the Dev Drive volume an error will be thrown and the Dev Drive will not be created. Its important to be very
+careful not to add the 'ClearDisk' flag while using the 'AllowDestructive' flag, as this will cause the disk to be cleared,
+and all data lost on the disk (even existing volumes).
+
+Configuration Disk_CreateDevDriveOnDiskWithExistingPartitions
+{
+    Import-DSCResource -ModuleName StorageDsc
+
+    Node localhost
+    {
+        WaitForDisk Disk2
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB84' # Disk 2
+            DiskIdType = 'UniqueId'
+            RetryIntervalSec = 60
+            RetryCount = 60
+        }
+
+        # Will create a Dev Drive volume of 60 Gb called Dev Drive 1.
+        Disk DevDrive1
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB84'
+            DiskIdType = 'UniqueId'
+            DriveLetter = 'E'
+            FSFormat = 'ReFS'
+            FSLabel = 'DevDrive 1'
+            DevDrive = $true
+            AllowDestructive = $true
+            Size = 60Gb
+            DependsOn = '[WaitForDisk]Disk2'
+        }
+
+        # Will create a Dev Drive volume of 60 Gb called Dev Drive 2.
+        Disk DevDrive2
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB84'
+            DiskIdType = 'UniqueId'
+            DriveLetter = 'F'
+            FSFormat = 'ReFS'
+            FSLabel = 'DevDrive 2'
+            DevDrive = $true
+            AllowDestructive = $true
+            Size = 60Gb
+            DependsOn = '[Disk]DevDrive1'
+        }
+    }
+}
+
+.EXAMPLE 4
+
+For this scenario we want to create 2 Non Dev Drive volumes and 2 Dev Drive volumes on a new 1 Tb disk
+(disk 1) with no partitions. The first non Dev Drive volume will be an NTFS volume of 100 Gb called 'Data'.
+The second non Dev Drive volume will be a ReFS volume of 200 Gb called 'Logs'. The first Dev Drive volume
+will be a ReFS volume of 300 Gb called 'Dev Drive 1'. The second Dev Drive volume will be a ReFS volume of
+400 Gb called 'Dev Drive 2'. Note: The Dev Drive volumes will be created after the non Dev Drive volumes are
+created but the order does not matter, we could have created the Dev Drive volumes first and then the non Dev
+Drive volumes or even interleave them. Since this is a new disk and we know there are no existing partitions,
+we do not need to set the 'AllowDestructive' flag for the Dev Drive volumes like in
+3-Disk_CreateDevDriveOnDiskWithExistingPartitions.ps1.
+
+This configuration below will wait for disk 1 to become available, and then create two new non Dev Drive volumes
+called Data and Logs with Drive letters G and J respectively. The D drive is an NTFS drive and the J drive is an
+ReFS drive. It also create two new Dev Drive volumes which are assigned drive letters K and L respectively.
+The Dev Drive volumes are formatted as ReFS volumes and labeled 'Dev Drive 1' and 'Dev Drive 2' respectively.
+
+Configuration Disk_InitializeDiskWithMultipleDrivesIncludingDevDrives
+{
+    Import-DSCResource -ModuleName StorageDsc
+
+    Node localhost
+    {
+        WaitForDisk Disk1
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB81' # Disk 1
+            DiskIdType = 'UniqueId'
+            RetryIntervalSec = 60
+            RetryCount = 60
+        }
+
+        # Will create a NTFS volume of 100 Gb called Data.
+        Disk DataVolume
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB81'
+            DiskIdType = 'UniqueId'
+            DriveLetter = 'G'
+            FSFormat = 'NTFS'
+            FSLabel = 'Data'
+            Size = 100Gb
+            DependsOn = '[WaitForDisk]Disk1'
+        }
+
+        # Will create a ReFS volume of 200 Gb called Logs.
+        Disk LogsVolume
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB81'
+            DiskIdType = 'UniqueId'
+            DriveLetter = 'J'
+            FSFormat = 'ReFS'
+            FSLabel = 'Logs'
+            Size = 200Gb
+            DependsOn = '[Disk]DataVolume'
+        }
+
+        # Will create a Dev Drive volume of 300 Gb called Dev Drive 1.
+        Disk DevDrive1
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB81'
+            DiskIdType = 'UniqueId'
+            DriveLetter = 'K'
+            FSFormat = 'ReFS'
+            FSLabel = 'DevDrive 1'
+            DevDrive = $true
+            Size = 300Gb
+            DependsOn = '[Disk]LogsVolume'
+        }
+
+        # Will create a Dev Drive volume of 400 Gb called Dev Drive 2.
+        Disk DevDrive2
+        {
+            DiskId = '5E1E50A401000000001517FFFF0AEB81'
+            DiskIdType = 'UniqueId'
+            DriveLetter = 'L'
+            FSFormat = 'ReFS'
+            FSLabel = 'DevDrive 2'
+            DevDrive = $true
+            Size = 400Gb
+            DependsOn = '[Disk]DevDrive1'
+        }
+    }
+}
+

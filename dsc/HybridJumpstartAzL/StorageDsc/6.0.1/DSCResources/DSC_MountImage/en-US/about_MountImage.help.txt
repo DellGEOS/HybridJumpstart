@@ -1,0 +1,90 @@
+.NAME
+    MountImage
+
+.DESCRIPTION
+    The resource is used to mount or unmount an ISO/VHD disk image. It can be
+    mounted as read-only (ISO, VHD, VHDx) or read/write (VHD, VHDx).
+
+.PARAMETER ImagePath
+    Key - String
+    Specifies the path of the VHD or ISO file.
+
+.PARAMETER DriveLetter
+    Write - String
+    Specifies the drive letter to mount this VHD or ISO to.
+
+.PARAMETER StorageType
+    Write - String
+    Allowed values: ISO, VHD, VHDx, VHDSet
+    Specifies the storage type of a file. If the StorageType parameter is not specified, then the storage type is determined by file extension.
+
+.PARAMETER Access
+    Write - String
+    Allowed values: ReadOnly, ReadWrite
+    Allows a VHD file to be mounted in read-only or read-write mode. ISO files are mounted in read-only mode regardless of what parameter value you provide.
+
+.PARAMETER Ensure
+    Write - String
+    Allowed values: Present, Absent
+    Determines whether the VHD or ISO should be mounted or not.
+
+.EXAMPLE 1
+
+This configuration will unmount the ISO file 'c:\Sources\SQL.iso'
+if mounted as a drive.
+
+configuration MountImage_DismountISO
+{
+    Import-DscResource -ModuleName StorageDsc
+
+    MountImage ISO
+    {
+        ImagePath = 'c:\Sources\SQL.iso'
+        Ensure = 'Absent'
+    }
+}
+
+.EXAMPLE 2
+
+This configuration will mount an ISO file as drive S:.
+
+configuration MountImage_MountISO
+{
+    Import-DscResource -ModuleName StorageDsc
+
+    MountImage ISO
+    {
+        ImagePath   = 'c:\Sources\SQL.iso'
+        DriveLetter = 'S'
+    }
+
+    WaitForVolume WaitForISO
+    {
+        DriveLetter      = 'S'
+        RetryIntervalSec = 5
+        RetryCount       = 10
+    }
+}
+
+.EXAMPLE 3
+
+This configuration will mount a VHD file and wait for it to become available.
+
+configuration MountImage_MountVHD
+{
+    Import-DscResource -ModuleName StorageDsc
+
+    MountImage MountVHD
+    {
+        ImagePath   = 'd:\Data\Disk1.vhd'
+        DriveLetter = 'V'
+    }
+
+    WaitForVolume WaitForVHD
+    {
+        DriveLetter      = 'V'
+        RetryIntervalSec = 5
+        RetryCount       = 10
+    }
+}
+

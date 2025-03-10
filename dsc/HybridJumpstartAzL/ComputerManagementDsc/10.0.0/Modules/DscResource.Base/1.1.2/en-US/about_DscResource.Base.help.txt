@@ -1,0 +1,25 @@
+TOPIC
+    about_DscResource.Base
+
+SHORT DESCRIPTION
+    Contains standard classes for class-based resource development.
+
+LONG DESCRIPTION
+    This module contains common classes that can be used for class-based DSC resources development.
+
+EXAMPLES
+    PS C:\> using module 'DscResource.Base'
+
+NOTE:
+    Thank you to the DSC Community contributors who contributed to this module by
+    writing code, sharing opinions, and provided feedback.
+
+TROUBLESHOOTING NOTE:
+    Go to the Github repository for read about issues, submit a new issue, and read
+    about new releases. https://github.com/dsccommunity/DscResource.Base
+
+SEE ALSO
+    - https://github.com/dsccommunity/DscResource.Base
+
+KEYWORDS
+    DSC, DscResource, Classes

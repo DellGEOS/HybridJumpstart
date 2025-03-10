@@ -1,0 +1,317 @@
+.NAME
+    WindowsEventLog
+
+.DESCRIPTION
+    This resource is used to configure the settings of an event log.
+
+    ## RestrictGuestAccess and Event Log DACLs
+
+    If you choose to restrict guest access to an event log, the
+    RestrictGuestAccess registry key will be configured and the event
+    log's DACL will be checked and updated to ensure the built-in
+    Guests group has been removed. Conversely, if you choose to
+    allow guest access, the registry key will be configured and the
+    DACL will be checked and updated to ensure the built-in Guests
+    group has been added.
+
+    This DACL behavior also applies if you configure your own custom
+    DACL via the SecurityDescriptor property and a warning will be
+    displayed to notify you of the change.
+
+    ## RegisteredSource and Resource Files
+
+    The PowerShell cmdlets that define event log sources do not check
+    for the presence of the resource file on the computer and this
+    resource follows the same paradigm. If you choose to create your
+    own resource files and want to register them with the event source,
+    you must ensure the files have been copied to the computer via a
+    DSC File resource definition or equivalent.
+
+.PARAMETER LogName
+    Key - String
+    Specifies the name of a valid event log
+
+.PARAMETER IsEnabled
+    Write - Boolean
+    Specifies whether the specified event log should be enabled or disabled
+
+.PARAMETER MaximumSizeInBytes
+    Write - SInt64
+    Specifies the maximum size in bytes for the specified event log
+
+.PARAMETER LogMode
+    Write - String
+    Allowed values: AutoBackup, Circular, Retain
+    Specifies the log mode for the specified event log
+
+.PARAMETER SecurityDescriptor
+    Write - String
+    Specifies the SDDL for the specified event log
+
+.PARAMETER LogFilePath
+    Write - String
+    Specifies the file name and path for the specified event log
+
+.PARAMETER LogRetentionDays
+    Write - SInt32
+    Specifies the number of days to retain events when the log mode is AutoBackup
+
+.PARAMETER RegisteredSource
+    Write - String
+    Specifies the name of an event source to register for the specified event log
+
+.PARAMETER CategoryResourceFile
+    Write - String
+    Specifies the category resource file for the event source
+
+.PARAMETER MessageResourceFile
+    Write - String
+    Specifies the message resource file for the event source
+
+.PARAMETER ParameterResourceFile
+    Write - String
+    Specifies the parameter resource file for the event source
+
+.PARAMETER RestrictGuestAccess
+    Write - Boolean
+    Specifies whether to allow guests to have access to the specified event log
+
+.EXAMPLE 1
+
+Sets the Application log to a maximum size of 4096MB,
+the log mode to circular, and ensure it is enabled.
+
+Configuration WindowsEventLog_SetLogSize_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog Application
+        {
+            LogName            = 'Application'
+            IsEnabled          = $true
+            LogMode            = 'Circular'
+            MaximumSizeInBytes = 4096MB
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Example script that registers MyEventSource as an event
+source with all resource files on the Application log.
+
+Configuration WindowsEventLog_RegisterEventSourceWithAllFiles_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        File MyEventSourceCategoryDll
+        {
+            Ensure          = 'Present'
+            Type            = 'File'
+            SourcePath      = '\\PULLSERVER\Files\MyEventSource.Category.dll'
+            DestinationPath = 'C:\Windows\System32\MyEventSource.Category.dll'
+        }
+
+        File MyEventSourceMessageDll
+        {
+            Ensure          = 'Present'
+            Type            = 'File'
+            SourcePath      = '\\PULLSERVER\Files\MyEventSource.Message.dll'
+            DestinationPath = 'C:\Windows\System32\MyEventSource.Message.dll'
+        }
+
+        File MyEventSourceParameterDll
+        {
+            Ensure          = 'Present'
+            Type            = 'File'
+            SourcePath      = '\\PULLSERVER\Files\MyEventSource.Parameter.dll'
+            DestinationPath = 'C:\Windows\System32\MyEventSource.Parameter.dll'
+        }
+
+        WindowsEventLog Application
+        {
+            LogName               = 'Application'
+            RegisteredSource      = 'MyEventSource'
+            CategoryResourceFile  = 'C:\Windows\System32\MyEventSource.Category.dll'
+            MessageResourceFile   = 'C:\Windows\System32\MyEventSource.Messages.dll'
+            ParameterResourceFile = 'C:\Windows\System32\MyEventSource.Parameters.dll'
+            DependsOn             = '[File]MyEventSourceCategoryDll',
+                                    '[File]MyEventSourceMessageDll',
+                                    '[File]MyEventSourceParameterDll'
+        }
+    }
+}
+
+.EXAMPLE 3
+
+Example script that sets the MSPaint Admin event channel
+to log mode AutoBackup, a maximum size of 2048MB, log
+retention for 10 days, and ensure it is enabled.
+
+Configuration WindowsEventLog_SetLogMode_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog MSPaintAdmin
+        {
+            LogName            = 'Microsoft-Windows-MSPaint/Admin'
+            IsEnabled          = $true
+            LogMode            = 'AutoBackup'
+            LogRetentionDays   = 10
+            MaximumSizeInBytes = 2048KB
+        }
+    }
+}
+
+.EXAMPLE 4
+
+Example script that sets the DSC Analytic log
+to size maximum size 4096MB, log mode to 'Retain' and
+ensures it is enabled.
+
+Configuration WindowsEventLog_EnableWindowsEventLog_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog DscAnalytic
+        {
+            LogName            = 'Microsoft-Windows-Dsc/Analytic'
+            IsEnabled          = $true
+            LogMode            = 'Retain'
+            MaximumSizeInBytes = 4096MB
+            LogFilePath        = '%SystemRoot%\System32\Winevt\Logs\Microsoft-Windows-DSC%4Analytic.evtx'
+        }
+    }
+}
+
+.EXAMPLE 5
+
+Example script that disables the DSC Analytic log.
+
+Configuration WindowsEventLog_DisableWindowsEventLog_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog DscAnalytic
+        {
+            LogName   = 'Microsoft-Windows-Dsc/Analytic'
+            IsEnabled = $false
+        }
+    }
+}
+
+.EXAMPLE 6
+
+Example script that reconfigures the security
+descriptor (DACL) of the Application log.
+
+Configuration WindowsEventLog_SetSecurityDescriptor_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog Application
+        {
+            LogName            = 'Application'
+            SecurityDescriptor = 'O:BAG:SYD:(A;;0x7;;;BA)(A;;0x7;;;SO)(A;;0x3;;;IU)(A;;0x3;;;SU)(A;;0x3;;;S-1-5-3)(A;;0x3;;;S-1-5-33)(A;;0x1;;;S-1-5-32-573)'
+        }
+    }
+}
+
+.EXAMPLE 7
+
+Example script that prohibits guests from accessing
+the System event log.
+
+Configuration WindowsEventLog_RestrictGuestAccess_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog System
+        {
+            LogName             = 'System'
+            RestrictGuestAccess = $true
+        }
+    }
+}
+
+.EXAMPLE 8
+
+Example script that allows guests to access
+the Application event log.
+
+Configuration WindowsEventLog_AllowGuestAccess_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog System
+        {
+            LogName             = 'System'
+            RestrictGuestAccess = $false
+        }
+    }
+}
+
+.EXAMPLE 9
+
+Example script that registers MyEventSource as an event
+source on the Application log.
+
+Configuration WindowsEventLog_RegisterEventSource_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        WindowsEventLog Application
+        {
+            LogName           = 'Application'
+            RegisteredSource  = 'MyEventSource'
+        }
+    }
+}
+
+.EXAMPLE 10
+
+Example script that registers MyEventSource as an event
+source with a message resource file on the Application log.
+
+Configuration WindowsEventLog_RegisterEventSourceWithMessageFile_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        File MyEventSourceMessageDll
+        {
+            Ensure          = 'Present'
+            Type            = 'File'
+            SourcePath      = '\\PULLSERVER\Files\MyEventSource.dll'
+            DestinationPath = 'C:\Windows\System32\MyEventSource.dll'
+        }
+
+        WindowsEventLog Application
+        {
+            LogName             = 'Application'
+            RegisteredSource    = 'MyEventSource'
+            MessageResourceFile = 'C:\Windows\System32\MyEventSource.dll'
+            DependsOn           = '[File]MyEventSourceMessageDll'
+        }
+    }
+}
+

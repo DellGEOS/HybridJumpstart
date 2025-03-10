@@ -125,7 +125,7 @@
                 "description": "Select your VM generation, ideally Gen 2. Not all Azure regions support Gen 2 VMs."
             }
         },
-        "azureStackHCINodes": {
+        "AzureLocalMachines": {
             "type": "Int",
             "defaultValue": 2,
             "allowedValues": [
@@ -135,10 +135,10 @@
                 4
             ],
             "metadata": {
-                "description": "Select the number of nested Azure Stack HCI nodes you'd like to deploy."
+                "description": "Select the number of nested Azure Local machines you'd like to deploy."
             }
         },
-        "azureStackHCINodeMemory": {
+        "AzureLocalMachineMemory": {
             "type": "Int",
             "defaultValue": 4,
             "allowedValues": [
@@ -151,7 +151,7 @@
                 48
             ],
             "metadata": {
-                "description": "Select the memory per Azure Stack HCI node. If you choose more memory than will fit on your host system, the per-node memory will be reduced automatically."
+                "description": "Select the memory per Azure Local machine. If you choose more memory than will fit on your host system, the per-machine memory will be reduced automatically."
             }
         },
         "telemetryLevel": {
@@ -377,7 +377,7 @@
     "variables": {
         "dataDisksCount": 8,
         "updateImages": "No",
-        "dscUri": "https://github.com/DellGEOS/HybridJumpstart/raw/main/dsc/HybridJumpstart.zip",
+        "dscUri": "https://github.com/DellGEOS/HybridJumpstart/raw/main/dsc/HybridJumpstartAzL.zip",
         "artifactsLocation": "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/",
         "randomGUID": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, parameters('virtualMachineName')),0,6)]",
         "dnsNameForPublicIP": "[toLower(concat(parameters('virtualMachineName'), variables('randomGUID')))]",
@@ -398,7 +398,7 @@
         {
             "name": "[variables('publicIpAddressName')]",
             "type": "Microsoft.Network/publicIpAddresses",
-            "apiVersion": "2020-11-01",
+            "apiVersion": "2024-05-01",
             "location": "[resourceGroup().location]",
             "sku": {
                 "name": "[variables('publicIpAddressSku')]"
@@ -412,7 +412,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
+            "apiVersion": "2024-11-01",
             "name": "[variables('virtualNetworkName')]",
             "properties": {
                 "mode": "Incremental",
@@ -442,7 +442,7 @@
         {
             "name": "[variables('networkInterfaceName')]",
             "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2020-11-01",
+            "apiVersion": "2024-05-01",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[variables('virtualNetworkName')]",
@@ -473,7 +473,7 @@
         {
             "name": "[variables('networkSecurityGroupName')]",
             "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2020-11-01",
+            "apiVersion": "2024-05-01",
             "location": "[resourceGroup().location]",
             "properties": {
                 "securityRules": [
@@ -496,7 +496,7 @@
         {
             "name": "[parameters('virtualMachineName')]",
             "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2020-12-01",
+            "apiVersion": "2024-07-01",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/', variables('networkInterfaceName'))]"
@@ -580,8 +580,8 @@
                             },
                             "configurationArguments": {
                                 "customRdpPort": "[parameters('customRdpPort')]",
-                                "azureStackHCINodes": "[parameters('azureStackHCINodes')]",
-                                "azureStackHCINodeMemory": "[parameters('azureStackHCINodeMemory')]",
+                                "AzureLocalMachines": "[parameters('AzureLocalMachines')]",
+                                "AzureLocalMachineMemory": "[parameters('AzureLocalMachineMemory')]",
                                 "telemetryLevel": "[parameters('telemetryLevel')]",
                                 "updateImages": "[variables('updateImages')]"
                             }

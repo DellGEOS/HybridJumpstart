@@ -1,0 +1,131 @@
+.NAME
+    PSResourceRepository
+
+.SYNOPSIS
+    A class for configuring PowerShell Repositories.
+
+.DESCRIPTION
+
+
+.PARAMETER Ensure
+    Write - Ensure
+    If the repository should be present or absent on the server
+    being configured. Default values is 'Present'.
+
+.PARAMETER Name
+    Key - System.String
+    Specifies the name of the repository to manage.
+
+.PARAMETER SourceLocation
+    Write - System.String
+    Specifies the URI for discovering and installing modules from
+    this repository. A URI can be a NuGet server feed, HTTP, HTTPS,
+    FTP or file location.
+
+.PARAMETER Credential
+    Write - PSCredential
+    Specifies credentials of an account that has rights to register a repository.
+
+.PARAMETER ScriptSourceLocation
+    Write - System.String
+    Specifies the URI for the script source location.
+
+.PARAMETER PublishLocation
+    Write - System.String
+    Specifies the URI of the publish location. For example, for
+    NuGet-based repositories, the publish location is similar
+    to http://someNuGetUrl.com/api/v2/Packages.
+
+.PARAMETER ScriptPublishLocation
+    Write - System.String
+    Specifies the URI for the script publish location.
+
+.PARAMETER Proxy
+    Write - System.String
+    Specifies the URI of the proxy to connect to this PSResourceRepository.
+
+.PARAMETER ProxyCredential
+    Write - PSCredential
+    Specifies the Credential to connect to the PSResourceRepository proxy.
+
+.PARAMETER InstallationPolicy
+    Write - System.String
+    Allowed values: Untrusted, Trusted
+    Specifies the installation policy. Valid values are  'Trusted'
+    or 'Untrusted'. The default value is 'Untrusted'.
+
+.PARAMETER PackageManagementProvider
+    Write - System.String
+    Specifies a OneGet package provider. Default value is 'NuGet'.
+
+.PARAMETER Default
+    Write - Nullable[System.Boolean]
+    Specifies whether to set the default properties for the default PSGallery PSRepository.
+    Default may only be used in conjunction with a PSRepositoryResource named PSGallery.
+    The properties SourceLocation, ScriptSourceLocation, PublishLocation, ScriptPublishLocation, Credential,
+    and PackageManagementProvider may not be used in conjunction with Default.
+    When the Default parameter is used, properties are not enforced when PSGallery properties are changed outside of Dsc.
+
+.PARAMETER Reasons
+    Read - CMReason[]
+    Returns the reason a property is not in desired state.
+
+.EXAMPLE 1
+
+This configuration adds the PSGallery PSRepository to a machine
+
+configuration Register_PSGallery_Present
+{
+    Import-DscResource -ModuleName 'ComputerManagementDsc'
+
+    node localhost
+    {
+        PSResourceRepository 'Register PSGallery PSRepository'
+        {
+            Name    = 'PSGallery'
+            Ensure  = 'Present'
+            Default = $true
+        }
+    }
+}
+
+.EXAMPLE 2
+
+This configuration adds the PSRepository named MyPSRepository to a machine
+
+configuration Register_PSRepository_Present
+{
+    Import-DscResource -ModuleName 'ComputerManagementDsc'
+
+    node localhost
+    {
+        PSResourceRepository 'Register MyPSRepository PSRepository'
+        {
+            Name                      = 'MyPSRepository'
+            SourceLocation            = 'https://www.mypsrepository.com/api/v2'
+            ScriptSourceLocation      = 'https://www.mypsrepository.com/api/v2/package/'
+            PublishLocation           = 'https://www.mypsrepository.com/api/v2/items/psscript'
+            ScriptPublishLocation     = 'https://www.mypsrepository.com/api/v2/package/'
+            InstallationPolicy        = 'Trusted'
+            PackageManagementProvider = 'NuGet'
+        }
+    }
+}
+
+.EXAMPLE 3
+
+This configuration removes the PSGallery PSRepository from a machine
+
+configuration Repository_Absent
+{
+    Import-DscResource -ModuleName 'ComputerManagementDsc'
+
+    node localhost
+    {
+        PSResourceRepository 'Remove PSGallery PSRepository'
+        {
+            Name           = 'PSGallery'
+            Ensure         = 'Absent'
+        }
+    }
+}

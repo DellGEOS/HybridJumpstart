@@ -1,0 +1,64 @@
+.NAME
+    SystemRestorePoint
+
+.DESCRIPTION
+    This resource is used to create and delete restore points.
+    System Protection must be enabled on at least one drive for
+    this module to work.
+
+    System restore points are only applicable to workstation
+    operating systems. Server operating systems are not supported.
+
+.PARAMETER Ensure
+    Required - String
+    Allowed values: Present, Absent
+    Indicates that the computer restore is enabled or is disabled.
+
+.PARAMETER Description
+    Key - String
+    Specifies a descriptive name for the restore point.
+
+.PARAMETER RestorePointType
+    Write - String
+    Allowed values: APPLICATION_INSTALL, APPLICATION_UNINSTALL, DEVICE_DRIVER_INSTALL, MODIFY_SETTINGS, CANCELLED_OPERATION
+    Specifies the restore point type. Defaults to APPLICATION_INSTALL.
+
+.EXAMPLE 1
+
+Creates a system restore point.
+
+Configuration SystemRestorePoint_CreateModifySettings_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        SystemRestorePoint ModifySettings
+        {
+            Ensure           = 'Present'
+            Description      = 'Modify system settings'
+            RestorePointType = 'MODIFY_SETTINGS'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Deletes all restore points matching the description
+and the APPLICATION_INSTALL restore point type.
+
+Configuration SystemRestorePoint_DeleteApplicationInstalls_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        SystemRestorePoint DeleteTestApplicationinstalls
+        {
+            Ensure           = 'Absent'
+            Description      = 'Test Restore Point'
+            RestorePointType = 'APPLICATION_INSTALL'
+        }
+    }
+}
+

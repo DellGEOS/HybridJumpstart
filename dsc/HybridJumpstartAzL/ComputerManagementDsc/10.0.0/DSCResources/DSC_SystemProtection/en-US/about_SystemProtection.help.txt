@@ -1,0 +1,149 @@
+.NAME
+    SystemProtection
+
+.DESCRIPTION
+    This resource is used configure System Protection. System
+    Protection is only applicable to workstation operating
+    systems. Server operating systems are not supported.
+
+    ## DiskUsage and Force Parameters
+
+    The amount of disk that can be allocated for System Protection
+    is configurable on a per-drive basis which is why this
+    resource doesn't accept an array of drives like xWindowsRestore
+    did.
+
+    If you reduce the disk usage for a protected drive, the resource
+    will try to resize it but VSS could throw an error because you
+    have to delete checkpoints first. When you set Force to $true,
+    SystemProtection will attempt the resize and if VSS throws an
+    error, SystemProtection will delete all checkpoints on the
+    the protected drive and try the resize operation again.
+
+    Make sure you fully understand and accept the risks associated
+    with using the Force parameter.
+
+.PARAMETER Ensure
+    Required - String
+    Allowed values: Present, Absent
+    Indicates that the computer restore is enabled or is disabled.
+
+.PARAMETER DriveLetter
+    Key - String
+    Specifies the drive letter to enable or disable protection on.
+
+.PARAMETER DiskUsage
+    Write - SInt32
+    Specifies the maximum disk space to use for protection as a percentage.
+
+.PARAMETER Force
+    Write - Boolean
+    Forces desired state to be applied regardless of data loss. Defaults to False.
+
+.EXAMPLE 1
+
+Enables system protection for the C drive using the
+default value of 10 percent disk usage.
+
+Configuration SystemProtection_EnableDriveC_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        SystemProtection DriveC
+        {
+            Ensure      = 'Present'
+            DriveLetter = 'C'
+        }
+    }
+}
+
+.EXAMPLE 2
+
+Enables system protection for the C drive and sets
+the maximum restore point disk usage to 5 percent.
+
+Configuration SystemProtection_EnableDriveC_5Percent_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        SystemProtection DriveC
+        {
+            Ensure      = 'Present'
+            DriveLetter = 'C'
+            DiskUsage   = 5
+        }
+    }
+}
+
+.EXAMPLE 3
+
+Disables system protection for the F drive.
+
+Configuration SystemProtection_DisableDriveF_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        SystemProtection DriveF
+        {
+            Ensure      = 'Absent'
+            DriveLetter = 'F'
+        }
+    }
+}
+
+.EXAMPLE 4
+
+Sets the maximum disk usage for Drive C to 15 percent.
+Assumes the current disk usage is configured for a
+higher percentage and you want to delete checkpoints.
+
+Configuration SystemProtection_ReduceDriveCDiskUsage_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        SystemProtection DriveC
+        {
+            Ensure      = 'Present'
+            DriveLetter = 'C'
+            DiskUsage   = 15
+            Force       = $true
+        }
+    }
+}
+
+.EXAMPLE 5
+
+Enables system protection for the C drive using the
+default value of 10 percent disk usage and the D
+drive with 25 percent disk usage.
+
+Configuration SystemProtection_MultiDrive_Config
+{
+    Import-DSCResource -ModuleName ComputerManagementDsc
+
+    Node localhost
+    {
+        SystemProtection DriveC
+        {
+            Ensure      = 'Present'
+            DriveLetter = 'C'
+            DiskUsage   = 15
+        }
+
+        SystemProtection DriveD
+        {
+            Ensure      = 'Present'
+            DriveLetter = 'D'
+            DiskUsage   = 25
+        }
+    }
+}
+
