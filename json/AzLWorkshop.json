@@ -6,63 +6,68 @@
             "type": "string",
             "defaultValue": "HybridHost001",
             "metadata": {
-                "description": "Keep the VM name to less than 15 characters"
+                "description": "Provide a name for your Azure VM. This VM name should be less than 15 characters"
             }
         },
         "virtualMachineSize": {
             "type": "string",
             "defaultValue": "Standard_E16s_v4",
             "allowedValues": [
-                "Standard_D16s_v3",
-                "Standard_D32s_v3",
-                "Standard_D64s_v3",
+                // Dsv4 sizes series - Supports Premium Storage, no temp storage
                 "Standard_D8s_v4",
                 "Standard_D16s_v4",
                 "Standard_D32s_v4",
                 "Standard_D48s_v4",
                 "Standard_D64s_v4",
+                // Ddv4 sizes series - No Premium Storage, supports temp storage
                 "Standard_D8d_v4",
                 "Standard_D16d_v4",
                 "Standard_D32d_v4",
                 "Standard_D48d_v4",
                 "Standard_D64d_v4",
+                // Ddsv4 sizes series - Supports Premium Storage and temp storage
                 "Standard_D8ds_v4",
                 "Standard_D16ds_v4",
                 "Standard_D32ds_v4",
                 "Standard_D48ds_v4",
                 "Standard_D64ds_v4",
+                // Dv5 sizes series - No Premium Storage, no temp storage
                 "Standard_D8_v5",
                 "Standard_D16_v5",
                 "Standard_D32_v5",
                 "Standard_D48_v5",
                 "Standard_D64_v5",
+                // Dsv5 sizes series - Supports Premium Storage, no temp storage
                 "Standard_D8s_v5",
                 "Standard_D16s_v5",
                 "Standard_D32s_v5",
                 "Standard_D48s_v5",
                 "Standard_D64s_v5",
+                // Ddv5 sizes series - No Premium Storage, supports temp storage
                 "Standard_D8d_v5",
                 "Standard_D16d_v5",
                 "Standard_D32d_v5",
                 "Standard_D48d_v5",
                 "Standard_D64d_v5",
+                // Ddsv5 sizes series - Supports Premium Storage and temp storage
                 "Standard_D8ds_v5",
                 "Standard_D16ds_v5",
                 "Standard_D32ds_v5",
                 "Standard_D48ds_v5",
                 "Standard_D64ds_v5",
-                "Standard_E8s_v3",
-                "Standard_E16s_v3",
-                "Standard_E16-4s_v3",
-                "Standard_E16-8s_v3",
-                "Standard_E20s_v3",
-                "Standard_E32s_v3",
-                "Standard_E32-8s_v3",
-                "Standard_E32-16s_v3",
-                "Standard_E48s_v3",
-                "Standard_E64s_v3",
-                "Standard_E64-16s_v3",
-                "Standard_E64-32s_v3",
+                // Dsv6 sizes series - Supports Premium Storage, no temp storage
+                "Standard_D8s_v6",
+                "Standard_D16s_v6",
+                "Standard_D32s_v6",
+                "Standard_D48s_v6",
+                "Standard_D64s_v6",
+                // Ddsv6 sizes series - Supports Premium Storage and temp storage
+                "Standard_D8ds_v6",
+                "Standard_D16ds_v6",
+                "Standard_D32ds_v6",
+                "Standard_D48ds_v6",
+                "Standard_D64ds_v6",
+                // Esv4 sizes series - Supports Premium Storage, no temp storage
                 "Standard_E8s_v4",
                 "Standard_E16s_v4",
                 "Standard_E16-8s_v4",
@@ -74,12 +79,14 @@
                 "Standard_E64s_v4",
                 "Standard_E64-16s_v4",
                 "Standard_E64-32s_v4",
+                // Edv4 sizes series - No Premium Storage, supports temp storage
                 "Standard_E8d_v4",
                 "Standard_E16d_v4",
                 "Standard_E20d_v4",
                 "Standard_E32d_v4",
                 "Standard_E48d_v4",
                 "Standard_E64d_v4",
+                // Edsv4 sizes series - Supports Premium Storage and temp storage
                 "Standard_E8ds_v4",
                 "Standard_E16ds_v4",
                 "Standard_E20ds_v4",
@@ -88,30 +95,48 @@
                 "Standard_E64ds_v4",
                 "Standard_E64-16ds_v4",
                 "Standard_E64-32ds_v4",
+                // Ev5 sizes series - No Premium Storage, no temp storage
                 "Standard_E8_v5",
                 "Standard_E16_v5",
                 "Standard_E20_v5",
                 "Standard_E32_v5",
                 "Standard_E48_v5",
                 "Standard_E64_v5",
+                // Esv5 sizes series - Supports Premium Storage, no temp storage
                 "Standard_E8s_v5",
                 "Standard_E16s_v5",
                 "Standard_E20s_v5",
                 "Standard_E32s_v5",
                 "Standard_E48s_v5",
                 "Standard_E64s_v5",
+                // Edv5 sizes series - No Premium Storage, supports temp storage
                 "Standard_E8d_v5",
                 "Standard_E16d_v5",
                 "Standard_E20d_v5",
                 "Standard_E32d_v5",
                 "Standard_E48d_v5",
                 "Standard_E64d_v5",
+                // Edsv5 sizes series - Supports Premium Storage and temp storage
                 "Standard_E8ds_v5",
                 "Standard_E16ds_v5",
                 "Standard_E20ds_v5",
                 "Standard_E32ds_v5",
                 "Standard_E48ds_v5",
-                "Standard_E64ds_v5"
+                "Standard_E64ds_v5",
+                // Esv6 sizes series - Supports Premium Storage, no temp storage
+                "Standard_E8s_v6",
+                "Standard_E16s_v6",
+                "Standard_E20s_v6",
+                "Standard_E32s_v6",
+                "Standard_E48s_v6",
+                "Standard_E64s_v6",
+                // Edsv6 sizes series - Supports Premium Storage and temp storage
+                "Standard_E8ds_v6",
+                "Standard_E16ds_v6",
+                "Standard_E20ds_v6",
+                "Standard_E32ds_v6",
+                "Standard_E48ds_v6",
+                "Standard_E64ds_v6"
             ]
         },
         "virtualMachineGeneration": {
@@ -125,20 +150,27 @@
                 "description": "Select your VM generation, ideally Gen 2. Not all Azure regions support Gen 2 VMs."
             }
         },
-        "AzureLocalMachines": {
-            "type": "int",
-            "defaultValue": 2,
+        "azureLocalArchitecture": {
+            "type": "string",
+            "defaultValue": "2-Machine Non-Converged",
             "allowedValues": [
-                1,
-                2,
-                3,
-                4
+                "Single Machine",
+                "2-Machine Non-Converged",
+                "2-Machine Fully-Converged",
+                "2-Machine Switchless Dual-Link",
+                "3-Machine Non-Converged",
+                "3-Machine Fully-Converged",
+                "3-Machine Switchless Single-Link",
+                "3-Machine Switchless Dual-Link",
+                "4-Machine Non-Converged",
+                "4-Machine Fully-Converged",
+                "4-Machine Switchless Dual-Link"
             ],
             "metadata": {
-                "description": "Select the number of nested Azure Local machines you'd like to deploy."
+                "description": "Select your preferred Azure Local architecture. The number of nested Azure Local machines and their network configuration will be determined by this selection."
             }
         },
-        "AzureLocalMachineMemory": {
+        "azureLocalMachineMemory": {
             "type": "int",
             "defaultValue": 16,
             "allowedValues": [
@@ -189,15 +221,28 @@
                 "description": "The size of the individual data disks in GiB. 8 of these will be provisioned and 64GiB is the recommended default."
             }
         },
-        "azureVMUsername": {
+        "adminUsername": {
             "type": "string",
-            "defaultValue": "AzureUser",
+            "defaultValue": "LocalAdmin",
             "metadata": {
-                "description": "The administrator username for the VM"
+                "description": "The administrator username for the VM and for login to the nested lab machines"
             }
         },
-        "azureVMPassword": {
-            "type": "securestring"
+        "domainName": {
+            "type": "string",
+            "defaultValue": "azl.lab",
+            "minLength": 3,
+            "maxLength": 64,
+            "metadata": {
+                "description": "The preferred domain name for the environment. This must be a valid domain name with a maximum of one subdomain, and will be used to create the Active Directory domain."
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "minLength": 12,
+            "metadata": {
+                "description": "The administrator password for the VM and for login to the nested lab machines. This should be at least 12 characters long and contains a lowercase character, an uppercase character, a numeral, and a special character."
+            }
         },
         "customRdpPort": {
             "type": "string",
@@ -374,7 +419,7 @@
     "variables": {
         "dataDisksCount": 8,
         "updateImages": "No",
-        "dscUri": "https://github.com/DellGEOS/HybridJumpstart/raw/main/dsc/HybridJumpstartAzL.zip",
+        "dscUri": "https://github.com/DellGEOS/HybridJumpstart/raw/main/dsc/AzureLocalWorkshop.zip",
         "artifactsLocation": "https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/",
         "randomGUID": "[substring(uniqueString(subscription().subscriptionId, resourceGroup().id, parameters('virtualMachineName')),0,6)]",
         "dnsNameForPublicIP": "[toLower(concat(parameters('virtualMachineName'), variables('randomGUID')))]",
@@ -501,8 +546,8 @@
             "properties": {
                 "osProfile": {
                     "computerName": "[parameters('virtualMachineName')]",
-                    "adminUsername": "[parameters('azureVMUsername')]",
-                    "adminPassword": "[parameters('azureVMPassword')]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
                         "provisionVmAgent": true
                     }
@@ -557,7 +602,7 @@
             "resources": [
                 {
                     "type": "extensions",
-                    "name": "ConfigureHybridJumpstart",
+                    "name": "ConfigureAzLWorkshop",
                     "apiVersion": "2024-07-01",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
@@ -572,13 +617,14 @@
                             "wmfVersion": "latest",
                             "configuration": {
                                 "url": "[variables('dscUri')]",
-                                "script": "HybridJumpstart.ps1",
-                                "function": "HybridJumpstart"
+                                "script": "AzLWorkshop.ps1",
+                                "function": "AzLWorkshop"
                             },
                             "configurationArguments": {
                                 "customRdpPort": "[parameters('customRdpPort')]",
-                                "AzureLocalMachines": "[parameters('AzureLocalMachines')]",
-                                "AzureLocalMachineMemory": "[parameters('AzureLocalMachineMemory')]",
+                                "azureLocalArchitecture": "[parameters('azureLocalArchitecture')]",
+                                "azureLocalMachineMemory": "[parameters('azureLocalMachineMemory')]",
+                                "domainName": "[parameters('domainName')]",
                                 "telemetryLevel": "[parameters('telemetryLevel')]",
                                 "updateImages": "[variables('updateImages')]"
                             }
@@ -586,8 +632,8 @@
                         "protectedSettings": {
                             "configurationArguments": {
                                 "adminCreds": {
-                                    "UserName": "[parameters('azureVMUsername')]",
-                                    "Password": "[parameters('azureVMPassword')]"
+                                    "UserName": "[parameters('adminUsername')]",
+                                    "Password": "[parameters('adminPassword')]"
                                 }
                             }
                         }
@@ -617,7 +663,7 @@
     "outputs": {
         "adminUsername": {
             "type": "string",
-            "value": "[parameters('azureVMUsername')]"
+            "value": "[parameters('adminUsername')]"
         },
         "rdpPort": {
             "type": "string",

@@ -1,0 +1,1192 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2021-09-09/uiFormDefinition.schema.json#",
+    "view": {
+        "kind": "Form",
+        "properties": {
+            "title": "Azure Local Workshop Deployment",
+            "steps": [
+                {
+                    "name": "basics",
+                    "label": "Azure VM Host Settings",
+                    "elements": [
+                        {
+                            "name": "resourceScope",
+                            "type": "Microsoft.Common.ResourceScope",
+                            "location": {
+                                "resourceTypes": [
+                                    "microsoft.network/publicipaddresses",
+                                    "microsoft.network/networkinterfaces",
+                                    "microsoft.network/networksecuritygroups",
+                                    "microsoft.compute/virtualmachines",
+                                    "microsoft.devtestlab/schedules",
+                                    "microsoft.resources/resourcegroups"
+                                ]
+                            }
+                        },
+                        {
+                            "name": "hostInfo",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Please provide your preferred configuration options for the Azure VM that will host your Azure Local environment.",
+                                "link": {
+                                    "label": "",
+                                    "uri": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "virtualMachineName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Virtual Machine Name",
+                            "subLabel": "",
+                            "defaultValue": "AzLHostVM001",
+                            "toolTip": "Provide a name for your Azure VM. This VM name should be less than 15 characters and should not contain ASCII or special characters",
+                            "constraints": {
+                                "required": true,
+                                "regex": "",
+                                "validationMessage": "",
+                                "validations": [
+                                    {
+                                        "isValid": "[or(or(empty(steps('basics').virtualMachineName),and(not(startsWith(steps('basics').virtualMachineName,'[[')),startsWith(steps('basics').virtualMachineName,'['),endsWith(steps('basics').virtualMachineName,']'),greater(indexOf(steps('basics').virtualMachineName,'('),-1),greater(indexOf(steps('basics').virtualMachineName,')'),-1))),and(not(regex(steps('basics').virtualMachineName,'^[\\d]+$')),regex(steps('basics').virtualMachineName,'^[a-zA-Z0-9-]+$'),lessOrEquals(length(steps('basics').virtualMachineName),15)))]",
+                                        "message": "Virtual machine name cannot contain non ASCII or special characters, must contain at least one alphabet, and must be between 1 and 15 characters."
+                                    }
+                                ]
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "hostInfo2",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "The VM size should be large enough to accommodate your Azure Local infrastructure (DC, WAC, AzL machines), which you'll configure on the next tab. Use the Tool Tips for guidance with each parameter",
+                                "link": {
+                                    "label": "",
+                                    "uri": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "virtualMachineSize",
+                            "type": "Microsoft.Compute.SizeSelector",
+                            "label": "Azure Local Host VM Size",
+                            "toolTip": "Select your preferred VM size. These sizes have been selected based on support for nested virtualization, capacity to run a nested Azure Local environment, along with flexible options for Premium Storage and temp storage",
+                            "recommendedSizes": [
+                                "Standard_E16s_v6",
+                                "Standard_E8s_v6",
+                                "Standard_D16s_v6"
+                            ],
+                            "constraints": {
+                                "required": true,
+                                "allowedSizes": ["Standard_D8s_v4",
+                                    "Standard_D16s_v4",
+                                    "Standard_D32s_v4",
+                                    "Standard_D48s_v4",
+                                    "Standard_D64s_v4",
+                                    "Standard_D16d_v4",
+                                    "Standard_D32d_v4",
+                                    "Standard_D48d_v4",
+                                    "Standard_D64d_v4",
+                                    "Standard_D8ds_v4",
+                                    "Standard_D32ds_v4",
+                                    "Standard_D48ds_v4",
+                                    "Standard_D64ds_v4",
+                                    "Standard_D8_v5",
+                                    "Standard_D16_v5",
+                                    "Standard_D48_v5",
+                                    "Standard_D64_v5",
+                                    "Standard_D8s_v5",
+                                    "Standard_D16s_v5",
+                                    "Standard_D32s_v5",
+                                    "Standard_D64s_v5",
+                                    "Standard_D8d_v5",
+                                    "Standard_D16d_v5",
+                                    "Standard_D32d_v5",
+                                    "Standard_D48d_v5",
+                                    "Standard_D8ds_v5",
+                                    "Standard_D16ds_v5",
+                                    "Standard_D32ds_v5",
+                                    "Standard_D48ds_v5",
+                                    "Standard_D64ds_v5",
+                                    "Standard_D8s_v6",
+                                    "Standard_D16s_v6",
+                                    "Standard_D32s_v6",
+                                    "Standard_D48s_v6",
+                                    "Standard_D64s_v6",
+                                    "Standard_D16ds_v6",
+                                    "Standard_D32ds_v6",
+                                    "Standard_D48ds_v6",
+                                    "Standard_D64ds_v6",
+                                    "Standard_E8s_v4",
+                                    "Standard_E16-8s_v4",
+                                    "Standard_E20s_v4",
+                                    "Standard_E32s_v4",
+                                    "Standard_E32-8s_v4",
+                                    "Standard_E32-16s_v4",
+                                    "Standard_E48s_v4",
+                                    "Standard_E64-16s_v4",
+                                    "Standard_E64-32s_v4",
+                                    "Standard_E8d_v4",
+                                    "Standard_E16d_v4",
+                                    "Standard_E20d_v4",
+                                    "Standard_E32d_v4",
+                                    "Standard_E48d_v4",
+                                    "Standard_E64d_v4",
+                                    "Standard_E8ds_v4",
+                                    "Standard_E16ds_v4",
+                                    "Standard_E32ds_v4",
+                                    "Standard_E48ds_v4",
+                                    "Standard_E64ds_v4",
+                                    "Standard_E64-16ds_v4",
+                                    "Standard_E64-32ds_v4",
+                                    "Standard_E8_v5",
+                                    "Standard_E20_v5",
+                                    "Standard_E32_v5",
+                                    "Standard_E48_v5",
+                                    "Standard_E64_v5",
+                                    "Standard_E8s_v5",
+                                    "Standard_E16s_v5",
+                                    "Standard_E20s_v5",
+                                    "Standard_E32s_v5",
+                                    "Standard_E64s_v5",
+                                    "Standard_E8d_v5",
+                                    "Standard_E16d_v5",
+                                    "Standard_E20d_v5",
+                                    "Standard_E32d_v5",
+                                    "Standard_E48d_v5",
+                                    "Standard_E8ds_v5",
+                                    "Standard_E16ds_v5",
+                                    "Standard_E20ds_v5",
+                                    "Standard_E32ds_v5",
+                                    "Standard_E48ds_v5",
+                                    "Standard_E64ds_v5",
+                                    "Standard_E8s_v6",
+                                    "Standard_E16s_v6",
+                                    "Standard_E20s_v6",
+                                    "Standard_E32s_v6",
+                                    "Standard_E48s_v6",
+                                    "Standard_E64s_v6",
+                                    "Standard_E16ds_v6",
+                                    "Standard_E20ds_v6",
+                                    "Standard_E32ds_v6",
+                                    "Standard_E48ds_v6",
+                                    "Standard_E64ds_v6"]
+                            },
+                            "options": {
+                                "hideDiskTypeFilter": false
+                            },
+                            "osPlatform": "Windows",
+                            "count": 1,
+                            "visible": true,
+                            "scope": {
+                                "subscriptionId": "[steps('basics').resourceScope.subscription.subscriptionId]",
+                                "location": "[steps('basics').resourceScope.location.name]"
+                            }
+                        },
+                        {
+                            "name": "virtualMachineGeneration",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Virtual Machine Generation",
+                            "subLabel": "",
+                            "defaultValue": "Generation 2",
+                            "toolTip": "Select your VM generation, ideally Gen 2. Not all Azure regions support Gen 2 VMs.",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "Generation 1",
+                                        "value": "Generation 1"
+                                    },
+                                    {
+                                        "label": "Generation 2",
+                                        "value": "Generation 2"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "dataDiskType",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Data Disk Type",
+                            "subLabel": "",
+                            "defaultValue": "StandardSSD_LRS",
+                            "toolTip": "The Storage type of the VM data disk. If your VM contains an 's' in the VM size, you can select Premium_LRS storage for increased performance, but at a higher cost.",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "StandardSSD_LRS",
+                                        "value": "StandardSSD_LRS"
+                                    },
+                                    {
+                                        "label": "Premium_LRS",
+                                        "value": "Premium_LRS"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "dataDiskSize",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Data Disk Size",
+                            "subLabel": "",
+                            "defaultValue": "64",
+                            "toolTip": "The size of the individual data disks in GiB. 8 of these will be provisioned and 64GiB is the recommended default.",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "32",
+                                        "value": "32"
+                                    },
+                                    {
+                                        "label": "64",
+                                        "value": "64"
+                                    },
+                                    {
+                                        "label": "128",
+                                        "value": "128"
+                                    },
+                                    {
+                                        "label": "256",
+                                        "value": "256"
+                                    },
+                                    {
+                                        "label": "512",
+                                        "value": "512"
+                                    },
+                                    {
+                                        "label": "1024",
+                                        "value": "1024"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "adminUsername",
+                            "type": "Microsoft.Compute.UserNameTextBox",
+                            "label": "Admin Username",
+                            "defaultValue": "LocalAdmin",
+                            "toolTip": "The administrator username for the VM and for login to the nested lab machines",
+                            "constraints": {
+                                "required": true,
+                                "regex": "^[a-z0-9A-Z]{1,30}$",
+                                "validationMessage": "Only alphanumeric characters are allowed, and the value must be 1-30 characters long."
+                            },
+                            "osPlatform": "Windows",
+                            "visible": true
+                        },
+                        {
+                            "name": "adminPassword",
+                            "type": "Microsoft.Compute.CredentialsCombo",
+                            "label": {
+                                "password": "Password",
+                                "confirmPassword": "Confirm password"
+                            },
+                            "toolTip": {
+                                "password": "The administrator password for the VM and for login to the nested lab machines. The password must be alphanumeric, contain at least 12 characters, and have at least 1 letter and 1 number."
+                            },
+                            "constraints": {
+                                "required": true
+                            },
+                            "options": {
+                                "hideConfirmation": false
+                            },
+                            "osPlatform": "Windows",
+                            "visible": true
+                        },
+                        {
+                            "name": "customRdpPort",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Custom Rdp Port",
+                            "subLabel": "",
+                            "defaultValue": "3389",
+                            "toolTip": "If you wish to use a different port to RDP into the VM (between 0 and 65535), change it here, otherwise, leave the default.",
+                            "constraints": {
+                                "required": true,
+                                "regex": "",
+                                "validationMessage": "",
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "alreadyHaveAWindowsServerLicense",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Already Have A Windows Server License",
+                            "subLabel": "",
+                            "defaultValue": "No",
+                            "toolTip": "By selecting Yes, you confirm you have an eligible Windows Server license with Software Assurance or Windows Server subscription to apply this Azure Hybrid Benefit. You can read more about compliance here: http://go.microsoft.com/fwlink/?LinkId=859786",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "Yes",
+                                        "value": "Yes"
+                                    },
+                                    {
+                                        "label": "No",
+                                        "value": "No"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        }
+                    ]
+                },
+                {
+                    "name": "azureLocalSettings",
+                    "label": "Azure Local Settings",
+                    "elements": [
+                        {
+                            "name": "azureLocalInfo",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Please customize your Azure Local deployment by first selecting your preferred Azure Local architecture, which includes single machine, along with switched and switchless deployment options. You'll also find non-converged and fully-converged network options.",
+                                "link": {
+                                    "label": "Learn more about the network patterns",
+                                    "uri": "https://learn.microsoft.com/en-us/azure/azure-local/plan/network-patterns-overview"
+                                }
+                            }
+                        },
+                        {
+                            "name": "azureLocalInfo2",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Then, select the amount of memory per Azure Local machine. If you choose more memory than will fit on your host system, the per-machine memory will be reduced automatically.",
+                                "link": {
+                                    "label": "",
+                                    "uri": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "azureLocalArchitecture",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Azure Local Architecture",
+                            "subLabel": "Azure Local Settings",
+                            "defaultValue": "2-Machine Non-Converged",
+                            "toolTip": "Select your preferred Azure Local architecture. The number of nested Azure Local machines and their network configuration will be determined by this selection.",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "Single Machine",
+                                        "value": "Single Machine"
+                                    },
+                                    {
+                                        "label": "2-Machine Non-Converged",
+                                        "value": "2-Machine Non-Converged"
+                                    },
+                                    {
+                                        "label": "2-Machine Fully-Converged",
+                                        "value": "2-Machine Fully-Converged"
+                                    },
+                                    {
+                                        "label": "2-Machine Switchless Dual-Link",
+                                        "value": "2-Machine Switchless Dual-Link"
+                                    },
+                                    {
+                                        "label": "3-Machine Non-Converged",
+                                        "value": "3-Machine Non-Converged"
+                                    },
+                                    {
+                                        "label": "3-Machine Fully-Converged",
+                                        "value": "3-Machine Fully-Converged"
+                                    },
+                                    {
+                                        "label": "3-Machine Switchless Single-Link",
+                                        "value": "3-Machine Switchless Single-Link"
+                                    },
+                                    {
+                                        "label": "3-Machine Switchless Dual-Link",
+                                        "value": "3-Machine Switchless Dual-Link"
+                                    },
+                                    {
+                                        "label": "4-Machine Non-Converged",
+                                        "value": "4-Machine Non-Converged"
+                                    },
+                                    {
+                                        "label": "4-Machine Fully-Converged",
+                                        "value": "4-Machine Fully-Converged"
+                                    },
+                                    {
+                                        "label": "4-Machine Switchless Dual-Link",
+                                        "value": "4-Machine Switchless Dual-Link"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "azureLocalMachineMemory",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Azure Local Machine Memory",
+                            "subLabel": "",
+                            "defaultValue": "16",
+                            "toolTip": "Select the memory per Azure Local machine. If you choose more memory than will fit on your host system, the per-machine memory will be reduced automatically.",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "16",
+                                        "value": "16"
+                                    },
+                                    {
+                                        "label": "24",
+                                        "value": "24"
+                                    },
+                                    {
+                                        "label": "32",
+                                        "value": "32"
+                                    },
+                                    {
+                                        "label": "48",
+                                        "value": "48"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "azureLocalInfo3",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Finally, provide a valid domain name for your Azure Local environment, and select your preferred telemetry level. Choose to opt-in to telemetry collection to better understand impact of the AzLWorkshop/MSLab scripts i.e. number of VMs deployed, where MSLab is being used etc.",
+                                "link": {
+                                    "label": "",
+                                    "uri": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "azureLocalInfo4",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Data sent from scripts is hosted in Azure Application Insights service and collected in full transparency, since all code is visible in PowerShell Scripts on Github repository.",
+                                "link": {
+                                    "label": "Learn more about telemetry",
+                                    "uri": "https://github.com/microsoft/MSLab/blob/master/Docs/mslab-telemetry.md"
+                                }
+                            }
+                        },
+                        {
+                            "name": "domainName",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Domain Name",
+                            "defaultValue": "azl.lab",
+                            "toolTip": "The preferred domain name for the environment. This must be a valid domain name with a maximum of one subdomain, and will be used to create the Active Directory domain.",
+                            "constraints": {
+                                "required": true,
+                                "regex": "^(?!:\/\/)(?!-)([a-zA-Z0-9-_]+\\.)?[a-zA-Z0-9][a-zA-Z0-9-_]+\\.[a-zA-Z]{2,11}?$",
+                                "validationMessage": "Please enter a valid domain name, in the format azl.lab, or corp.azl.lab. A maximum of a single subdomain is supported."
+                            },
+                            "visible": true
+                        },
+                        {
+                            "name": "telemetryLevel",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Telemetry Level",
+                            "subLabel": "",
+                            "defaultValue": "Full",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": true,
+                                "allowedValues": [
+                                    {
+                                        "label": "None",
+                                        "value": "None"
+                                    },
+                                    {
+                                        "label": "Basic",
+                                        "value": "Basic"
+                                    },
+                                    {
+                                        "label": "Full",
+                                        "value": "Full"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        }
+                    ]
+                },
+                {
+                    "name": "autoShutdown",
+                    "label": "Auto Shutdown Settings",
+                    "elements": [
+                        {
+                            "name": "autoShutdownInfo",
+                            "type": "Microsoft.Common.TextBlock",
+                            "visible": true,
+                            "options": {
+                                "text": "Configure your preferred automatic shutdown settings for the Azure Local Host VM. This will help you save costs by shutting down the VM when not in use.",
+                                "link": {
+                                    "label": "",
+                                    "uri": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "autoShutdownStatus",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Auto Shutdown Status",
+                            "subLabel": "",
+                            "defaultValue": "Enabled",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "Enabled",
+                                        "value": "Enabled"
+                                    },
+                                    {
+                                        "label": "Disabled",
+                                        "value": "Disabled"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "autoShutdownTime",
+                            "type": "Microsoft.Common.TextBox",
+                            "label": "Auto Shutdown Time",
+                            "subLabel": "",
+                            "defaultValue": "22:00",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": false,
+                                "regex": "",
+                                "validationMessage": "",
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        },
+                        {
+                            "name": "autoShutdownTimeZone",
+                            "type": "Microsoft.Common.DropDown",
+                            "label": "Auto Shutdown Time Zone",
+                            "subLabel": "",
+                            "defaultValue": "UTC",
+                            "toolTip": "",
+                            "constraints": {
+                                "required": false,
+                                "allowedValues": [
+                                    {
+                                        "label": "Afghanistan Standard Time",
+                                        "value": "Afghanistan Standard Time"
+                                    },
+                                    {
+                                        "label": "Alaskan Standard Time",
+                                        "value": "Alaskan Standard Time"
+                                    },
+                                    {
+                                        "label": "Aleutian Standard Time",
+                                        "value": "Aleutian Standard Time"
+                                    },
+                                    {
+                                        "label": "Altai Standard Time",
+                                        "value": "Altai Standard Time"
+                                    },
+                                    {
+                                        "label": "Arab Standard Time",
+                                        "value": "Arab Standard Time"
+                                    },
+                                    {
+                                        "label": "Arabian Standard Time",
+                                        "value": "Arabian Standard Time"
+                                    },
+                                    {
+                                        "label": "Arabic Standard Time",
+                                        "value": "Arabic Standard Time"
+                                    },
+                                    {
+                                        "label": "Argentina Standard Time",
+                                        "value": "Argentina Standard Time"
+                                    },
+                                    {
+                                        "label": "Astrakhan Standard Time",
+                                        "value": "Astrakhan Standard Time"
+                                    },
+                                    {
+                                        "label": "Atlantic Standard Time",
+                                        "value": "Atlantic Standard Time"
+                                    },
+                                    {
+                                        "label": "AUS Central Standard Time",
+                                        "value": "AUS Central Standard Time"
+                                    },
+                                    {
+                                        "label": "Aus Central W. Standard Time",
+                                        "value": "Aus Central W. Standard Time"
+                                    },
+                                    {
+                                        "label": "AUS Eastern Standard Time",
+                                        "value": "AUS Eastern Standard Time"
+                                    },
+                                    {
+                                        "label": "Azerbaijan Standard Time",
+                                        "value": "Azerbaijan Standard Time"
+                                    },
+                                    {
+                                        "label": "Azores Standard Time",
+                                        "value": "Azores Standard Time"
+                                    },
+                                    {
+                                        "label": "Bahia Standard Time",
+                                        "value": "Bahia Standard Time"
+                                    },
+                                    {
+                                        "label": "Bangladesh Standard Time",
+                                        "value": "Bangladesh Standard Time"
+                                    },
+                                    {
+                                        "label": "Belarus Standard Time",
+                                        "value": "Belarus Standard Time"
+                                    },
+                                    {
+                                        "label": "Bougainville Standard Time",
+                                        "value": "Bougainville Standard Time"
+                                    },
+                                    {
+                                        "label": "Canada Central Standard Time",
+                                        "value": "Canada Central Standard Time"
+                                    },
+                                    {
+                                        "label": "Cape Verde Standard Time",
+                                        "value": "Cape Verde Standard Time"
+                                    },
+                                    {
+                                        "label": "Caucasus Standard Time",
+                                        "value": "Caucasus Standard Time"
+                                    },
+                                    {
+                                        "label": "Cen. Australia Standard Time",
+                                        "value": "Cen. Australia Standard Time"
+                                    },
+                                    {
+                                        "label": "Central America Standard Time",
+                                        "value": "Central America Standard Time"
+                                    },
+                                    {
+                                        "label": "Central Asia Standard Time",
+                                        "value": "Central Asia Standard Time"
+                                    },
+                                    {
+                                        "label": "Central Brazilian Standard Time",
+                                        "value": "Central Brazilian Standard Time"
+                                    },
+                                    {
+                                        "label": "Central Europe Standard Time",
+                                        "value": "Central Europe Standard Time"
+                                    },
+                                    {
+                                        "label": "Central European Standard Time",
+                                        "value": "Central European Standard Time"
+                                    },
+                                    {
+                                        "label": "Central Pacific Standard Time",
+                                        "value": "Central Pacific Standard Time"
+                                    },
+                                    {
+                                        "label": "Central Standard Time",
+                                        "value": "Central Standard Time"
+                                    },
+                                    {
+                                        "label": "Central Standard Time (Mexico)",
+                                        "value": "Central Standard Time (Mexico)"
+                                    },
+                                    {
+                                        "label": "Chatham Islands Standard Time",
+                                        "value": "Chatham Islands Standard Time"
+                                    },
+                                    {
+                                        "label": "China Standard Time",
+                                        "value": "China Standard Time"
+                                    },
+                                    {
+                                        "label": "Cuba Standard Time",
+                                        "value": "Cuba Standard Time"
+                                    },
+                                    {
+                                        "label": "Dateline Standard Time",
+                                        "value": "Dateline Standard Time"
+                                    },
+                                    {
+                                        "label": "E. Africa Standard Time",
+                                        "value": "E. Africa Standard Time"
+                                    },
+                                    {
+                                        "label": "E. Australia Standard Time",
+                                        "value": "E. Australia Standard Time"
+                                    },
+                                    {
+                                        "label": "E. Europe Standard Time",
+                                        "value": "E. Europe Standard Time"
+                                    },
+                                    {
+                                        "label": "E. South America Standard Time",
+                                        "value": "E. South America Standard Time"
+                                    },
+                                    {
+                                        "label": "Easter Island Standard Time",
+                                        "value": "Easter Island Standard Time"
+                                    },
+                                    {
+                                        "label": "Eastern Standard Time",
+                                        "value": "Eastern Standard Time"
+                                    },
+                                    {
+                                        "label": "Eastern Standard Time (Mexico)",
+                                        "value": "Eastern Standard Time (Mexico)"
+                                    },
+                                    {
+                                        "label": "Egypt Standard Time",
+                                        "value": "Egypt Standard Time"
+                                    },
+                                    {
+                                        "label": "Ekaterinburg Standard Time",
+                                        "value": "Ekaterinburg Standard Time"
+                                    },
+                                    {
+                                        "label": "Fiji Standard Time",
+                                        "value": "Fiji Standard Time"
+                                    },
+                                    {
+                                        "label": "FLE Standard Time",
+                                        "value": "FLE Standard Time"
+                                    },
+                                    {
+                                        "label": "Georgian Standard Time",
+                                        "value": "Georgian Standard Time"
+                                    },
+                                    {
+                                        "label": "GMT Standard Time",
+                                        "value": "GMT Standard Time"
+                                    },
+                                    {
+                                        "label": "Greenland Standard Time",
+                                        "value": "Greenland Standard Time"
+                                    },
+                                    {
+                                        "label": "Greenwich Standard Time",
+                                        "value": "Greenwich Standard Time"
+                                    },
+                                    {
+                                        "label": "GTB Standard Time",
+                                        "value": "GTB Standard Time"
+                                    },
+                                    {
+                                        "label": "Haiti Standard Time",
+                                        "value": "Haiti Standard Time"
+                                    },
+                                    {
+                                        "label": "Hawaiian Standard Time",
+                                        "value": "Hawaiian Standard Time"
+                                    },
+                                    {
+                                        "label": "India Standard Time",
+                                        "value": "India Standard Time"
+                                    },
+                                    {
+                                        "label": "Iran Standard Time",
+                                        "value": "Iran Standard Time"
+                                    },
+                                    {
+                                        "label": "Israel Standard Time",
+                                        "value": "Israel Standard Time"
+                                    },
+                                    {
+                                        "label": "Jordan Standard Time",
+                                        "value": "Jordan Standard Time"
+                                    },
+                                    {
+                                        "label": "Kaliningrad Standard Time",
+                                        "value": "Kaliningrad Standard Time"
+                                    },
+                                    {
+                                        "label": "Korea Standard Time",
+                                        "value": "Korea Standard Time"
+                                    },
+                                    {
+                                        "label": "Libya Standard Time",
+                                        "value": "Libya Standard Time"
+                                    },
+                                    {
+                                        "label": "Line Islands Standard Time",
+                                        "value": "Line Islands Standard Time"
+                                    },
+                                    {
+                                        "label": "Lord Howe Standard Time",
+                                        "value": "Lord Howe Standard Time"
+                                    },
+                                    {
+                                        "label": "Magadan Standard Time",
+                                        "value": "Magadan Standard Time"
+                                    },
+                                    {
+                                        "label": "Magallanes Standard Time",
+                                        "value": "Magallanes Standard Time"
+                                    },
+                                    {
+                                        "label": "Marquesas Standard Time",
+                                        "value": "Marquesas Standard Time"
+                                    },
+                                    {
+                                        "label": "Mauritius Standard Time",
+                                        "value": "Mauritius Standard Time"
+                                    },
+                                    {
+                                        "label": "Middle East Standard Time",
+                                        "value": "Middle East Standard Time"
+                                    },
+                                    {
+                                        "label": "Montevideo Standard Time",
+                                        "value": "Montevideo Standard Time"
+                                    },
+                                    {
+                                        "label": "Morocco Standard Time",
+                                        "value": "Morocco Standard Time"
+                                    },
+                                    {
+                                        "label": "Mountain Standard Time",
+                                        "value": "Mountain Standard Time"
+                                    },
+                                    {
+                                        "label": "Mountain Standard Time (Mexico)",
+                                        "value": "Mountain Standard Time (Mexico)"
+                                    },
+                                    {
+                                        "label": "Myanmar Standard Time",
+                                        "value": "Myanmar Standard Time"
+                                    },
+                                    {
+                                        "label": "N. Central Asia Standard Time",
+                                        "value": "N. Central Asia Standard Time"
+                                    },
+                                    {
+                                        "label": "Namibia Standard Time",
+                                        "value": "Namibia Standard Time"
+                                    },
+                                    {
+                                        "label": "Nepal Standard Time",
+                                        "value": "Nepal Standard Time"
+                                    },
+                                    {
+                                        "label": "New Zealand Standard Time",
+                                        "value": "New Zealand Standard Time"
+                                    },
+                                    {
+                                        "label": "Newfoundland Standard Time",
+                                        "value": "Newfoundland Standard Time"
+                                    },
+                                    {
+                                        "label": "Norfolk Standard Time",
+                                        "value": "Norfolk Standard Time"
+                                    },
+                                    {
+                                        "label": "North Asia East Standard Time",
+                                        "value": "North Asia East Standard Time"
+                                    },
+                                    {
+                                        "label": "North Asia Standard Time",
+                                        "value": "North Asia Standard Time"
+                                    },
+                                    {
+                                        "label": "North Korea Standard Time",
+                                        "value": "North Korea Standard Time"
+                                    },
+                                    {
+                                        "label": "Omsk Standard Time",
+                                        "value": "Omsk Standard Time"
+                                    },
+                                    {
+                                        "label": "Pacific SA Standard Time",
+                                        "value": "Pacific SA Standard Time"
+                                    },
+                                    {
+                                        "label": "Pacific Standard Time",
+                                        "value": "Pacific Standard Time"
+                                    },
+                                    {
+                                        "label": "Pacific Standard Time (Mexico)",
+                                        "value": "Pacific Standard Time (Mexico)"
+                                    },
+                                    {
+                                        "label": "Pakistan Standard Time",
+                                        "value": "Pakistan Standard Time"
+                                    },
+                                    {
+                                        "label": "Paraguay Standard Time",
+                                        "value": "Paraguay Standard Time"
+                                    },
+                                    {
+                                        "label": "Romance Standard Time",
+                                        "value": "Romance Standard Time"
+                                    },
+                                    {
+                                        "label": "Russia Time Zone 10",
+                                        "value": "Russia Time Zone 10"
+                                    },
+                                    {
+                                        "label": "Russia Time Zone 11",
+                                        "value": "Russia Time Zone 11"
+                                    },
+                                    {
+                                        "label": "Russia Time Zone 3",
+                                        "value": "Russia Time Zone 3"
+                                    },
+                                    {
+                                        "label": "Russian Standard Time",
+                                        "value": "Russian Standard Time"
+                                    },
+                                    {
+                                        "label": "SA Eastern Standard Time",
+                                        "value": "SA Eastern Standard Time"
+                                    },
+                                    {
+                                        "label": "SA Pacific Standard Time",
+                                        "value": "SA Pacific Standard Time"
+                                    },
+                                    {
+                                        "label": "SA Western Standard Time",
+                                        "value": "SA Western Standard Time"
+                                    },
+                                    {
+                                        "label": "Saint Pierre Standard Time",
+                                        "value": "Saint Pierre Standard Time"
+                                    },
+                                    {
+                                        "label": "Sakhalin Standard Time",
+                                        "value": "Sakhalin Standard Time"
+                                    },
+                                    {
+                                        "label": "Samoa Standard Time",
+                                        "value": "Samoa Standard Time"
+                                    },
+                                    {
+                                        "label": "Sao Tome Standard Time",
+                                        "value": "Sao Tome Standard Time"
+                                    },
+                                    {
+                                        "label": "Saratov Standard Time",
+                                        "value": "Saratov Standard Time"
+                                    },
+                                    {
+                                        "label": "SE Asia Standard Time",
+                                        "value": "SE Asia Standard Time"
+                                    },
+                                    {
+                                        "label": "Singapore Standard Time",
+                                        "value": "Singapore Standard Time"
+                                    },
+                                    {
+                                        "label": "South Africa Standard Time",
+                                        "value": "South Africa Standard Time"
+                                    },
+                                    {
+                                        "label": "Sri Lanka Standard Time",
+                                        "value": "Sri Lanka Standard Time"
+                                    },
+                                    {
+                                        "label": "Sudan Standard Time",
+                                        "value": "Sudan Standard Time"
+                                    },
+                                    {
+                                        "label": "Syria Standard Time",
+                                        "value": "Syria Standard Time"
+                                    },
+                                    {
+                                        "label": "Taipei Standard Time",
+                                        "value": "Taipei Standard Time"
+                                    },
+                                    {
+                                        "label": "Tasmania Standard Time",
+                                        "value": "Tasmania Standard Time"
+                                    },
+                                    {
+                                        "label": "Tocantins Standard Time",
+                                        "value": "Tocantins Standard Time"
+                                    },
+                                    {
+                                        "label": "Tokyo Standard Time",
+                                        "value": "Tokyo Standard Time"
+                                    },
+                                    {
+                                        "label": "Tomsk Standard Time",
+                                        "value": "Tomsk Standard Time"
+                                    },
+                                    {
+                                        "label": "Tonga Standard Time",
+                                        "value": "Tonga Standard Time"
+                                    },
+                                    {
+                                        "label": "Transbaikal Standard Time",
+                                        "value": "Transbaikal Standard Time"
+                                    },
+                                    {
+                                        "label": "Turkey Standard Time",
+                                        "value": "Turkey Standard Time"
+                                    },
+                                    {
+                                        "label": "Turks And Caicos Standard Time",
+                                        "value": "Turks And Caicos Standard Time"
+                                    },
+                                    {
+                                        "label": "Ulaanbaatar Standard Time",
+                                        "value": "Ulaanbaatar Standard Time"
+                                    },
+                                    {
+                                        "label": "US Eastern Standard Time",
+                                        "value": "US Eastern Standard Time"
+                                    },
+                                    {
+                                        "label": "US Mountain Standard Time",
+                                        "value": "US Mountain Standard Time"
+                                    },
+                                    {
+                                        "label": "UTC",
+                                        "value": "UTC"
+                                    },
+                                    {
+                                        "label": "UTC-02",
+                                        "value": "UTC-02"
+                                    },
+                                    {
+                                        "label": "UTC-08",
+                                        "value": "UTC-08"
+                                    },
+                                    {
+                                        "label": "UTC-09",
+                                        "value": "UTC-09"
+                                    },
+                                    {
+                                        "label": "UTC-11",
+                                        "value": "UTC-11"
+                                    },
+                                    {
+                                        "label": "UTC+12",
+                                        "value": "UTC+12"
+                                    },
+                                    {
+                                        "label": "UTC+13",
+                                        "value": "UTC+13"
+                                    },
+                                    {
+                                        "label": "Venezuela Standard Time",
+                                        "value": "Venezuela Standard Time"
+                                    },
+                                    {
+                                        "label": "Vladivostok Standard Time",
+                                        "value": "Vladivostok Standard Time"
+                                    },
+                                    {
+                                        "label": "W. Australia Standard Time",
+                                        "value": "W. Australia Standard Time"
+                                    },
+                                    {
+                                        "label": "W. Central Africa Standard Time",
+                                        "value": "W. Central Africa Standard Time"
+                                    },
+                                    {
+                                        "label": "W. Europe Standard Time",
+                                        "value": "W. Europe Standard Time"
+                                    },
+                                    {
+                                        "label": "W. Mongolia Standard Time",
+                                        "value": "W. Mongolia Standard Time"
+                                    },
+                                    {
+                                        "label": "West Asia Standard Time",
+                                        "value": "West Asia Standard Time"
+                                    },
+                                    {
+                                        "label": "West Bank Standard Time",
+                                        "value": "West Bank Standard Time"
+                                    },
+                                    {
+                                        "label": "West Pacific Standard Time",
+                                        "value": "West Pacific Standard Time"
+                                    },
+                                    {
+                                        "label": "Yakutsk Standard Time",
+                                        "value": "Yakutsk Standard Time"
+                                    }
+                                ],
+                                "validations": []
+                            },
+                            "infoMessages": [],
+                            "visible": true
+                        }
+                    ]
+                },
+                {
+                    "name": "tags",
+                    "label": "Tags",
+                    "elements": [
+                        {
+                            "name": "tagsByResource",
+                            "type": "Microsoft.Common.TagsByResource",
+                            "resources": [
+                                "Microsoft.Storage/storageAccounts",
+                                "Microsoft.Compute/virtualMachines"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "deployment": {
+                "kind": "ResourceGroup",
+                "location": "[steps('basics').resourceScope.location.name]",
+                "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
+                "parameters": {
+                    "virtualMachineName": "[steps('basics').virtualMachineName]",
+                    "virtualMachineSize": "[steps('basics').virtualMachineSize]",
+                    "virtualMachineGeneration": "[steps('basics').virtualMachineGeneration]",
+                    "dataDiskType": "[steps('basics').dataDiskType]",
+                    "dataDiskSize": "[steps('basics').dataDiskSize]",
+                    "adminUsername": "[steps('basics').adminUsername]",
+                    "adminPassword": "[steps('basics').adminPassword]",
+                    "customRdpPort": "[steps('basics').customRdpPort]",
+                    "alreadyHaveAWindowsServerLicense": "[steps('basics').alreadyHaveAWindowsServerLicense]",
+                    "azureLocalArchitecture": "[steps('azureLocalSettings').azureLocalArchitecture]",
+                    "azureLocalMachineMemory": "[steps('azureLocalSettings').azureLocalMachineMemory]",
+                    "telemetryLevel": "[steps('azureLocalSettings').telemetryLevel]",
+                    "domainName": "[steps('azureLocalSettings').domainName]",
+                    "autoShutdownStatus": "[steps('autoShutdown').autoShutdownStatus]",
+                    "autoShutdownTime": "[steps('autoShutdown').autoShutdownTime]",
+                    "autoShutdownTimeZone": "[steps('autoShutdown').autoShutdownTimeZone]"
+                }
+            }
+        }
+    }
+}

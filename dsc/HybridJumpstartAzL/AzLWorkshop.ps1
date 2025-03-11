@@ -1,11 +1,12 @@
-configuration HybridJumpstart
+configuration AzLWorkshop
 {
     param 
     (
         [System.Management.Automation.PSCredential]$Admincreds,
         [Parameter(Mandatory)]
-        [ValidateSet("1", "2", "3", "4", "5", "6")]
-        [Int]$azureLocalMachines,
+        [ValidateSet("Single Machine", "2-Machine Non-Converged", "2-Machine Fully-Converged", "2-Machine Switchless Dual-Link", "3-Machine Non-Converged", "3-Machine Fully-Converged",
+            "3-Machine Switchless Single-Link", "3-Machine Switchless Dual-Link", "4-Machine Non-Converged", "4-Machine Fully-Converged", "4-Machine Switchless Dual-Link")]
+        [String]$azureLocalArchitecture,
         [Parameter(Mandatory)]
         [ValidateSet("16", "24", "32", "48")]
         [Int]$azureLocalMachineMemory,
@@ -14,6 +15,8 @@ configuration HybridJumpstart
         [String]$telemetryLevel,
         [ValidateSet("Yes", "No")]
         [String]$updateImages,
+        [Parameter(Mandatory)]
+        [String]$domainName,
         [String]$customRdpPort,
         [String]$jumpstartPath,
         [String]$WindowsServerIsoPath,
@@ -50,7 +53,16 @@ configuration HybridJumpstart
         }
 
         $dateStamp = Get-Date -UFormat %d%b%y
-        $vmPrefix = "HybridJumpstart-$dateStamp"
+        $vmPrefix = "AzLWorkshop-$dateStamp"
+
+        # Calculate the number of Azure Local machines that are required, before calculating memory sizing
+        if ($azureLocalArchitecture -eq "Single Machine") {
+            $azureLocalMachines = 1
+        }
+        else {
+            # Take the first character of the architecture string to determine the number of machines
+            $azureLocalMachines = [INT]$azureLocalArchitecture.Substring(0, 1)
+        }
 
         # Calculate Host Memory Sizing to account for oversizing
         [INT]$totalFreePhysicalMemory = Get-CimInstance Win32_OperatingSystem -Verbose:$false | ForEach-Object { [math]::round($_.FreePhysicalMemory / 1MB) }
@@ -71,10 +83,10 @@ configuration HybridJumpstart
         if ((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77") {
             # If this in Azure, lock things in specifically
             $targetDrive = "V"
-            $jumpstartPath = "$targetDrive" + ":\HybridJumpstart"
+            $jumpstartPath = "$targetDrive" + ":\AzLWorkshop"
         }
         else {
-            $jumpstartPath = "$jumpstartPath" + "\HybridJumpstart"
+            $jumpstartPath = "$jumpstartPath" + "\AzLWorkshop"
         }
 
         $mslabLocalPath = "$jumpstartPath\mslab.zip"
@@ -86,6 +98,13 @@ configuration HybridJumpstart
         $isoPath = "$jumpstartPath\ISO"
         $flagsPath = "$jumpstartPath\Flags"
         $azLocalVhdPath = "$parentDiskPath\AzL_G2.vhdx"
+
+        $domainNetBios = $domainName.Split('.')[0]
+        $msLabUsername = "$domainNetBios\$($Admincreds.UserName)"
+        $msLabPassword = $Admincreds.GetNetworkCredential().Password
+        $secMsLabPassword = New-Object -TypeName System.Security.SecureString
+        $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
+        $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
 
         if (!((Get-CimInstance win32_systemenclosure).SMBIOSAssetTag -eq "7783-7084-3265-9085-8269-3286-77")) {
             # If this is on-prem, user should have supplied a folder/path they wish to install into
@@ -147,17 +166,17 @@ configuration HybridJumpstart
                 SetScript  = {
                     $vDisk = Get-VirtualDisk -FriendlyName JumpstartDisk
                     if ($vDisk | Get-Disk | Where-Object PartitionStyle -eq 'raw') {
-                        $vDisk | Get-Disk | Initialize-Disk -Passthru | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel HybridJumpstart -AllocationUnitSize 64KB -FileSystem NTFS
+                        $vDisk | Get-Disk | Initialize-Disk -Passthru | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel AzLWorkshop -AllocationUnitSize 64KB -FileSystem NTFS
                     }
                     elseif ($vDisk | Get-Disk | Where-Object PartitionStyle -eq 'GPT') {
-                        $vDisk | Get-Disk | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel HybridJumpstart -AllocationUnitSize 64KB -FileSystem NTFS
+                        $vDisk | Get-Disk | New-Partition -DriveLetter $Using:targetDrive -UseMaximumSize | Format-Volume -NewFileSystemLabel AzLWorkshop -AllocationUnitSize 64KB -FileSystem NTFS
                     }
                 }
                 TestScript = { 
-                (Get-Volume -ErrorAction SilentlyContinue -FileSystemLabel HybridJumpstart).FileSystem -eq 'NTFS'
+                (Get-Volume -ErrorAction SilentlyContinue -FileSystemLabel AzLWorkshop).FileSystem -eq 'NTFS'
                 }
                 GetScript  = {
-                    @{Ensure = if ((Get-Volume -FileSystemLabel HybridJumpstart).FileSystem -eq 'NTFS') { 'Present' } Else { 'Absent' } }
+                    @{Ensure = if ((Get-Volume -FileSystemLabel AzLWorkshop).FileSystem -eq 'NTFS') { 'Present' } Else { 'Absent' } }
                 }
                 DependsOn  = "[Script]VirtualDisk"
             }
@@ -298,13 +317,18 @@ configuration HybridJumpstart
 
             SetScript  = {
                 $labConfigFile = Get-Content -Path "$Using:labConfigPath"
-                $labConfigFile = $labConfigFile.Replace("<<azureLocalMachines>>", $Using:azureLocalMachines)
+                $labConfigFile = $labConfigFile.Replace("<<DomainAdminName>>", $Using:msLabUsername)
+                $labConfigFile = $labConfigFile.Replace("<<AdminPassword>>", $Using:msLabPassword)
+                $labConfigFile = $labConfigFile.Replace("<<DomainNetBios>>", $Using:domainNetBios)
+                $labConfigFile = $labConfigFile.Replace("<<DomainName>>", $Using:domainName)
                 $labConfigFile = $labConfigFile.Replace("<<azureLocalMachineMemory>>", $Using:azureLocalMachineMemory)
                 $labConfigFile = $labConfigFile.Replace("<<WSServerIsoPath>>", $Using:wsISOLocalPath)
                 $labConfigFile = $labConfigFile.Replace("<<MsuFolder>>", $Using:updatePath)
                 $labConfigFile = $labConfigFile.Replace("<<VmPrefix>>", $Using:vmPrefix)
                 $labConfigFile = $labConfigFile.Replace("<<TelemetryLevel>>", $Using:telemetryLevel)
                 $labConfigFile = $labConfigFile.Replace("<<customDNSForwarders>>", $Using:customDNSForwarders)
+                $labConfigFile = $labConfigFile.Replace("<<vSwitchName>>", $Using:vSwitchName)
+                $labConfigFile = $labConfigFile.Replace("<<allowedVlans>>", $Using:allowedVlans)
                 Out-File -FilePath "$Using:labConfigPath" -InputObject $labConfigFile -Force
             }
 
@@ -768,11 +792,6 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
-                $msLabUsername = "dell\labadmin"
-                $msLabPassword = 'LS1setup!'
-                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
-                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
-                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $msLabCreds -ScriptBlock {
                     Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
                     Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
@@ -790,25 +809,15 @@ configuration HybridJumpstart
         
         Script "Deploy WAC" {
             GetScript  = {
-                $msLabUsername = "dell\labadmin"
-                $msLabPassword = 'LS1setup!'
-                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
-                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
-                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Start-Sleep -Seconds 10
-                $result = Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
+                $result = Invoke-Command -VMName "$Using:vmPrefix-WAC" -Credential $msLabCreds -ScriptBlock {
                     [bool] (Get-WmiObject -class win32_product  | Where-Object { $_.Name -eq "Windows Admin Center" })
                 }
                 return @{ 'Result' = $result }
             }
 
             SetScript  = {
-                $msLabUsername = "dell\labadmin"
-                $msLabPassword = 'LS1setup!'
-                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
-                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
-                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
-                Invoke-Command -VMName "$Using:vmPrefix-WACGW" -Credential $msLabCreds -ScriptBlock {
+                Invoke-Command -VMName "$Using:vmPrefix-WAC" -Credential $msLabCreds -ScriptBlock {
                     if (-not (Test-Path -Path "C:\WindowsAdminCenter.exe")) {
                         $ProgressPreference = 'SilentlyContinue'
                         Invoke-WebRequest -Uri 'https://aka.ms/WACDownload' -OutFile "C:\WindowsAdminCenter.exe" -UseBasicParsing
@@ -851,11 +860,6 @@ configuration HybridJumpstart
 
         Script "Update DC" {
             GetScript  = {
-                $msLabUsername = "dell\labadmin"
-                $msLabPassword = 'LS1setup!'
-                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
-                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
-                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Start-Sleep -Seconds 10
                 $result = Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $msLabCreds -ScriptBlock {
                     if (Get-ChildItem Cert:\LocalMachine\Root\ | Where-Object subject -like "CN=Windows Admin Center") {
@@ -869,24 +873,13 @@ configuration HybridJumpstart
             }
 
             SetScript  = {
-                $msLabUsername = "dell\labadmin"
-                $msLabPassword = 'LS1setup!'
-                $secMsLabPassword = New-Object -TypeName System.Security.SecureString
-                $msLabPassword.ToCharArray() | ForEach-Object { $secMsLabPassword.AppendChar($_) }
-                $msLabCreds = New-Object -typename System.Management.Automation.PSCredential -argumentlist $msLabUsername, $secMsLabPassword
                 Invoke-Command -VMName "$Using:vmPrefix-DC" -Credential $msLabCreds -ScriptBlock {
-                    $GatewayServerName = "WACGW"
+                    $GatewayServerName = "WAC"
                     Start-Sleep 10
-                    $gatewayObject = Get-ADComputer -Identity $GatewayServerName
-                    $computers = (Get-ADComputer -Filter { OperatingSystem -eq "Azure Stack HCI" }).Name
-                    foreach ($computer in $computers) {
-                        $computerObject = Get-ADComputer -Identity $computer
-                        Set-ADComputer -Identity $computerObject -PrincipalsAllowedToDelegateToAccount $gatewayObject
-                    }
                     Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/DellGEOS/HybridJumpstart/main/media/hybridjumpstart.png' -OutFile "C:\Windows\Web\Wallpaper\Windows\hybridjumpstart.png" -UseBasicParsing
                     Set-GPPrefRegistryValue -Name "Default Domain Policy" -Context User -Action Replace -Key "HKCU\Control Panel\Desktop" -ValueName Wallpaper -Value "C:\Windows\Web\Wallpaper\Windows\hybridjumpstart.png" -Type String
                     $cert = Invoke-Command -ComputerName $GatewayServerName `
-                        -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=Windows Admin Center" }
+                        -ScriptBlock { Get-ChildItem Cert:\LocalMachine\My\ | Where-Object subject -eq "CN=WindowsAdminCenterSelfSigned" }
                     $cert | Export-Certificate -FilePath $env:TEMP\WACCert.cer
                     Import-Certificate -FilePath $env:TEMP\WACCert.cer -CertStoreLocation Cert:\LocalMachine\Root\
                 }
