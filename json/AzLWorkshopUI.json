@@ -304,7 +304,11 @@
                                 "hideConfirmation": false
                             },
                             "osPlatform": "Windows",
-                            "visible": true
+                            "visible": true,
+                            "output": {
+                                "type": "securestring",
+                                "value": "[parameters('adminPassword.password')]"
+                            }                            
                         },
                         {
                             "name": "customRdpPort",
