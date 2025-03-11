@@ -122,6 +122,10 @@ Secondly, the **Deploy to Azure** button, when clicked, will take you directly t
 
 Upon clicking the **Deploy to Azure** button, enter the details, which should look something similar to those shown below. You can choose the number of nested Azure Stack HCI nodes (from 1-4) and how much memory to allocate to the nested nodes, then click **Review + Create**.
 
+Use this one to test new UI JSON:
+
+[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#view/Microsoft_Azure_CreateUIDef/CustomDeploymentBlade/uri/https%3A%2F%2Fraw.githubusercontent.com%2FDellGEOS%2FHybridJumpstart%2Fmain%2Fjson%2FAzLWorkshop.json/uiFormDefinitionUri/https%3A%2F%2Fraw.githubusercontent.com%2FDellGEOS%2FHybridJumpstart%2Fmain%2Fjson%2FAzLWorkshopUI.json "Deploy to Azure")
+
 _________________
 ### Important Note <!-- omit in toc -->
 If you select a greater amount of node memory than is able to fit within your chosen Azure VM size, **the automation process will automatically shrink the node memory** to allow the deployment to complete successfully.
