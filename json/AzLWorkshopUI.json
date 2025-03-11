@@ -304,11 +304,7 @@
                                 "hideConfirmation": false
                             },
                             "osPlatform": "Windows",
-                            "visible": true,
-                            "output": {
-                                "type": "securestring",
-                                "value": "[parameters('adminPassword.password')]"
-                            }                            
+                            "visible": true
                         },
                         {
                             "name": "customRdpPort",
@@ -1177,7 +1173,7 @@
                 "dataDiskType": "[steps('basics').dataDiskType]",
                 "dataDiskSize": "[steps('basics').dataDiskSize]",
                 "adminUsername": "[steps('basics').adminUsername]",
-                "adminPassword": "[steps('basics').adminPassword]",
+                "adminPassword": "[steps('basics').adminPassword.password]",
                 "customRdpPort": "[steps('basics').customRdpPort]",
                 "alreadyHaveAWindowsServerLicense": "[steps('basics').alreadyHaveAWindowsServerLicense]",
                 "azureLocalArchitecture": "[steps('azureLocalSettings').azureLocalArchitecture]",
