@@ -1163,30 +1163,30 @@
                         }
                     ]
                 }
-            ],
-            "outputs": {
-                "parameters": {
-                    "virtualMachineName": "[steps('basics').virtualMachineName]",
-                    "virtualMachineSize": "[steps('basics').virtualMachineSize]",
-                    "virtualMachineGeneration": "[steps('basics').virtualMachineGeneration]",
-                    "dataDiskType": "[steps('basics').dataDiskType]",
-                    "dataDiskSize": "[steps('basics').dataDiskSize]",
-                    "adminUsername": "[steps('basics').adminUsername]",
-                    "adminPassword": "[steps('basics').adminPassword]",
-                    "customRdpPort": "[steps('basics').customRdpPort]",
-                    "alreadyHaveAWindowsServerLicense": "[steps('basics').alreadyHaveAWindowsServerLicense]",
-                    "azureLocalArchitecture": "[steps('azureLocalSettings').azureLocalArchitecture]",
-                    "azureLocalMachineMemory": "[steps('azureLocalSettings').azureLocalMachineMemory]",
-                    "telemetryLevel": "[steps('azureLocalSettings').telemetryLevel]",
-                    "domainName": "[steps('azureLocalSettings').domainName]",
-                    "autoShutdownStatus": "[steps('autoShutdown').autoShutdownStatus]",
-                    "autoShutdownTime": "[steps('autoShutdown').autoShutdownTime]",
-                    "autoShutdownTimeZone": "[steps('autoShutdown').autoShutdownTimeZone]"
-                },
-                "kind": "ResourceGroup",
-                "location": "[steps('basics').resourceScope.location.name]",
-                "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]"
-            }
+            ]
+        },
+        "outputs": {
+            "parameters": {
+                "virtualMachineName": "[steps('basics').virtualMachineName]",
+                "virtualMachineSize": "[steps('basics').virtualMachineSize]",
+                "virtualMachineGeneration": "[steps('basics').virtualMachineGeneration]",
+                "dataDiskType": "[steps('basics').dataDiskType]",
+                "dataDiskSize": "[steps('basics').dataDiskSize]",
+                "adminUsername": "[steps('basics').adminUsername]",
+                "adminPassword": "[steps('basics').adminPassword]",
+                "customRdpPort": "[steps('basics').customRdpPort]",
+                "alreadyHaveAWindowsServerLicense": "[steps('basics').alreadyHaveAWindowsServerLicense]",
+                "azureLocalArchitecture": "[steps('azureLocalSettings').azureLocalArchitecture]",
+                "azureLocalMachineMemory": "[steps('azureLocalSettings').azureLocalMachineMemory]",
+                "telemetryLevel": "[steps('azureLocalSettings').telemetryLevel]",
+                "domainName": "[steps('azureLocalSettings').domainName]",
+                "autoShutdownStatus": "[steps('autoShutdown').autoShutdownStatus]",
+                "autoShutdownTime": "[steps('autoShutdown').autoShutdownTime]",
+                "autoShutdownTimeZone": "[steps('autoShutdown').autoShutdownTimeZone]"
+            },
+            "kind": "ResourceGroup",
+            "location": "[steps('basics').resourceScope.location.name]",
+            "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]"
         }
     }
 }
