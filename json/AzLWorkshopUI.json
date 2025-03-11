@@ -1164,10 +1164,7 @@
                     ]
                 }
             ],
-            "deployment": {
-                "kind": "ResourceGroup",
-                "location": "[steps('basics').resourceScope.location.name]",
-                "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]",
+            "outputs": {
                 "parameters": {
                     "virtualMachineName": "[steps('basics').virtualMachineName]",
                     "virtualMachineSize": "[steps('basics').virtualMachineSize]",
@@ -1185,7 +1182,10 @@
                     "autoShutdownStatus": "[steps('autoShutdown').autoShutdownStatus]",
                     "autoShutdownTime": "[steps('autoShutdown').autoShutdownTime]",
                     "autoShutdownTimeZone": "[steps('autoShutdown').autoShutdownTimeZone]"
-                }
+                },
+                "kind": "ResourceGroup",
+                "location": "[steps('basics').resourceScope.location.name]",
+                "resourceGroupId": "[steps('basics').resourceScope.resourceGroup.id]"
             }
         }
     }
